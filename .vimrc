@@ -3,7 +3,7 @@ set encoding=utf8
 " =============== COLOR ===============
 set t_Co=256
 syntax on                   " enable syntax highlighting
-colorscheme dracula
+colorscheme nord
 
 " =============== Text Format ===============
 set tabstop=4               " number of visual spaces per TAB
@@ -49,14 +49,14 @@ set splitbelow
 set splitright
 
 "Easier movement between splits
-nnoremap <C-A-Right> <C-W><C-L> 
-nnoremap <C-A-Left> <C-W><C-H>
-nnoremap <C-A-Up> <C-W><C-K>
-nnoremap <C-A-Down> <C-W><C-J>
+nnoremap <C-Right> <C-W><C-L> 
+nnoremap <C-Left> <C-W><C-H>
+nnoremap <C-Up> <C-W><C-K>
+nnoremap <C-Down> <C-W><C-J>
 
 "Easier movement between buffers (fake tabs, don't tell real vimmers)
-nnoremap <C-Right> :bnext<CR>
-nnoremap <C-Left> :bprevious<CR>
+nnoremap <C-A-Right> :bnext<CR>
+nnoremap <C-A-Left> :bprevious<CR>
 
 "Clear highlights after search by pressing return
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
@@ -83,7 +83,8 @@ Plugin 'raimondi/delimitmate'
 Plugin 'pangloss/vim-javascript'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'edkolev/promptline.vim'
-Plugin 'dracula/vim'
+Plugin 'arcticicestudio/nord-vim'
+Plugin 'fatih/vim-go'
 
 call vundle#end()
 filetype plugin indent on    " required

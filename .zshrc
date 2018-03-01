@@ -11,8 +11,11 @@ COMPLETION_WAITING_DOTS="true"                      #Display red dots whilst wai
 fpath=(/usr/local/share/zsh-completions $fpath)
 plugins=(z git ssh-agent zsh-syntax-highlighting)             # Load plugins
 
+# Configuration for SSH Agent. Note we need to clear environment files
+# On login to make things work out as intended.
 zstyle :omz:plugins:ssh-agent identities id_rsa
 zstyle :omz:plugins:ssh-agent lifetime 4h
+rm ~/.ssh/environment*
 
 # Login to SSH_Agents
 #if [ ! -S ~/.ssh/ssh_auth_sock ]; then
