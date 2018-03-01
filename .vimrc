@@ -1,10 +1,5 @@
 set encoding=utf8
 
-" =============== COLOR ===============
-set t_Co=256
-syntax on                   " enable syntax highlighting
-colorscheme nord
-
 " =============== Text Format ===============
 set tabstop=4               " number of visual spaces per TAB
 set shiftwidth=4
@@ -130,3 +125,8 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
+
+" =============== COLOR ===============
+set t_Co=256
+syntax on                   " enable syntax highlighting
+colorscheme nord
