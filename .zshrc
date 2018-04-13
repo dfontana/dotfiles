@@ -4,7 +4,7 @@ export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 source activate py36
 
 # Set name of the zsh theme and dir colors to load. Look in ~/.oh-my-zsh/themes/
-ZSH_THEME="mySoliah"
+ZSH_THEME="soliah"
 
 ENABLE_CORRECTION="true"                            #Command auto-correction.
 COMPLETION_WAITING_DOTS="true"                      #Display red dots whilst waiting
