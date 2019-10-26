@@ -1,35 +1,34 @@
-# Path to your oh-my-zsh installation.
-export ZSH=~/.oh-my-zsh
+# Init Oh-my-zsh and path vars
+export ZSH="$HOME/.oh-my-zsh"
 export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
-source activate py36
 
-# Set name of the zsh theme and dir colors to load. Look in ~/.oh-my-zsh/themes/
-ZSH_THEME="soliah"
+# Link the go version you want to use if its not the default in the repo currentl.
+export PATH="/usr/lib/go-1.13/bin:$PATH"
 
-ENABLE_CORRECTION="true"                            #Command auto-correction.
-COMPLETION_WAITING_DOTS="true"                      #Display red dots whilst waiting
+# Creature comforts
+ENABLE_CORRECTION="true"
+COMPLETION_WAITING_DOTS="true"
+HYPHEN_INSENSITIVE="true"
 
+# Init zsh plugins
 fpath=(/usr/local/share/zsh-completions $fpath)
-plugins=(z git ssh-agent zsh-syntax-highlighting)             # Load plugins
+plugins=(z git ssh-agent docker docker-compose zsh-autosuggestions zsh-syntax-highlighting)
 
-# Configuration for SSH Agent. Note we need to clear environment files
-# On login to make things work out as intended.
-zstyle :omz:plugins:ssh-agent identities id_rsa
-zstyle :omz:plugins:ssh-agent lifetime 4h
-rm ~/.ssh/environment*
+# Theme to use, pick your fav
+ZSH_THEME="spaceship"
 
-# Login to SSH_Agents
-#if [ ! -S ~/.ssh/ssh_auth_sock ]; then
-#	eval `ssh-agent`
-#fi
-#ssh-add -l | grep "The agent has no identities" && ssh-add
-
-# Enable syntax highlighting, enable promptline.vim powerline symbols (see plugin page) && launch.
+# Fixes for plugins that dont want to work
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.shell_prompt.sh
-source $ZSH/oh-my-zsh.sh
+source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source <(kubectl completion zsh)
+source "$ZSH/oh-my-zsh.sh"
 
-# Preview MD files in terminal by using lynx, pandoc
-rmd () {
-    pandoc $1 | lynx -stdin
-}
+# To help programs that read these
+export VISUAL=vim
+export EDITOR="$VISUAL"
+
+# Launch tmux if it exists, we're interactive, and not already inside a tmux
+alias tmux=tmux new-session -A -s main
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+  exec tmux new-session -A -s main
+fi

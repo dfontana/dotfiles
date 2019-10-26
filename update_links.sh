@@ -1,11 +1,10 @@
 #!/bin/sh
-cd ~/dotfiles || exit
 for item in .*; do
     if [ "$item" != "." ] && [ "$item" != ".." ] && [ "$item" != ".git" ]; then
         if [ "$item" = ".zsh_custom" ]; then
-            ln -ns ~/dotfiles/$item ~/.oh-my-zsh/custom &> /dev/null
+            ln -rns ./$item ~/.oh-my-zsh/custom &> /dev/null
         else
-            ln -ns ~/dotfiles/$item ~/$item &> /dev/null
+            ln -rns ./$item ~/$item &> /dev/null
         fi
 
         LINKED=$?
