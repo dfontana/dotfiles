@@ -2,9 +2,9 @@
 for item in .*; do
     if [ "$item" != "." ] && [ "$item" != ".." ] && [ "$item" != ".git" ]; then
         if [ "$item" = ".zsh_custom" ]; then
-            ln -ns ./$item ~/.oh-my-zsh/custom &> /dev/null
+            ln -rns ./$item ~/.oh-my-zsh/custom &> /dev/null
         else
-            ln -ns ./$item ~/$item &> /dev/null
+            ln -rns ./$item ~/$item &> /dev/null
         fi
 
         LINKED=$?
