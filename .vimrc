@@ -32,8 +32,9 @@ set showmatch				" match braces
 set mouse=a					" allow mouse navigation
 set foldmethod=syntax       " Auto fold based on syntax. za to toggle a fold.
 set backspace=indent,eol,start " Backspace over line endings and inserted stuff.
+set clipboard=unnamedplus    " Copy to system clipboard on linux, Mac use just unamed
 
-"More natural split creation
+" More natural split creation
 set splitbelow
 set splitright
 
@@ -60,6 +61,13 @@ nnoremap <silent> <CR> :nohlsearch<CR><CR>
 inoremap <S-Tab> <C-d>
 
 " =============== Vim-Plug ===============
+" Install vimplug if its not already
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'https://github.com/scrooloose/nerdtree.git'

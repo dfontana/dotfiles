@@ -1,5 +1,5 @@
 # Init Oh-my-zsh and path vars
-export ZSH="~/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
 # Link the go version you want to use if its not the default in the repo currentl.
@@ -21,7 +21,7 @@ ZSH_THEME="spaceship"
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source <(kubectl completion zsh)
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # To help programs that read these
 export VISUAL=vim
