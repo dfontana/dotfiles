@@ -1,5 +1,12 @@
 set encoding=utf8
 
+" =============== COLOR ===============
+set t_Co=256
+let g:solarized_termcolors=256
+syntax enable
+set background=light
+colorscheme solarized
+
 " =============== Text Format ===============
 set tabstop=4               " number of visual spaces per TAB
 set shiftwidth=4
@@ -7,20 +14,12 @@ set softtabstop=4           " number of spaces in tab when editing
 set expandtab               " tabs = spaces
 set smarttab
 set autoindent
-set nolist                  " doesn't mix with softwrapping
-set wrap                    " softwrap
-set linebreak               " Break characters by breakat definition
-set breakat&vim             " default breakat, to prevent override
-set conceallevel=2          " Hides format *characters* unless active line
 filetype indent on          " load filetype indent files
 
-" =============== Other   ===============
-set spell spelllang=en_us   " Spell checking in english US
-
 " =============== General ===============
-set nofoldenable            " Turns off autofolding.
-set ignorecase              " Turns off case sensitivity
-set nosmartcase             " Stops Foo from matching only Foo
+set nofoldenable            " Stop folding by default
+set ignorecase              " Tab complete and search is now fuzzy to case
+set smartcase
 set number                  " enable line numbers
 set showcmd                 " show command in statusline
 set cursorline              " highlight line under cursor
@@ -31,17 +30,17 @@ set hlsearch                " highlight search matches
 set lazyredraw              " stop all the redrawin'
 set showmatch				" match braces
 set mouse=a					" allow mouse navigation
-set foldmethod=syntax       " Auto fold based on syntax definition.
-set backspace=indent,eol,start " Fixes obnoxious backspace behavior.. 
+set foldmethod=syntax       " Auto fold based on syntax. za to toggle a fold.
+set backspace=indent,eol,start " Backspace over line endings and inserted stuff.
+
+"More natural split creation
+set splitbelow
+set splitright
 
 " =============== Key bindings ===============
 "move vertically by wrapped line
 nnoremap j gj
 nnoremap k gk
-
-"More natural split creation
-set splitbelow
-set splitright
 
 "Easier movement between splits
 nnoremap <C-Right> <C-W><C-L> 
@@ -49,84 +48,82 @@ nnoremap <C-Left> <C-W><C-H>
 nnoremap <C-Up> <C-W><C-K>
 nnoremap <C-Down> <C-W><C-J>
 
-"Easier movement between buffers (fake tabs, don't tell real vimmers)
-nnoremap <C-A-Right> :bnext<CR>
-nnoremap <C-A-Left> :bprevious<CR>
+" Move between windows (like NerdTree)
+nnoremap <S-Right> <C-W>l 
+nnoremap <S-Left> <C-W>h
+
 
 "Clear highlights after search by pressing return
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
 
-" Plugin Keybindings
+" Tab/Shift Tab for indentation
+inoremap <S-Tab> <C-d>
+
+" =============== Vim-Plug ===============
+call plug#begin('~/.vim/plugged')
+
+Plug 'https://github.com/scrooloose/nerdtree.git'
+Plug 'justinmk/vim-sneak'
+Plug 'itchyny/lightline.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'https://github.com/airblade/vim-gitgutter.git'
+Plug 'rhysd/git-messenger.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'dense-analysis/ale'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'maximbaz/lightline-ale'
+Plug 'pangloss/vim-javascript'
+Plug 'vim-scripts/AutoComplPop'
+
+call plug#end()
+
+" ======= NerdTree
 map <C-t> :NERDTreeToggle<CR>
-map <C-i> :call JsBeautify()<cr>
+autocmd vimenter * NERDTree   " Open on Start
+autocmd VimEnter * wincmd p   " Move cursor to text window tho
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " Close if its the last thing open
 
-" =============== VUNDLE ===============
-set nocompatible              " be iMproved, required
-filetype off                  " required
-set rtp+=~/.vim/bundle/Vundle.vim
+" ======= Sneak
+let g:sneak#s_next = 1 " Press s/S again to go forwards/backwards
+let g:sneak#use_ic_scs = 1 " Ignore case
 
-call vundle#begin()
+" ======= LightLine
+set laststatus=2 " Start it each time
+set noshowmode   " Replace built in with lightline
+let g:lightline = {
+        \   'colorscheme':'solarized',
+        \   'active': {
+        \       'left': [[ 'mode', 'paste'], ['readonly','filename'],['linter_problems']],
+        \       'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]] 
+        \   },
+        \   'component_type': {
+        \       'linter_checking': 'left',
+        \       'linter_warnings': 'warning',
+        \       'linter_errors': 'error',
+        \       'linter_ok': 'left',
+        \   },
+        \   'component_expand': {
+        \       'linter_problems': 'LightlineLinterErrors',
+        \       'linter_checking': 'lightline#ale#checking',
+        \       'linter_warnings': 'lightline#ale#warnings',
+        \       'linter_errors': 'lightline#ale#errors',
+        \       'linter_ok': 'lightline#ale#ok',
+        \   }
+        \ }
 
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'xuyuanp/nerdtree-git-plugin'
-Plugin 'bling/vim-airline'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'scrooloose/syntastic'
-Plugin 'scrooloose/nerdtree'
-Plugin 'raimondi/delimitmate'
-Plugin 'pangloss/vim-javascript'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'edkolev/promptline.vim'
-Plugin 'arcticicestudio/nord-vim'
-Plugin 'fatih/vim-go'
 
-call vundle#end()
-filetype plugin indent on    " required
+function! LightlineLinterErrors() abort
+    let l:problems = ale#statusline#FirstProblem(bufnr(''), 'error')
+    return printf("[%s] %d,%d: %s", problems.linter_name, problems.lnum, problems.col, problems.text)
+endfunction
 
-" =============== CTRLP =================
-let g:ctrlp_custom_ignore = 'node_modules\|bower_components\|.DS_Store'
+" ======= Prettier
+let g:prettier#quickfix_enabled = 0
 
-" =============== NERD Commenter ========
-" Align line-wise comment delimiters instead of following indentation
-let g:NERDDefaultAlign = 'left'
-
-" =============== AIRLINE ===============
-"start Airline everytime
-set laststatus=2
-
-"Display all buffers when 1 tab is active
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
-
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-
-" unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.branch = '⎇'	
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-
-" airline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
-
-" =============== COLOR ===============
-set t_Co=256
-syntax on                   " enable syntax highlighting
-colorscheme nord
+" ======= ALE
+let g:ale_sign_column_always = 1
+let g:ale_completion_enabled = 1
+let g:ale_fixers = {
+    \   'javascript': ['eslint']
+    \ }
+set omnifunc=ale#completion#OmniFunc
