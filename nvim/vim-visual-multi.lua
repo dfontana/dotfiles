@@ -56,3 +56,4 @@ vim.cmd([[
   let g:VM_maps["Toggle Single Region"]        = ''
   let g:VM_maps["Toggle Multiline"]            = ''
 ]])  
+
