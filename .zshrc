@@ -20,15 +20,8 @@ ZSH_THEME="spaceship"
 # Fixes for plugins that dont want to work
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source <(kubectl completion zsh)
 source "$ZSH/oh-my-zsh.sh"
 
 # To help programs that read these
 export VISUAL=vim
 export EDITOR="$VISUAL"
-
-# Launch tmux if it exists, we're interactive, and not already inside a tmux
-alias tmux=tmux new-session -A -s main
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  exec tmux new-session -A -s main
-fi
