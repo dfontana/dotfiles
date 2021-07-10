@@ -10,5 +10,5 @@ Stores configurations related to development environment.
 - Link nvim (not integrated into the above script yet) (Requires LunarVim installed)
 ```
 ln -s `pwd`/nvim/lv-config.lua ~/.config/nvim/
-ln -s `pwd`/nvim/vim-visual-multi.lua ~/.config/nvim/
+ln -s `pwd`/nvim/vim-visual-multi.lua ~/.config/nvim/lua/
 ```
