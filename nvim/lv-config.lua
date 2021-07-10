@@ -1,18 +1,3 @@
--- vim settings
-vim.o.tabstop = 2
-vim.o.shiftwidth = 2
-vim.o.expandtab = true
-vim.o.ignorecase = true
-vim.o.smartcase = true
-vim.o.cursorline = true
-vim.cmd[[highlight vCursor guifg=white guibg=steelblue]]
-vim.o.guicursor = 'a:block-blinkwait175-blinkoff150-blinkon175-vCursor'
-vim.o.whichwrap = 'b,s,h,l'
-
--- Rust
-vim.cmd[[autocmd BufNewFile,BufRead *.rs setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2]]
-
-
 --[[
 O is the global options object
 
@@ -27,11 +12,13 @@ O.format_on_save = true
 O.auto_complete = true
 O.colorscheme = 'gruvbox'
 O.auto_close_tree = 0
-O.wrap_lines = false
+O.wrap_lines = true
 O.timeoutlen = 100
 O.leader_key = " "
 O.ignore_case = true
 O.smart_case = true
+O.shift_width = 2
+O.tab_stop = 2
 
 -- Plugins
 O.plugin.dashboard.active = true
@@ -55,5 +42,31 @@ O.user_plugins = {
 }
 
 O.user_which_key = {
-	b = { ":Telescope buffers<CR>", "Find Buffer"}
+	b = { ":Telescope buffers<CR>", "Find Buffer"},
+  l = {
+    name = "LSP",
+    a = { "<cmd>Telescope lsp_code_actions<cr>", "Code Action" },
+    d = { "<cmd>Telescope lsp_definitions<cr>", "Go To Definition" },
+    D = { "<cmd>Telescope lsp_document_diagnostics<cr>", "Document Errors"},
+    i = { "<cmd>lua vim.lsp.buf.implementation()<cr>", "Go To Impl" },
+    u = { "<cmd>Telescope lsp_references<cr>", "Usages" },
+    f = { "<cmd>Neoformat<cr>", "Format" },
+    q = { "<cmd>Telescope quickfix<cr>", "Quickfix" },
+    r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
+    s = { "<cmd>lua vim.lsp.buf.signature_help()<cr>", "Signature Help" },
+  },
 }
+
+-- vim settings
+vim.cmd[[highlight vCursor guifg=white guibg=steelblue]]
+vim.o.guicursor = 'a:block-blinkwait175-blinkoff150-blinkon175-vCursor'
+
+-- Show diagnostics on cursor hover (no movement)
+vim.o.updatetime=300
+O.user_autocommands = {
+  {"CursorHold", "*", "lua", "vim.lsp.diagnostic.show_line_diagnostics()"}
+}
+
+-- Rust
+vim.cmd[[autocmd BufNewFile,BufRead *.rs setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2]]
+O.lang.rust.rust_tools.active = true
