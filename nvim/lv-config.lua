@@ -68,5 +68,6 @@ O.user_autocommands = {
 }
 
 -- Rust
-vim.cmd[[autocmd BufNewFile,BufRead *.rs setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2]]
+vim.cmd[[let g:rust_recommended_style=0]]
 O.lang.rust.rust_tools.active = true
+
