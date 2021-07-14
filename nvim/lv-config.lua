@@ -8,36 +8,25 @@ an executable
 ]]
 
 -- general
-O.format_on_save = true
-O.auto_complete = true
-O.colorscheme = 'gruvbox'
-O.auto_close_tree = 0
-O.wrap_lines = true
-O.timeoutlen = 100
-O.leader_key = " "
-O.ignore_case = true
-O.smart_case = true
-O.shift_width = 2
-O.tab_stop = 2
+O.format_on_save = false
+O.colorscheme = 'gruvbox-material'
+O.default_options.wrap = true
 
 -- Plugins
 O.plugin.dashboard.active = true
-O.plugin.colorizer.active = false
-O.plugin.ts_playground.active = false
-O.plugin.indent_line.active = false
-O.plugin.zen.active = false
 
 -- if you don't want all the parsers change this to a table of the ones you want
 O.treesitter.ensure_installed = "all"
 O.treesitter.ignore_install = {"haskell"}
 O.treesitter.highlight.enabled = true
 
-O.lang.tsserver.linter = nil
-
 O.user_plugins = {
   {
     "mg979/vim-visual-multi",
     config = function() require"vim-visual-multi" end,
+  },
+  {
+    "sainnhe/gruvbox-material"
   }
 }
 
@@ -59,6 +48,10 @@ O.user_which_key = {
 
 -- vim settings
 vim.cmd[[highlight vCursor guifg=white guibg=steelblue]]
+vim.cmd[[set shortmess-=S]]
+vim.cmd[[set background=dark]]
+vim.cmd[[let g:gruvbox_material_background = 'soft']]
+vim.cmd[[let g:gruvbox_material_palette = 'original']]
 vim.o.guicursor = 'a:block-blinkwait175-blinkoff150-blinkon175-vCursor'
 
 -- Show diagnostics on cursor hover (no movement)
