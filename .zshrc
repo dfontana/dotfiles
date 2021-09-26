@@ -1,6 +1,6 @@
 # Init Oh-my-zsh and path vars
 export ZSH="$HOME/.oh-my-zsh"
-export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+export PATH="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:$PATH"
 
 # Link the go version you want to use if its not the default in the repo currentl.
 export PATH="/usr/lib/go-1.13/bin:$PATH"
