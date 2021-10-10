@@ -4,11 +4,48 @@ Stores configurations related to development environment.
 ## Prerequisites
 - oh-my-zsh is expected to already be installed.
 
-## Using
-
+## Dot Setup
 - Run `./update_links.sh` from within this directory. No it's not perfect, but it will link things.
-- Link nvim (not integrated into the above script yet) (Requires LunarVim installed)
+
+## LunarVim
+- Located in `~/.local/share/lunarvim/lvim
+- Binary is in `~/.local/bin`
+- Config goes in `~/.config/lvim`
+
+### Setup
+Make sure `~/.local/bin` is on the PATH. Then setup the config:
 ```
-ln -s `pwd`/nvim/lv-config.lua ~/.config/nvim/
-ln -s `pwd`/nvim/vim-visual-multi.lua ~/.config/nvim/lua/
+ln -s `pwd`/lvim ~/.config/lvim
+```
+
+Then run:
+```
+:TSInstall bash json lua python rust yaml javascript
+:LSPInstall bash json lua python rust yaml typescript
+:PackerInstall 
+:PackerCompile
+```
+
+### Updating
+Plugins:
+```
+:PackerUpdate
+```
+
+LunarVim:
+```
+cd ~/.local/share/lunarvim/lvim && git pull
+:PackerSync
+```
+## Upgrade notes
+
+Going from NVIM requires a full wipe of LVIM. You should delete:
+- ~/.local/share/nvim/site/pack/packer 
+- ~/.cache/nvim
+- ~/.config/nvim
+
+And re-install:
+```
+curl -LSs https://raw.githubusercontent.com/lunarvim/lunarvim/rolling/utils/installer/install.sh -O install.sh
+LV_BRANCH=master bash ./install.sh
 ```
