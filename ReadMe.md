@@ -21,7 +21,7 @@ ln -s `pwd`/lvim ~/.config/lvim
 Then run:
 ```
 :TSInstall bash json lua python rust yaml javascript
-:LSPInstall bash json lua python rust yaml typescript
+:LspInstall bashls jsonls pyright rust_analyzer yamlls tsserver
 :PackerInstall 
 :PackerCompile
 ```

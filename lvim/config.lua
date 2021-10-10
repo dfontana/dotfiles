@@ -64,6 +64,9 @@ lvim.builtin.treesitter.highlight.enabled = true
 lvim.lang.json.formatters = {{ exe = 'prettier' }}
 lvim.lang.rust.formatters = {{ exe = "rustfmt" }}
 
+-- Shutoff default formatting for rust
+vim.cmd[[let g:rust_recommended_style=0]]
+
 lvim.lsp.override = { "rust" }
 lvim.plugins = {
   {
