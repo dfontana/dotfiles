@@ -1,5 +1,8 @@
 ## Fan Control
 
+Init module: `git submodule update --init --recursive`
+Update module: `git submodule update --remote --merge`
+
 You need to first get the python deps setup; eg:
 
 ```bash
