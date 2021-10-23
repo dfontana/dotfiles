@@ -1,0 +1,11 @@
+[Unit]
+Description=LiquidCtl Setup Service
+
+[Service]
+User=root
+Type=oneshot
+ExecStart=liquidctl initialize all
+
+[Install]
+WantedBy=multi-user.target
+

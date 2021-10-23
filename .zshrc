@@ -23,5 +23,9 @@ source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source "$ZSH/oh-my-zsh.sh"
 
 # To help programs that read these
-export VISUAL=vim
+export VISUAL=lvim
 export EDITOR="$VISUAL"
+
+alias vim=lvim
+
+eval "$(starship init zsh)"
