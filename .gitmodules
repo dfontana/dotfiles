@@ -1,0 +1,3 @@
+[submodule "fancontrol/liquidctl"]
+	path = fancontrol/liquidctl
+	url = git@github.com:liquidctl/liquidctl.git
