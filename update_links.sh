@@ -16,3 +16,13 @@ for item in .*; do
         fi
     fi
 done
+
+# Link Fan Control
+ln -s `pwd`/fancontrol/systemd/*.service /etc/systemd/system/
+LINKED=$?
+if [ $LINKED -eq 0 ]; then
+  echo "[FanService] Linked."
+else
+  echo "[FanService] Exists."
+fi
+

@@ -37,7 +37,7 @@ LunarVim:
 cd ~/.local/share/lunarvim/lvim && git pull
 :PackerSync
 ```
-## Upgrade notes
+### Upgrade notes
 
 Going from NVIM requires a full wipe of LVIM. You should delete:
 - ~/.local/share/nvim/site/pack/packer 
@@ -49,3 +49,20 @@ And re-install:
 curl -LSs https://raw.githubusercontent.com/lunarvim/lunarvim/rolling/utils/installer/install.sh -O install.sh
 LV_BRANCH=master bash ./install.sh
 ```
+
+## FanControl
+
+For linux fan profile management.
+
+- Init the submodule (or update it):
+```
+Init module:    git submodule update --init --recursive
+Update module:  git submodule update --remote --merge
+```
+
+- Install python deps:
+```
+pip install ./fancontrol/liquidctl psutil
+sudo pip install psutil
+```
+
