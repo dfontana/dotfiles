@@ -21,14 +21,13 @@ lvim.builtin.which_key.mappings['l'] = {
   a = { "<cmd>Telescope lsp_code_actions<cr>", "Code Action" },
   d = {
     name = "Diagnostics",
-    d = {"<cmd>Telescope lsp_document_diagnostics<cr>", "Document"},
-    w = {"<cmd>Telescope lsp_workspace_diagnostics<cr>", "Workspace"},
+    d = {"<cmd>Telescope diagnostics<cr>", "Document"},
     n = {
-      "<cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<cr>",
+      "<cmd>lua vim.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<cr>",
       "Next Diagnostic",
     },
     p = {
-      "<cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<cr>",
+      "<cmd>lua vim.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<cr>",
       "Prev Diagnostic",
     },
   },
