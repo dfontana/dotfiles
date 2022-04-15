@@ -13,14 +13,8 @@ Stores configurations related to development environment.
 - Config goes in `~/.config/lvim`
 
 ### Setup
-Make sure `~/.local/bin` is on the PATH. Then setup the config:
+Make sure `~/.local/bin` is on the PATH. Then run:
 ```
-ln -s `pwd`/lvim ~/.config/lvim
-```
-
-Then run:
-```
-:TSInstall bash json lua python rust yaml javascript
 :LspInstall bashls jsonls pyright rust_analyzer yamlls tsserver
 :PackerInstall 
 :PackerCompile
@@ -29,25 +23,12 @@ Then run:
 ### Updating
 Plugins:
 ```
-:PackerUpdate
+:PackerSync
 ```
 
 LunarVim:
 ```
-cd ~/.local/share/lunarvim/lvim && git pull
-:PackerSync
-```
-### Upgrade notes
-
-Going from NVIM requires a full wipe of LVIM. You should delete:
-- ~/.local/share/nvim/site/pack/packer 
-- ~/.cache/nvim
-- ~/.config/nvim
-
-And re-install:
-```
-curl -LSs https://raw.githubusercontent.com/lunarvim/lunarvim/rolling/utils/installer/install.sh -O install.sh
-LV_BRANCH=master bash ./install.sh
+:LvimUpdate
 ```
 
 ## FanControl

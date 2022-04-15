@@ -50,19 +50,35 @@ lvim.builtin.which_key.mappings['l'] = {
   q = { "<cmd>Telescope quickfix<cr>", "Quickfix" },
   r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
 }
+lvim.builtin.which_key.vmappings['C'] =  {"Cursors at line start", noremap = true}
 
-lvim.builtin.dashboard.active = true
+lvim.builtin.alpha.active = true
+lvim.builtin.alpha.mode = "dashboard"
+lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
+lvim.builtin.nvimtree.active = true
 lvim.builtin.nvimtree.side = "left"
 lvim.builtin.nvimtree.show_icons.git = 0
 
 -- if you don't want all the parsers change this to a table of the ones you want
-lvim.builtin.treesitter.ensure_installed = "maintained"
-lvim.builtin.treesitter.ignore_install = { "haskell" }
+lvim.builtin.treesitter.ensure_installed = {
+  "bash",
+  "javascript",
+  "json",
+  "lua",
+  "python",
+  "css",
+  "rust",
+  "java",
+  "yaml",
+}
 lvim.builtin.treesitter.highlight.enabled = true
 
-lvim.lang.json.formatters = {{ exe = 'prettier' }}
-lvim.lang.rust.formatters = {{ exe = "rustfmt" }}
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  {command = 'rustfmt'},
+  {command = 'prettier'},
+}
 
 -- Shutoff default formatting for rust
 vim.cmd[[let g:rust_recommended_style=0]]
@@ -117,8 +133,8 @@ lvim.plugins = {
       vim.cmd ("let g:VM_maps = {}")
       vim.cmd ("let g:VM_maps['Add Cursor Down'] = '<S-Down>'")
       vim.cmd ("let g:VM_maps['Add Cursor Up'] = '<S-Up>'")
-      vim.cmd ("let g:VM_maps['Mouse Cusrsor'] = '<S-LeftMouse>'")
-      vim.cmd ("let g:VM_maps['Visual Cursors'] = '<S-c>'")
+      vim.cmd ("let g:VM_maps['Mouse Cursor'] = '<S-LeftMouse>'")
+      vim.cmd ("let g:VM_maps['Visual Cursors'] = '<Space-S-c>'")
     end
   },
   {

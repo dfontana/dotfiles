@@ -1,1 +1,4 @@
 .zsh_custom/
+lvim/
+!lvim/config.lua
+!lvim/lsp-settings/**
