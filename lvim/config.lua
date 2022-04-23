@@ -47,7 +47,12 @@ lvim.builtin.which_key.mappings['l'] = {
     S = { "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", "Workspace Symbols" },
   },
   q = { "<cmd>Telescope quickfix<cr>", "Quickfix" },
-  r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
+  r = {
+    name = "Run",
+    r = { "<cmd>RustRunnables<cr>", "Rust Runnables"},
+    h = { "<cmd>RustHoverActions<cr><cmd>RustHoverActions<cr>", "Rust Hover Actions"},
+    R = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
+  }
 }
 lvim.builtin.which_key.vmappings['C'] =  {"Cursors at line start", noremap = true}
 
@@ -73,16 +78,8 @@ lvim.builtin.treesitter.ensure_installed = {
 }
 lvim.builtin.treesitter.highlight.enabled = true
 
-local formatters = require "lvim.lsp.null-ls.formatters"
-formatters.setup {
-  {command = 'rustfmt'},
-  {command = 'prettier'},
-}
-
 -- Shutoff default formatting for rust
 vim.cmd[[let g:rust_recommended_style=0]]
-
-lvim.lsp.override = { "rust" }
 lvim.plugins = {
   {
     'marko-cerovac/material.nvim',
@@ -157,3 +154,5 @@ lvim.plugins = {
     ft = { "rust", "rs" },
   },
 }
+
+
