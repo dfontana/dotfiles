@@ -55,6 +55,28 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
 
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  {
+    command = "prettier",
+    filetypes = { "javascript", "css", "scss", "html" },
+  },
+}
+local lvimLsp = require("lvim.lsp")
+require("lvim.lsp.manager").setup("tsserver", {
+  on_attach = function(client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+    lvimLsp.common_on_attach(client, bufnr)
+  end,
+  on_init = lvimLsp.common_on_init,
+  settings = {
+    format = {
+      enable = false,
+    },
+  },
+})
+
+
 -- Shutoff default formatting for rust
 vim.cmd [[let g:rust_recommended_style=0]]
 
