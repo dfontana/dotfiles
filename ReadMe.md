@@ -10,10 +10,12 @@ Stores configurations related to development environment.
   - Nerd Fonts Symbols Only (Mono!)
 
 ## Dot Setup
+- Run `./install_neovim.sh` to get the latest neovim installed
 - Run `./update_links.sh` from within this directory. No it's not perfect, but it will link things.
 
+
 ## LunarVim
-- Located in `~/.local/share/lunarvim/lvim
+- Located in `~/.local/share/lunarvim/lvim`
 - Binary is in `~/.local/bin`
 - Config goes in `~/.config/lvim`
 
