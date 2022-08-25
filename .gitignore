@@ -1,4 +1,3 @@
 .zsh_custom/
-lvim/
-!lvim/config.lua
-!lvim/lsp-settings/**
+lvim/plugin/packer_compiled.lua
+

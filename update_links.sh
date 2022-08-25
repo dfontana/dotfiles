@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/bin/bash
 pwd=$(pwd)
 
 function link {
@@ -30,6 +29,12 @@ echo "Linking Home"
 for item in home/*; do
   cln=${item#"home/"}
   link $item "$HOME/.$cln"
+done
+
+echo "Linking .config"
+for item in config/*; do
+  cln=${item#"config/"}
+  link $item "$HOME/.config/$cln"
 done
 
 # Link Lvim

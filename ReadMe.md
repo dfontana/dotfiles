@@ -3,6 +3,11 @@ Stores configurations related to development environment.
 
 ## Prerequisites
 - oh-my-zsh is expected to already be installed.
+- fzf, rg, fnm, pynvim
+- Linux: xsel
+- Fonts:
+  - Caskadiya Code (Mono!)
+  - Nerd Fonts Symbols Only (Mono!)
 
 ## Dot Setup
 - Run `./update_links.sh` from within this directory. No it's not perfect, but it will link things.
