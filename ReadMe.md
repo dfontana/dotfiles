@@ -17,6 +17,7 @@ Stores configurations related to development environment.
 ## TODO
 - Finish grooming over nvim configuration
 - Update kitty configuration to improve things like splits, etc
+  - Continue from layouts
   - Tab Bar: https://github.com/kovidgoyal/kitty/discussions/4447#discussioncomment-3240635
   - Configs: https://sw.kovidgoyal.net/kitty/overview/#configuring-kitty
 
