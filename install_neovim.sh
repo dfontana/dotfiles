@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 #function for dependency check
 dep_ch() {

@@ -3,7 +3,10 @@ Stores configurations related to development environment.
 
 ## Prerequisites
 - oh-my-zsh is expected to already be installed.
-- fzf, rg, fnm, pynvim
+- Need these: 
+  - All: fzf, rg, fnm, pynvim, starship, miniconda, bat, jenv, kubectx, dive, exa, temurin
+  - Linux: xsel
+  - Mac: cmake pkg-config
 - Linux: xsel
 - Fonts:
   - Caskadiya Code (Mono!)

@@ -1,0 +1,50 @@
+# Put K8s at the end
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$docker_context\
+$package\
+$cmake\
+$dart\
+$deno\
+$golang\
+$helm\
+$java\
+$lua\
+$nodejs\
+$php\
+$python\
+$rust\
+$terraform\
+$conda\
+$memory_usage\
+$gcloud\
+$env_var\
+$kubernetes\
+$custom\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$status\
+$shell\
+$character"""
+
+[git_status]
+disabled = false
+[kubernetes]
+disabled = false
+format = 'on [$symbol$context \($namespace\)](green) '
+[docker_context]
+disabled = true
+[php]
+disabled = true
+[gcloud]
+disabled = true

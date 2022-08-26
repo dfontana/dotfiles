@@ -1,11 +1,15 @@
 lvim.log.level = "warn"
 lvim.colorscheme = "material"
 vim.g.material_style = "darker"
+
+vim.opt.completeopt = { "menuone", "noselect" }
+
 lvim.format_on_save = true
 lvim.lint_on_save = true
 lvim.line_wrap_cursor_movement = true
-vim.opt.inccommand = "split"
 vim.opt.wrap = true
+
+vim.opt.inccommand = "split"
 vim.cmd [[set shortmess-=S]]
 vim.opt.guicursor = 'a:block-blinkwait175-blinkoff150-blinkon175-vCursor'
 
@@ -39,8 +43,8 @@ lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.show_icons.git = 0
 
+lvim.lsp.automatic_servers_installation = true
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
   "javascript",
