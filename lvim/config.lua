@@ -21,7 +21,7 @@ lvim.builtin.which_key.mappings["t"] = {
 }
 lvim.builtin.which_key.mappings['l'] = {
   name = "LSP",
-  a = { "<cmd>Telescope lsp_code_actions<cr>", "Code Action" },
+  a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
   d = { "<cmd>Telescope lsp_definitions<cr>", "Go To Definition" },
   f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
   r = {
@@ -55,6 +55,8 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
 
+-- Note: We have to reconfig tsserver to disable it's formatting functionality
+-- since that conflicts with prettier
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   {
@@ -76,11 +78,21 @@ require("lvim.lsp.manager").setup("tsserver", {
   },
 })
 
+-- Linters: We want eslint for javascript, to get React hints, etc inline.
+-- tsserver appears to only help with imports and vars, etc.
+local linters = require("lvim.lsp.null-ls.linters")
+linters.setup {
+  {
+    command = "eslint",
+    filetypes = { "javascript" },
+  },
+}
 
 -- Shutoff default formatting for rust
 vim.cmd [[let g:rust_recommended_style=0]]
 
 lvim.plugins = {
+  { "stevearc/dressing.nvim" },
   { "folke/trouble.nvim", cmd = "TroubleToggle", },
   {
     'marko-cerovac/material.nvim',
