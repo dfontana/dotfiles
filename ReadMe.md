@@ -8,9 +8,7 @@ Stores configurations related to development environment.
   - Linux: xsel
   - Mac: cmake pkg-config
 - Linux: xsel
-- Fonts:
-  - Caskadiya Code (Mono!)
-  - Nerd Fonts Symbols Only (Mono!)
+- Fonts: Install everything in `fonts/` folder
 
 ## Dot Setup
 - Run `./install_neovim.sh` to get the latest neovim installed
@@ -18,7 +16,9 @@ Stores configurations related to development environment.
 
 ## TODO
 - Finish grooming over nvim configuration
-- Update kitty configuration to improve things like switching tabs, splits, etc
+- Update kitty configuration to improve things like splits, etc
+  - Tab Bar: https://github.com/kovidgoyal/kitty/discussions/4447#discussioncomment-3240635
+  - Configs: https://sw.kovidgoyal.net/kitty/overview/#configuring-kitty
 
 ## FanControl
 
