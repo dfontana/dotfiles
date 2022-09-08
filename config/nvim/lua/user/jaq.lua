@@ -16,7 +16,6 @@ jaq_nvim.setup {
       javascript = "node %",
       -- markdown = "glow %",
       python = "python %",
-      -- rust = "rustc % && ./$fileBase && rm $fileBase",
       rust = "cargo run",
       cpp = "g++ % -o $fileBase && ./$fileBase",
       go = "go run %",

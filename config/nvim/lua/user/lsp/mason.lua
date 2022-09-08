@@ -25,7 +25,6 @@ local servers = {
   "clangd",
   "rust_analyzer",
   "taplo",
-  "zk@v0.10.1",
   "lemminx"
 }
 
@@ -78,16 +77,10 @@ for _, server in pairs(servers) do
     if not l_status_ok then
       return
     end
-    -- local sumneko_opts = require "user.lsp.settings.sumneko_lua"
-    -- opts = vim.tbl_deep_extend("force", sumneko_opts, opts)
-    -- opts = vim.tbl_deep_extend("force", require("lua-dev").setup(), opts)
     local luadev = lua_dev.setup {
-      --   -- add any options here, or leave empty to use the default settings
-      -- lspconfig = opts,
       lspconfig = {
         on_attach = opts.on_attach,
         capabilities = opts.capabilities,
-        --   -- settings = opts.settings,
       },
     }
     lspconfig.sumneko_lua.setup(luadev)
@@ -109,18 +102,12 @@ for _, server in pairs(servers) do
     opts = vim.tbl_deep_extend("force", emmet_ls_opts, opts)
   end
 
-  if server == "zk" then
-    local zk_opts = require "user.lsp.settings.zk"
-    opts = vim.tbl_deep_extend("force", zk_opts, opts)
-  end
-
   if server == "jdtls" then
     goto continue
   end
 
   if server == "rust_analyzer" then
     local rust_opts = require "user.lsp.settings.rust"
-    -- opts = vim.tbl_deep_extend("force", rust_opts, opts)
     local rust_tools_status_ok, rust_tools = pcall(require, "rust-tools")
     if not rust_tools_status_ok then
       return
@@ -133,6 +120,3 @@ for _, server in pairs(servers) do
   lspconfig[server].setup(opts)
   ::continue::
 end
-
--- TODO: add something to installer later
--- require("lspconfig").motoko.setup {}

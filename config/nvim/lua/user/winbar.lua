@@ -15,7 +15,6 @@ M.winbar_filetype_exclude = {
   "toggleterm",
   "DressingSelect",
   "Jaq",
-  "harpoon",
   "dapui_scopes",
   "dapui_breakpoints",
   "dapui_stacks",
@@ -23,7 +22,6 @@ M.winbar_filetype_exclude = {
   "dap-repl",
   "dap-terminal",
   "dapui_console",
-  "lab",
   "Markdown",
   "",
 }
@@ -45,34 +43,9 @@ M.get_filename = function()
       file_icon_color = ""
     end
 
-    local navic_text = vim.api.nvim_get_hl_by_name("NavicText", true)
-    vim.api.nvim_set_hl(0, "Winbar", { fg = navic_text.foreground })
-
     return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. "%#Winbar#" .. filename .. "%*"
   end
 end
-
--- local get_gps = function()
---   local status_gps_ok, gps = pcall(require, "nvim-gps")
---   if not status_gps_ok then
---     return ""
---   end
---
---   local status_ok, gps_location = pcall(gps.get_location, {})
---   if not status_ok then
---     return ""
---   end
---
---   if not gps.is_available() or gps_location == "error" then
---     return ""
---   end
---
---   if not require("user.functions").isempty(gps_location) then
---     return require("user.icons").ui.ChevronRight .. " " .. gps_location
---   else
---     return ""
---   end
--- end
 
 local get_gps = function()
   local status_gps_ok, gps = pcall(require, "nvim-navic")
