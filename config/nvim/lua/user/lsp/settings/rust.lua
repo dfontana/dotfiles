@@ -1,3 +1,6 @@
+local extension_path = vim.env.HOME .. '/.local/lib/nvim/codelldb/'
+local codelldb_path = extension_path .. 'adapter/codelldb'
+local liblldb_path = extension_path .. 'lldb/lib/liblldb.dylib'
 return {
   tools = {
     -- autoSetHints = false,
@@ -63,14 +66,10 @@ return {
       -- height = 30,
     },
   },
+  dap = {
+    adapter = require('rust-tools.dap').get_codelldb_adapter(codelldb_path, liblldb_path)
+  },
   server = {
-    --[[
-        $ mkdir -p ~/.local/bin
-        $ curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > ~/.local/bin/rust-analyzer
-        $ chmod +x ~/.local/bin/rust-analyzer
-    --]]
-    -- cmd = { os.getenv "HOME" .. "/.local/bin/rust-analyzer" },
-    cmd = { "rustup", "run", "nightly", os.getenv "HOME" .. "/.local/bin/rust-analyzer" },
     on_attach = require("user.lsp.handlers").on_attach,
     capabilities = require("user.lsp.handlers").capabilities,
 
@@ -86,41 +85,3 @@ return {
     },
   },
 }
--- return {
---   settings = {
---     rust_analyzer = {
---       inlayHints = {
---         bindingModeHints = {
---           enable = true,
---         },
---         typeHints = {
---           enable = true,
---           hideClosureInitialization = false,
---           hideNamedConstructor = false,
---         },
---         chainingHints = {
---           enable = true,
---         },
---         closingBraceHints = {
---           enable = true,
---           minLines = 25,
---         },
---         closureReturnTypeHints = {
---           enable = "never",
---         },
---         lifetimeElisionHints = {
---           enable = "never",
---           useParameterNames = false,
---           maxLength = 25,
---         },
---         parameterHints = {
---           enable = true,
---         },
---         reborrowHints = {
---           enable = "never",
---         },
---         renderColons = true,
---       },
---     },
---   },
--- }
