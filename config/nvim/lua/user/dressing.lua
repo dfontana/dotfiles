@@ -3,6 +3,10 @@ if not status_ok then
   return
 end
 
+local dark_gray = "#45423b"
+vim.api.nvim_set_hl(0, "FloatTitle", { fg = dark_gray })
+vim.api.nvim_set_hl(0, "FloatBorder", { fg = dark_gray })
+
 dressing.setup {
   input = {
     -- Set to false to disable the vim.ui.input implementation

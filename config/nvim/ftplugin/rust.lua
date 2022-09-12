@@ -12,6 +12,7 @@ local opts = {
   nowait = true, -- use `nowait` when creating keymaps
 }
 
+-- TODO: Review these bindings
 local mappings = {
   L = {
     name = "Rust",
@@ -38,6 +39,7 @@ local mappings = {
     -- a = { "<cmd>RustHoverRange<Cr>", "Hover Range" },
     -- j = { "<cmd>RustMoveItemDown<Cr>", "Move Item Down" },
     -- k = { "<cmd>RustMoveItemUp<Cr>", "Move Item Up" },
+    --     h = { "<cmd>RustHoverActions<cr><cmd>RustHoverActions<cr>", "Rust Hover Actions" },
   },
 }
 

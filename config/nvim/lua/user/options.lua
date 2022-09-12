@@ -17,9 +17,9 @@ local options = {
   splitright = true,                       -- force all vertical splits to go to the right of current window
   swapfile = false,                        -- creates a swapfile
   termguicolors = true,                    -- set term gui colors (most terminals support this)
-  timeoutlen = 1000,                       -- time to wait for a mapped sequence to complete (in milliseconds)
+  timeoutlen = 500,                        -- time to wait for a mapped sequence to complete (in milliseconds)
   undofile = true,                         -- enable persistent undo
-  updatetime = 100,                       -- faster completion (4000ms default)
+  updatetime = 100,                        -- faster completion (4000ms default)
   writebackup = false,                     -- if a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited
   expandtab = true,                        -- convert tabs to spaces
   shiftwidth = 2,                          -- the number of spaces inserted for each indentation
@@ -29,20 +29,19 @@ local options = {
   laststatus = 3,
   showcmd = false,
   ruler = false,
-  relativenumber = false,                   -- set relative numbered lines
+  relativenumber = false,                  -- set relative numbered lines
   numberwidth = 4,                         -- set number column width to 2 {default 4}
   signcolumn = "yes",                      -- always show the sign column, otherwise it would shift the text each time
-  wrap = false,                            -- display lines as one long line
+  wrap = true,                             -- display lines as one long line
   sidescrolloff = 8,
   guifont = "monospace:h17",               -- the font used in graphical neovim applications
   title = true,
+  inccommand = "split",                    -- Show search and replace preview for buffer
 }
-
 vim.opt.fillchars = vim.opt.fillchars + 'eob: '
 vim.opt.fillchars:append {
   stl = ' ',
 }
-
 vim.opt.shortmess:append "c"
 
 for k, v in pairs(options) do

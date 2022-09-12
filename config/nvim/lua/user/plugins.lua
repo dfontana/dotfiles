@@ -99,22 +99,17 @@ return packer.startup(function(use)
   use "nvim-telescope/telescope-media-files.nvim"
   use "tom-anders/telescope-vim-bookmarks.nvim"
 
-  -- Color
+  -- Color / Theme
   use "NvChad/nvim-colorizer.lua"
   use "ziontee113/color-picker.nvim"
-
-  -- Colorschemes
- use 'shaunsingh/solarized.nvim'
+  use 'shaunsingh/solarized.nvim'
+  use "kyazdani42/nvim-web-devicons"
 
   -- Utility
   use "rcarriga/nvim-notify"
   use "stevearc/dressing.nvim"
-  use "ghillb/cybu.nvim"
   use "moll/vim-bbye"
   use "lewis6991/impatient.nvim"
-
-  -- Icon
-  use "kyazdani42/nvim-web-devicons"
 
   -- Debugging
   use "mfussenegger/nvim-dap"
@@ -137,14 +132,13 @@ return packer.startup(function(use)
 
   -- Comment
   use "numToStr/Comment.nvim"
-  use "B4mbus/todo-comments.nvim"
+  use "folke/todo-comments.nvim"
 
   -- Terminal
   use "akinsho/toggleterm.nvim"
 
   -- Project
   use "ahmedkhalf/project.nvim"
-  use "windwp/nvim-spectre"
 
   -- Quickfix
   use "kevinhwang91/nvim-bqf"
@@ -163,6 +157,7 @@ return packer.startup(function(use)
   use "nacro90/numb.nvim"
   use "andymass/vim-matchup"
   use "junegunn/vim-slash"
+  use "mg979/vim-visual-multi"
 
   -- Keybinding
   use "folke/which-key.nvim"
