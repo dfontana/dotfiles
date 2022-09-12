@@ -40,7 +40,7 @@ keymap("n", "<M-Left>", ":vertical resize +2<CR>", opts)
 keymap("v", "<", "<gv", opts)
 keymap("v", ">", ">gv", opts)
 
-local opts = {
+local kopts = {
   mode = "n", -- NORMAL mode
   prefix = "<leader>",
   buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
@@ -49,10 +49,15 @@ local opts = {
   nowait = true, -- use `nowait` when creating keymaps
 }
 local mappings = {
-  R = {
-    name = "Keymappings"
-    -- TODO: Fill in these with the above mappings to make it easier to lookup 
+  K = {
+    name = "Keymappings",
+    ["<M-Up>"] = "Resize Split Up",
+    ["<M-Down>"] = "Resize Split Down",
+    ["<M-Left>"] = "Resize Split Left",
+    ["<M-Right>"] = "Resize Split Right",
+    ["<S-Up>"] = "Add Cursor Above",
+    ["<S-Down>"] = "Add Cursor Below",
   }
 }
-which_key.register(mappings, opts)
+which_key.register(mappings, kopts)
 return M

@@ -303,7 +303,7 @@ local lanuage_server = {
       end
     end
 
-    local clients = vim.lsp.buf_get_clients()
+    local clients = vim.lsp.get_active_clients()
     local client_names = {}
 
     -- add client

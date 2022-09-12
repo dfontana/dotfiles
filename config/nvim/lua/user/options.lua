@@ -37,6 +37,9 @@ local options = {
   guifont = "monospace:h17",               -- the font used in graphical neovim applications
   title = true,
   inccommand = "split",                    -- Show search and replace preview for buffer
+  foldmethod = 'expr',
+  foldexpr = 'nvim_treesitter#foldexpr()',
+  foldlevel = 99,
 }
 vim.opt.fillchars = vim.opt.fillchars + 'eob: '
 vim.opt.fillchars:append {

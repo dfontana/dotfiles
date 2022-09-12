@@ -10,7 +10,7 @@ local setup = {
     spelling = {
       enabled = true,   -- enabling this will show WhichKey when pressing z= to select spelling suggestions
       suggestions = 20, -- how many suggestions should be shown in the list?
-    }, 
+    },
     presets = {
       operators = false,    -- Show help for things like d/y/c, etc
       motions = false,      -- Show help for motions
@@ -46,7 +46,7 @@ local setup = {
     spacing = 3,                    -- spacing between columns
     align = "center",               -- align columns left, center or right
   },
-  ignore_missing = false, -- enable this to hide mappings for which you didn't specify a label
+  ignore_missing = true, -- enable this to hide mappings for which you didn't specify a label
   hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " }, -- hide mapping boilerplate
   show_help = true, -- show help message on the command line when the popup is visible 
   triggers = "auto",
@@ -69,12 +69,9 @@ local opts = {
 }
 
 local mappings = {
-  b = { "<cmd>Telescope buffers<cr>", "Buffers" },
   e = { "<cmd>NvimTreeToggle<cr>", "Explorer" },
-  h = { "<cmd>nohlsearch<CR>", "No HL" },
   ["/"] = { '<cmd>lua require("Comment.api").toggle.linewise.current()<CR>', "Comment" },
   c = { "<cmd>Bdelete!<CR>", "Close Buffer" },
-  ["<C-c>"] = "Command Palette",
   z = "Folds & Spelling",
   p = {
     name = "Packer",
@@ -86,6 +83,7 @@ local mappings = {
   },
   o = {
     name = "Options",
+    h = { "<cmd>nohlsearch<CR>", "No HL" },
     w = { '<cmd>lua require("user.functions").toggle_option("wrap")<cr>', "Wrap" },
     l = { '<cmd>lua require("user.functions").toggle_option("cursorline")<cr>', "Cursorline" },
     s = { '<cmd>lua require("user.functions").toggle_option("spell")<cr>', "Spell" },
@@ -104,35 +102,23 @@ local mappings = {
   },
   s = {
     name = "Search",
-    c = { "<cmd>Telescope colorscheme<cr>", "Colorscheme" },
+    b = { "<cmd>Telescope buffers<cr>", "Buffers" },
     f = { "<cmd>Telescope find_files<cr>", "Files" },
     t = { "<cmd>Telescope live_grep<cr>", "Text" },
     T = { "<cmd>TodoTelescope<cr>", "TODO"},
+    p = { "<cmd>Telescope projects<cr>", "Projects"},
     h = { "<cmd>Telescope help_tags<cr>", "Help" },
-    H = { "<cmd>Telescope highlights<cr>", "Highlights" },
     l = { "<cmd>Telescope resume<cr>", "Last Search" },
     r = { "<cmd>Telescope oldfiles<cr>", "Recent File" },
-    R = { "<cmd>Telescope registers<cr>", "Registers" },
-    k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
     C = { "<cmd>Telescope commands<cr>", "Commands" },
-    p = { "<cmd>Telescope projects<cr>", "Projects"},
   },
-  -- TODO: Finish reviewing the bindings below this line
   g = {
     name = "Git",
-    j = { "<cmd>lua require 'gitsigns'.next_hunk()<cr>", "Next Hunk" },
-    k = { "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", "Prev Hunk" },
-    l = { "<cmd>GitBlameToggle<cr>", "Blame" },
+    b = { "<cmd>GitBlameToggle<cr>", "Blame" },
     p = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", "Preview Hunk" },
     r = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", "Reset Hunk" },
-    R = { "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", "Reset Buffer" },
-    s = { "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", "Stage Hunk" },
-    u = {
-      "<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>",
-      "Undo Stage Hunk",
-    },
     o = { "<cmd>Telescope git_status<cr>", "Open changed file" },
-    b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
+    s = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
     c = { "<cmd>Telescope git_commits<cr>", "Checkout commit" },
     d = {
       "<cmd>Gitsigns diffthis HEAD<cr>",
@@ -141,22 +127,16 @@ local mappings = {
   },
   l = {
     name = "LSP",
-    a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
-    l = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens Action" },
-    c = { "<cmd>lua require('user.lsp').server_capabilities()<cr>", "Get Capabilities" },
-    d = { "<cmd>Telescope lsp_definition<cr>", "Definition" },
-    k = { "<cmd>lua require('user.functions').show_documentation()<CR>"},
-    w = {
-      "<cmd>Telescope lsp_workspace_diagnostics<cr>",
-      "Workspace Diagnostics",
+    a = {
+      name = "Actions",
+      a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
+      j = { "<cmd>Jaq<cr>", "JaqRun" },
     },
+    d = { "<cmd>Telescope lsp_definition<cr>", "Definition" },
+    r = { "<cmd>Telescope lsp_references<cr>", "References" },
+    k = { "<cmd>lua require('user.functions').show_documentation()<CR>", "Documentation"},
     f = { "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", "Format" },
-    F = { "<cmd>LspToggleAutoFormat<cr>", "Toggle Autoformat" },
-    i = { "<cmd>LspInfo<cr>", "Info" },
-    h = { "<cmd>lua require('lsp-inlayhints').toggle()<cr>", "Toggle Hints" },
-    H = { "<cmd>IlluminationToggle<cr>", "Toggle Doc HL" },
-    I = { "<cmd>LspInstallInfo<cr>", "Installer Info" },
-    -- TODO: { "<cmd>lua vim.diagnostic.open_float(0,{scope='line'})<cr>", "Hover Detail" }
+    h = { "<cmd>lua vim.diagnostic.open_float(0,{scope='line'})<cr>", "Hover Detail" },
     n = {
       "<cmd>lua vim.diagnostic.goto_next({buffer=0})<CR>",
       "Next Diagnostic",
@@ -165,22 +145,15 @@ local mappings = {
       "<cmd>lua vim.diagnostic.goto_prev({buffer=0})<cr>",
       "Prev Diagnostic",
     },
+    w = {
+      "<cmd>Telescope diagnostics<cr>",
+      "Workspace Diagnostics",
+    },
     v = { "<cmd>lua require('lsp_lines').toggle()<cr>", "Virtual Text" },
     o = { "<cmd>SymbolsOutline<cr>", "Outline" },
     q = { "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>", "Quickfix" },
-    r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
-    R = { "<cmd>Telescope lsp_references<cr>", "References" }, 
-    t = { '<cmd>lua require("user.functions").toggle_diagnostics()<cr>', "Toggle Diagnostics" },
-  },
-  S = {
-    name = "SnipRun",
-    c = { "<cmd>SnipClose<cr>", "Close" },
-    f = { "<cmd>%SnipRun<cr>", "Run File" },
-    i = { "<cmd>SnipInfo<cr>", "Info" },
-    m = { "<cmd>SnipReplMemoryClean<cr>", "Mem Clean" },
-    r = { "<cmd>SnipReset<cr>", "Reset" },
-    t = { "<cmd>SnipRunToggle<cr>", "Toggle" },
-    x = { "<cmd>SnipTerminate<cr>", "Terminate" },
+    R = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
+    i = { "<cmd>LspInfo<cr>", "LspInfo" },
   },
   t = {
     name = "Terminal",
@@ -188,8 +161,6 @@ local mappings = {
     v = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", "Vertical" },
   },
 }
-
--- TODO: this keymap("n", "<m-r>", ":silent only | Jaq<cr>", opts)
 
 local vopts = {
   mode = "v", -- VISUAL mode
@@ -201,7 +172,6 @@ local vopts = {
 }
 local vmappings = {
   ["/"] = { '<ESC><CMD>lua require("Comment.api").toggle.linewise(vim.fn.visualmode())<CR>', "Comment" },
-  s = { "<esc><cmd>'<,'>SnipRun<cr>", "Run range" },
 }
 
 which_key.setup(setup)
