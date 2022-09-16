@@ -132,7 +132,7 @@ local mappings = {
       a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
       j = { "<cmd>Jaq<cr>", "JaqRun" },
     },
-    d = { "<cmd>Telescope lsp_definition<cr>", "Definition" },
+    d = { "<cmd>Telescope lsp_definitions<cr>", "Definition" },
     r = { "<cmd>Telescope lsp_references<cr>", "References" },
     k = { "<cmd>lua require('user.functions').show_documentation()<CR>", "Documentation"},
     f = { "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", "Format" },
@@ -145,6 +145,7 @@ local mappings = {
       "<cmd>lua vim.diagnostic.goto_prev({buffer=0})<cr>",
       "Prev Diagnostic",
     },
+    s = { "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Signature"},
     w = {
       "<cmd>Telescope diagnostics<cr>",
       "Workspace Diagnostics",
