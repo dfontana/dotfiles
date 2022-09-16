@@ -32,7 +32,7 @@ end
 
 -- Have packer use a popup window
 packer.init {
-  -- snapshot = "july-24",
+  snapshot = "stable-2022-09-16",
   snapshot_path = fn.stdpath "config" .. "/snapshots",
   max_jobs = 50,
   display = {
