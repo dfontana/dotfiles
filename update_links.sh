@@ -37,15 +37,6 @@ for item in config/*; do
   link $item "$HOME/.config/$cln"
 done
 
-# Link Lvim
-echo "Linking Lvim"
-for item in lvim/*; do
-  git check-ignore -q $item
-  if [ $? -eq 1 ]; then
-    link $item "$HOME/.config/lvim/" 0
-  fi
-done
-
 # Link Fan Control
 echo "Linking FanControl"
 if [ $LINK_FAN -eq 1 ]; then

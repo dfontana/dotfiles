@@ -32,6 +32,9 @@ end
 
 -- Have packer use a popup window
 packer.init {
+  git = {
+    clone_timeout = false,
+  },
   snapshot = "stable-2022-09-16",
   snapshot_path = fn.stdpath "config" .. "/snapshots",
   max_jobs = 50,
@@ -76,7 +79,6 @@ return packer.startup(function(use)
   use "hrsh7th/cmp-nvim-lsp"
   use "hrsh7th/cmp-emoji"
   use "hrsh7th/cmp-nvim-lua"
-  use { "tzachar/cmp-tabnine", commit = "1a8fd2795e4317fd564da269cc64a2fa17ee854e", run = "./install.sh" }
 
   -- Snippet
   use "L3MON4D3/LuaSnip" --snippet engine

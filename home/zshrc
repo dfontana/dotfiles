@@ -2,9 +2,6 @@
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:$PATH"
 
-# Link the go version you want to use if its not the default in the repo currentl.
-export PATH="/usr/lib/go-1.13/bin:$PATH"
-
 # Creature comforts
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
@@ -12,10 +9,8 @@ HYPHEN_INSENSITIVE="true"
 
 # Init zsh plugins
 fpath=(/usr/local/share/zsh-completions $fpath)
-plugins=(z git ssh-agent docker docker-compose zsh-autosuggestions zsh-syntax-highlighting)
-
-# Theme to use, pick your fav
-ZSH_THEME="spaceship"
+FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+plugins=(docker docker-compose fzf ripgrep rust sbt scala ssh-agent zsh-autosuggestions zsh-syntax-highlighting)
 
 # Fixes for plugins that dont want to work
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -23,7 +18,7 @@ source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source "$ZSH/oh-my-zsh.sh"
 
 # To help programs that read these
-export VISUAL=lvim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
 
 # jenv
@@ -32,20 +27,31 @@ command -v jenv &> /dev/null && eval "$(jenv init -)"
 # Cause i'm tried of googling it & typing it, some utilities to
 # 1) current epoch time/convert epoch time (millis)
 # 2) Diff two csvs column wise
-# 3) List orphaned local branches 'cause they were merged remotelyalias mvn="mvn -T 4 -ntp"
+# 3) List orphaned local branches 'cause they were merged remotely
 alias csvdiff='git diff --color-words="[^[:space:],]+"'
 gitgone(){git branch -vv | grep "gone" | awk 'ORS=" " {print $1}';}
 function epoch() {
   if [[ -z "$1" ]]; then
     echo "$(($(date +%s) * 1000)) -> $(date)"
   else
-    echo "$1 -> $(date -r ${1:0:-3})"
+    echo "$1 -> $(date -d @${1:0:-3})"
   fi
 }
 
+# Aliases because some of these commands are just too easy to forget
+alias mvn="mvn -T 4 -ntp"
+alias kc="kubectl"
+alias kn="kubens"
+alias kx="kubectx"
+alias ssh="kitty +kitten ssh -A"
 
-# Final inits
-alias vim=lvim
-alias ssh="kitty +kitten ssh"
-eval "$(fnm env --use-on-cd)"
+# Load any extensions we have for this computer in the config
+# directory
+for conf in "$HOME/.config/zsh/"*.zsh; do
+  source "${conf}"
+done
+unset conf
+
+# Final inits. Note we -A SSH so identity is forwarded to remote server
+command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd)"
 eval "$(starship init zsh)"

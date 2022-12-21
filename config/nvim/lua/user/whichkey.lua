@@ -130,6 +130,7 @@ local mappings = {
     a = {
       name = "Actions",
       a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
+      f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix"},
       j = { "<cmd>Jaq<cr>", "JaqRun" },
     },
     d = { "<cmd>Telescope lsp_definitions<cr>", "Definition" },
