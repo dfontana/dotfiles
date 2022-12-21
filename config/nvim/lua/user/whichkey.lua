@@ -124,14 +124,14 @@ local mappings = {
       "<cmd>Gitsigns diffthis HEAD<cr>",
       "Diff",
     },
+    y = {"Open line on GitHub"},
   },
   l = {
     name = "LSP",
     a = {
       name = "Actions",
       a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
-      f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix"},
-      j = { "<cmd>Jaq<cr>", "JaqRun" },
+      f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix"}, 
     },
     d = { "<cmd>Telescope lsp_definitions<cr>", "Definition" },
     r = { "<cmd>Telescope lsp_references<cr>", "References" },

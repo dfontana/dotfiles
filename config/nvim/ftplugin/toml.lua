@@ -14,28 +14,14 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
       nowait = true, -- use `nowait` when creating keymaps
     }
 
-    -- require('crates').focus_popup()
-    -- require('crates').hide_popup()
-
     local mappings = {
       L = {
         name = "Cargo",
-
-        -- u = { "<cmd>require('crates').update()<CR>", "Toggle Hints" },
-        -- r = { "<cmd>require('crates').reload()<CR>", "Toggle Hints" },
-
-        -- Visual
-        -- U = { "<cmd>require('crates').update_crates()<CR>", "" },
-        -- G = { "<cmd>require('crates').upgrade_crates()<CR>", "" },
-
         t = { "<cmd>lua require('crates').toggle()<CR>", "Toggle Hints" },
-
         u = { "<cmd>lua require('crates').update_crate()<CR>", "Update" },
         U = { "<cmd>lua require('crates').upgrade_crate()<CR>", "Upgrade" },
-
         a = { "<cmd>lua require('crates').update_all_crates()<CR>", "Update All" },
         A = { "<cmd>lua require('crates').upgrade_all_crates()<CR>", "Upgrade All" },
-
         h = { "<cmd>lua require('crates').open_homepage()<CR>", "Open Home" },
         r = { "<cmd>lua require('crates').open_repository()<CR>", "Open Repo" },
         d = { "<cmd>lua require('crates').open_documentation()<CR>", "Open Doc" },

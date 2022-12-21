@@ -1,6 +1,8 @@
 local extension_path = vim.env.HOME .. '/.local/lib/nvim/codelldb/'
 local codelldb_path = extension_path .. 'adapter/codelldb'
 local liblldb_path = extension_path .. 'lldb/lib/liblldb.dylib'
+
+-- TODO: Fix default indent from 4 to rustfmt or 2
 return {
   tools = {
     -- autoSetHints = false,

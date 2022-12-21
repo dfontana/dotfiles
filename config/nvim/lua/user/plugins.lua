@@ -35,7 +35,7 @@ packer.init {
   git = {
     clone_timeout = false,
   },
-  snapshot = "stable-2022-09-16",
+  snapshot = "stable-2022-12-21",
   snapshot_path = fn.stdpath "config" .. "/snapshots",
   max_jobs = 50,
   display = {
@@ -54,7 +54,7 @@ return packer.startup(function(use)
   -- Lua Development
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
   use "nvim-lua/popup.nvim"
-  use "christianchiarulli/lua-dev.nvim"
+  use "folke/neodev.nvim"
 
   -- LSP
   use "neovim/nvim-lspconfig" -- enable LSP
@@ -71,7 +71,7 @@ return packer.startup(function(use)
   use "https://git.sr.ht/~whynothugo/lsp_lines.nvim"
 
   -- Completion
-  use "christianchiarulli/nvim-cmp"
+  use "hrsh7th/nvim-cmp"
   use "hrsh7th/cmp-buffer" -- buffer completions
   use "hrsh7th/cmp-path" -- path completions
   use "hrsh7th/cmp-cmdline" -- cmdline completions
@@ -88,7 +88,6 @@ return packer.startup(function(use)
   use "nvim-treesitter/nvim-treesitter"
   use "JoosepAlviste/nvim-ts-context-commentstring"
   use "p00f/nvim-ts-rainbow"
-  use "nvim-treesitter/playground"
   use "windwp/nvim-ts-autotag"
   use "nvim-treesitter/nvim-treesitter-textobjects"
   use {
@@ -99,11 +98,9 @@ return packer.startup(function(use)
   -- Fuzzy Finder/Telescope
   use "nvim-telescope/telescope.nvim"
   use "nvim-telescope/telescope-media-files.nvim"
-  use "tom-anders/telescope-vim-bookmarks.nvim"
 
   -- Color / Theme
   use "NvChad/nvim-colorizer.lua"
-  use "ziontee113/color-picker.nvim"
   use 'shaunsingh/solarized.nvim'
   use "kyazdani42/nvim-web-devicons"
 
@@ -144,10 +141,7 @@ return packer.startup(function(use)
 
   -- Quickfix
   use "kevinhwang91/nvim-bqf"
-
-  -- Code Runner
-  use "is0n/jaq-nvim"
-
+  
   -- Git
   use "lewis6991/gitsigns.nvim"
   use "f-person/git-blame.nvim"
@@ -168,15 +162,8 @@ return packer.startup(function(use)
   use "mfussenegger/nvim-jdtls"
 
   -- Rust
-  use { "christianchiarulli/rust-tools.nvim", branch = "modularize_and_inlay_rewrite" }
+  use "simrat39/rust-tools.nvim"
   use "Saecki/crates.nvim"
-
-  -- Markdown
-  use {
-    "iamcco/markdown-preview.nvim",
-    run = "cd app && npm install",
-    ft = "markdown",
-  }
 
   if PACKER_BOOTSTRAP then
     require("packer").sync()

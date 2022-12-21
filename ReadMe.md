@@ -14,13 +14,6 @@ Stores configurations related to development environment.
 - Run `./install_neovim.sh` to get the latest neovim installed
 - Run `./update_links.sh` from within this directory. No it's not perfect, but it will link things.
 
-## TODO
-- Finish grooming over nvim configuration
-- Update kitty configuration to improve things like splits, etc
-  - Continue from layouts
-  - Tab Bar: https://github.com/kovidgoyal/kitty/discussions/4447#discussioncomment-3240635
-  - Configs: https://sw.kovidgoyal.net/kitty/overview/#configuring-kitty
-
 ## FanControl
 
 For linux fan profile management.

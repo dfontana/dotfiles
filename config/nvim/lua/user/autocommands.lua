@@ -7,17 +7,16 @@ vim.api.nvim_create_autocmd({ "User" }, {
   end,
 })
 
+-- Let ESC and 'q' both close a buffer if it's just informational
+-- like a help, man page, lspinfo window, etc etc etc.
+-- TODO: Doc windows (Spc-l-k) & test run windows (Spc-l-a-a) in rust test module
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = {
-    "Jaq",
     "qf",
     "help",
     "man",
     "lspinfo",
-    "spectre_panel",
-    "lir",
     "DressingSelect",
-    "tsplayground",
     "Markdown",
   },
   callback = function()
@@ -29,32 +28,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "Jaq" },
-  callback = function()
-    vim.cmd [[
-      nnoremap <silent> <buffer> <m-r> :close<CR>
-      " nnoremap <silent> <buffer> <m-r> <NOP> 
-      set nobuflisted 
-    ]]
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  pattern = { "" },
-  callback = function()
-    local buf_ft = vim.bo.filetype
-    if buf_ft == "" or buf_ft == nil then
-      vim.cmd [[
-      nnoremap <silent> <buffer> q :close<CR> 
-      nnoremap <silent> <buffer> <c-j> j<CR> 
-      nnoremap <silent> <buffer> <c-k> k<CR> 
-      set nobuflisted 
-    ]]
-    end
-  end,
-})
-
+-- Set the terminal title string to the project being worked on
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { "" },
   callback = function()
@@ -69,6 +43,8 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end,
 })
 
+-- Adjust how the Terminal windows work
+-- TODO: you might want to remove this, it might fix somethings
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { "term://*" },
   callback = function()
@@ -77,6 +53,8 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end,
 })
 
+-- When working within a git or markdown buffer
+-- let's add some additional helpers
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "gitcommit", "markdown" },
   callback = function()
@@ -85,11 +63,16 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "lir" },
+-- Hover snippets for lua
+vim.api.nvim_create_autocmd({ "CursorHold" }, {
   callback = function()
-    vim.opt_local.number = false
-    vim.opt_local.relativenumber = false
+    local status_ok, luasnip = pcall(require, "luasnip")
+    if not status_ok then
+      return
+    end
+    if luasnip.expand_or_jumpable() then
+      vim.cmd [[silent! lua require("luasnip").unlink_current()]]
+    end
   end,
 })
 
@@ -98,12 +81,6 @@ vim.cmd "autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTre
 vim.api.nvim_create_autocmd({ "VimResized" }, {
   callback = function()
     vim.cmd "tabdo wincmd ="
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "CmdWinEnter" }, {
-  callback = function()
-    vim.cmd "quit"
   end,
 })
 
@@ -139,21 +116,3 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "CursorHold" }, {
-  callback = function()
-    local status_ok, luasnip = pcall(require, "luasnip")
-    if not status_ok then
-      return
-    end
-    if luasnip.expand_or_jumpable() then
-      vim.cmd [[silent! lua require("luasnip").unlink_current()]]
-    end
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  pattern = { "*.ts" },
-  callback = function()
-    vim.lsp.buf.format { async = true }
-  end,
-})
