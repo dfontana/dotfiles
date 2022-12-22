@@ -1,14 +1,6 @@
 return {
   settings = {
     Lua = {
-      type = {
-        -- weakUnionCheck = true,
-        -- weakNilCheck = true,
-        -- castNumberToInteger = true,
-      },
-      format = {
-        enable = false,
-      },
       hint = {
         enable = true,
         arrayIndex = "Disable", -- "Enable", "Auto", "Disable"
@@ -18,7 +10,6 @@ return {
         semicolon = "Disable", -- "All", "SameLine", "Disable"
         setType = true,
       },
-      -- spell = {"the"}
       runtime = {
         version = "LuaJIT",
         special = {
@@ -30,9 +21,9 @@ return {
       },
       workspace = {
         library = {
-          [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-          [vim.fn.stdpath "config" .. "/lua"] = true,
-          -- [vim.fn.datapath "config" .. "/lua"] = true,
+          library = vim.api.nvim_get_runtime_file("", true),
+          -- [vim.fn.expand "$VIMRUNTIME/lua"] = true,
+          -- [vim.fn.stdpath "config" .. "/lua"] = true,
         },
       },
       telemetry = {

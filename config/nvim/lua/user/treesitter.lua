@@ -3,9 +3,6 @@ if not status_ok then
   return
 end
 
--- local ft_to_parser = require("nvim-treesitter.parsers").filetype_to_parsername
--- ft_to_parser.motoko = "typescript"
-
 configs.setup {
   ensure_installed = "all", -- one of "all" or a list of languages
   sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
@@ -53,7 +50,7 @@ configs.setup {
     disable = { "html" },
   },
   playground = {
-    enable = true,
+    enable = false,
   },
   textobjects = {
     select = {

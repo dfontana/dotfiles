@@ -141,7 +141,7 @@ return packer.startup(function(use)
 
   -- Quickfix
   use "kevinhwang91/nvim-bqf"
-  
+
   -- Git
   use "lewis6991/gitsigns.nvim"
   use "f-person/git-blame.nvim"
@@ -157,9 +157,6 @@ return packer.startup(function(use)
 
   -- Keybinding
   use "folke/which-key.nvim"
-
-  -- Java
-  use "mfussenegger/nvim-jdtls"
 
   -- Rust
   use "simrat39/rust-tools.nvim"

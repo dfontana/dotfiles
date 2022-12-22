@@ -34,13 +34,13 @@ local options = {
   signcolumn = "yes",                      -- always show the sign column, otherwise it would shift the text each time
   wrap = true,                             -- display lines as one long line
   sidescrolloff = 8,
-  guifont = "monospace:h17",               -- the font used in graphical neovim applications
   title = true,
   inccommand = "split",                    -- Show search and replace preview for buffer
   foldmethod = 'expr',
   foldexpr = 'nvim_treesitter#foldexpr()',
   foldlevel = 99,
 }
+vim.g.conflict_marker_enable_highlight = 0
 vim.opt.fillchars = vim.opt.fillchars + 'eob: '
 vim.opt.fillchars:append {
   stl = ' ',

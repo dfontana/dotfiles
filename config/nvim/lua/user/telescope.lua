@@ -5,6 +5,7 @@ end
 
 local actions = require "telescope.actions"
 telescope.load_extension "media_files"
+telescope.load_extension "notify"
 local icons = require "user.icons"
 
 telescope.setup {

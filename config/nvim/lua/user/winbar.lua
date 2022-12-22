@@ -14,7 +14,6 @@ M.winbar_filetype_exclude = {
   "spectre_panel",
   "toggleterm",
   "DressingSelect",
-  "Jaq",
   "dapui_scopes",
   "dapui_breakpoints",
   "dapui_stacks",

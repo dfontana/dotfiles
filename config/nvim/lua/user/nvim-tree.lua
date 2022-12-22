@@ -22,10 +22,6 @@ nvim_tree.setup {
     "dashboard",
     "alpha",
   },
-  filters = {
-    custom = { ".git" },
-    exclude = { ".gitignore" },
-  },
   update_cwd = true,
   renderer = {
     add_trailing = false,

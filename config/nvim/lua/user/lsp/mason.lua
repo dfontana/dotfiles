@@ -11,9 +11,7 @@ end
 local servers = {
   "cssls",
   "cssmodules_ls",
-  "emmet_ls",
   "html",
-  "jdtls",
   "jsonls",
   "sumneko_lua",
   "tflint",
@@ -85,15 +83,6 @@ for _, server in pairs(servers) do
   if server == "pyright" then
     local pyright_opts = require "user.lsp.settings.pyright"
     opts = vim.tbl_deep_extend("force", pyright_opts, opts)
-  end
-
-  if server == "emmet_ls" then
-    local emmet_ls_opts = require "user.lsp.settings.emmet_ls"
-    opts = vim.tbl_deep_extend("force", emmet_ls_opts, opts)
-  end
-
-  if server == "jdtls" then
-    goto continue
   end
 
   if server == "rust_analyzer" then

@@ -131,7 +131,7 @@ local mappings = {
     a = {
       name = "Actions",
       a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
-      f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix"}, 
+      f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix" },
     },
     d = { "<cmd>Telescope lsp_definitions<cr>", "Definition" },
     r = { "<cmd>Telescope lsp_references<cr>", "References" },
@@ -153,7 +153,7 @@ local mappings = {
     },
     v = { "<cmd>lua require('lsp_lines').toggle()<cr>", "Virtual Text" },
     o = { "<cmd>SymbolsOutline<cr>", "Outline" },
-    q = { "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>", "Quickfix" },
+    q = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Quickfix" },
     R = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
     i = { "<cmd>LspInfo<cr>", "LspInfo" },
   },
