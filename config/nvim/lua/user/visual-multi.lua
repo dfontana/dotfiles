@@ -1,5 +1,0 @@
-vim.cmd("let g:VM_quit_after_leaving_insert_mode = 1")
-vim.cmd("let g:VM_skip_empty_lines = 1")
-vim.cmd("let g:VM_default_mappings = 0")
-vim.cmd("let g:VM_mouse_mappings = 1")
-vim.cmd("let g:VM_theme = 'sand'")

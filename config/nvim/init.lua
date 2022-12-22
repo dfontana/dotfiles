@@ -1,46 +1,25 @@
-require "user.hot-reload"
-require "user.keymaps"
-require "user.plugins"
-require "user.autocommands"
-require "user.colorscheme"
-require "user.cmp"
-require "user.navic"
-require "user.neodev"
-require "user.lsp-inlayhints"
-require "user.lsp"
-require "user.telescope"
-require "user.treesitter"
-require "user.autopairs"
-require "user.comment"
-require "user.gitsigns"
-require "user.nvim-tree"
-reload "user.lualine"
-require "user.toggleterm"
-require "user.project"
-require "user.impatient"
-require "user.indentline"
-require "user.alpha"
-require "user.whichkey"
-require "user.matchup"
-require "user.numb"
-require "user.colorizer"
-require "user.todo-comments"
-require "user.symbol-outline"
-require "user.git-blame"
-require "user.gitlinker"
-require "user.notify"
-require "user.functions"
-require "user.illuminate"
-require "user.dap"
--- TODO: Can navic do this for me?
-require "user.winbar"
-require "user.options"
-require "user.nvim-webdev-icons"
-require "user.crates"
-require "user.dressing"
-require "user.tabout"
-require "user.fidget"
-require "user.vim-slash"
-require "user.bufferline"
-require "user.cutlass"
-require "user.visual-multi"
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"--single-branch",
+		"git@github.com:folke/lazy.nvim.git",
+		lazypath,
+	})
+end 
+vim.opt.runtimepath:prepend(lazypath)
+
+-- Nuance: These have to be set before lazy, period
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+require("config.options")
+require("lazy").setup("config.plugins", {
+	defaults = { lazy = true },
+	checker = { enabled = true },
+})
+require("config.keymaps")
+require("config.autocommands")
+require("config.winbar")
