@@ -1,4 +1,5 @@
-format = """($kubernetes\n)\
+# Put K8s at the end
+format = """
 $username\
 $hostname\
 $directory\
@@ -8,45 +9,41 @@ $git_state\
 $git_metrics\
 $git_status\
 $docker_context\
+$package\
+$cmake\
+$dart\
+$deno\
 $golang\
 $helm\
 $java\
+$lua\
+$nodejs\
+$php\
 $python\
 $rust\
 $terraform\
+$conda\
+$memory_usage\
 $gcloud\
 $env_var\
+$kubernetes\
 $custom\
 $cmd_duration\
 $line_break\
 $jobs\
+$battery\
+$time\
 $status\
 $shell\
 $character"""
 
 [git_status]
 disabled = false
-[git_branch]
-format = "[$symbol$branch(:$remote_branch)]($style) "
 [kubernetes]
 disabled = false
-format = '[$symbol$context \($namespace\)]($style)'
-[helm]
-format = '[$symbol($version )]($style)'
+format = 'on [$symbol$context \($namespace\)](green) '
 [docker_context]
 disabled = true
-[rust]
-format = '[$symbol($version )]($style)'
-[scala]
-format = '[${symbol}(${version} )]($style)'
-[terraform]
-format = '[$symbol$workspace]($style)'
-[golang]
-format = '[$symbol($version )]($style)'
-[java]
-format = '[${symbol}(${version} )]($style)'
-[python]
-format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
 [php]
 disabled = true
 [gcloud]

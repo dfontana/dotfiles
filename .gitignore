@@ -1,5 +1,4 @@
 .DS_Store
 .zsh_custom/
 config/zsh/werk.zsh
-lvim/plugin/packer_compiled.lua
-config/nvim/plugin/packer_compiled.lua
+packer_compiled.lua
