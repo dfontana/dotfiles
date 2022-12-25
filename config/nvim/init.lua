@@ -8,7 +8,7 @@ if not vim.loop.fs_stat(lazypath) then
 		"git@github.com:folke/lazy.nvim.git",
 		lazypath,
 	})
-end 
+end
 vim.opt.runtimepath:prepend(lazypath)
 
 -- Nuance: These have to be set before lazy, period
