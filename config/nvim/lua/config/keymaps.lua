@@ -144,15 +144,12 @@ local mappings = {
   },
   l = {
     name = "LSP",
-    a = {
-      name = "Actions",
-      a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
-      f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix"},
-    },
+    a = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens" },
+    f = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Fix"},
     d = { "<cmd>Telescope lsp_definitions<cr>", "Definition" },
     r = { "<cmd>Telescope lsp_references<cr>", "References" },
     k = { "<cmd>lua require('config.functions').show_documentation()<CR>", "Documentation"},
-    f = { "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", "Format" },
+    F = { "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", "Format" },
     h = { "<cmd>lua vim.diagnostic.open_float(0,{scope='line'})<cr>", "Hover Detail" },
     w = {
       "<cmd>Telescope diagnostics<cr>",
