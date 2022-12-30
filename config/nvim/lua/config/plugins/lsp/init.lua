@@ -80,6 +80,7 @@ return {
 		lsp.setup()
 
 		-- Additional setups that should happen after setup()
+    vim.cmd("let g:rust_recommended_style = 0")
 		require("rust-tools").setup({ server = rust_lsp })
 		require("lsp_lines").setup()
 	end,
