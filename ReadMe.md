@@ -30,6 +30,19 @@ pip install ./fancontrol/liquidctl psutil
 sudo pip install psutil
 ```
 
+## Nvim 
+
+Should bootstrap itself on launch but if you run into issues, check here
+
+### Treesitter reinstalls parsers on each launch 
+
+Some cache is likely busted and re-installing plugins might help. But if that doesn't, just purge the following paths. It might be lazy's fault, it might not be, but since everything is managed in the dot files this is harmless to purge and reset...
+
+```
+~/.local/share/nvim/lazy/
+~/.local/state/nvim/lazy/
+```
+
 ---
 
 ### (Deprecated)
