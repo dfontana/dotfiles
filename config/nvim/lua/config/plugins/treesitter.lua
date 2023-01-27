@@ -28,6 +28,7 @@ return {
 				"rust",
 				"scss",
 				"sql",
+        "terraform",
 				"toml",
         "vim",
 				"yaml",
