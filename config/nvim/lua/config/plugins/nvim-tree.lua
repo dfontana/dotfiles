@@ -7,7 +7,6 @@ return {
     local icons = require "config.icons"
     local tree_cb = nvim_tree_config.nvim_tree_callback
     nvim_tree.setup {
-      open_on_setup = true,
       hijack_directories = {
         enable = false,
       },

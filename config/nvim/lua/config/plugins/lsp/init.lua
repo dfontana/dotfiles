@@ -57,7 +57,7 @@ return {
 
 		-- Rust
 		local rust_opts = require("config.plugins.lsp.settings.rust")
-		local rust_lsp = lsp.build_options("rust_analyzer", rust_opts)
+		local rust_lsp = lsp.build_options("rust_analyzer", {})
 
 		-- JSON 
 		local schemastore = require("schemastore")
@@ -81,7 +81,7 @@ return {
 
 		-- Additional setups that should happen after setup()
     vim.cmd("let g:rust_recommended_style = 0")
-		require("rust-tools").setup({ server = rust_lsp })
+		require("rust-tools").setup(rust_opts(rust_lsp))
 		require("lsp_lines").setup()
 	end,
 }
