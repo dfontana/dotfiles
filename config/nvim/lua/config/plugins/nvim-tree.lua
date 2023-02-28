@@ -80,6 +80,11 @@ return {
         update_cwd = true,
         ignore_list = {},
       },
+      actions = {
+        open_file = {
+          resize_window = true,
+        }
+      },
       git = {
         enable = true,
         ignore = false,

@@ -30,6 +30,7 @@ command -v jenv &> /dev/null && eval "$(jenv init -)"
 # 3) List orphaned local branches 'cause they were merged remotely
 alias csvdiff='git diff --color-words="[^[:space:],]+"'
 gitgone(){git branch -vv | grep "gone" | awk 'ORS=" " {print $1}';}
+gittouch(){git status -s --porcelain | awk 'ORS=" " {print $2}'}
 function epoch() {
   if [[ -z "$1" ]]; then
     echo "$(($(date +%s) * 1000)) -> $(date)"

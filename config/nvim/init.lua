@@ -17,8 +17,8 @@ vim.g.maplocalleader = " "
 
 require("config.options")
 require("lazy").setup("config.plugins", {
-	defaults = { lazy = true },
-	checker = { enabled = true },
+	defaults = { lazy = false },
+	checker = { enabled = true, notify = false },
 })
 require("config.keymaps")
 require("config.autocommands")
