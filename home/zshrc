@@ -9,7 +9,7 @@ HYPHEN_INSENSITIVE="true"
 
 # Init zsh plugins
 fpath=(/usr/local/share/zsh-completions $fpath)
-FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+command -v brew &> /dev/null && FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 plugins=(docker docker-compose fzf ripgrep rust sbt scala ssh-agent zsh-autosuggestions zsh-syntax-highlighting)
 
 # Fixes for plugins that dont want to work
