@@ -18,7 +18,7 @@ source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source "$ZSH/oh-my-zsh.sh"
 
 # To help programs that read these
-export VISUAL=nvim
+export VISUAL=hx
 export EDITOR="$VISUAL"
 
 # jenv
