@@ -1,0 +1,13 @@
+[[language]]
+name = "python"
+roots = ["pyproject.toml", "setup.py", "Poetry.lock", ".git"]
+file-types = ["py"]
+comment-token = "#"
+language-servers = ["python-pyright"]
+auto-format = true
+formatter = {command = 'black', args = ["--quiet", "-"]}
+
+[language-server.python-pyright]
+command = "pyright-langserver"
+args = ["--stdio"]
+
