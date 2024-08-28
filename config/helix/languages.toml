@@ -17,3 +17,30 @@ reportMissingTypeStubs = false
 [language-server.pyright.config.python.analysis]
 typeCheckingMode = "basic"
 autoImportCompletions = true
+
+[[language]]
+name = "roc"
+scope = "source.roc"
+injection-regex = "roc"
+file-types = ["roc"]
+shebangs = ["roc"]
+roots = []
+comment-token = "#"
+language-servers = ["roc-ls"]
+indent = { tab-width = 2, unit = " " }
+auto-format = true
+formatter = { command = "roc", args =[ "format", "--stdin", "--stdout"]}
+
+[language-server.roc-ls]
+command = "roc_language_server"
+
+
+[language.auto-pairs]
+'(' = ')'
+'{' = '}'
+'[' = ']'
+'"' = '"'
+
+[[grammar]]
+name = "roc"
+source = { git = "https://github.com/faldor20/tree-sitter-roc.git", rev = "ef46edd0c03ea30a22f7e92bc68628fb7231dc8a" }

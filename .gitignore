@@ -2,3 +2,4 @@
 .zsh_custom/
 config/zsh/werk.zsh
 packer_compiled.lua
+config/helix/runtime/grammars/

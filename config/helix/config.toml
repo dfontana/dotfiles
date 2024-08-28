@@ -24,12 +24,10 @@ insert = "bar"
 select = "underline"
 
 [editor.whitespace.render]
-space = "all"
 tab = "all"
 nbsp = "all"
 
 [editor.whitespace.characters]
-space = "·"
 tab = "→"
 tabpad = "·"
 nbsp = "·"
