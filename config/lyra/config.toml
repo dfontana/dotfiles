@@ -1,0 +1,71 @@
+result_count = 9
+plugins = ["apps", "calc", "webq"]
+hotkey = "CmdOrCtrl+Space"
+
+[styles]
+window_size = [600.0, 32.0]
+window_padding = 4.0
+bg_color = [255, 255, 255, 255]
+bg_color_selected = [84, 230, 174, 255]
+text_color = [96, 96, 96, 255]
+text_color_selected = [255, 255, 255, 255]
+font_family = "Monospace"
+font_size = 16.0
+
+[styles.window_placement]
+XY = [421.0, 100.0]
+
+[styles.window_rounding]
+nw = 5.0
+ne = 5.0
+sw = 5.0
+se = 5.0
+
+[styles.option_margin]
+left = 4.0
+right = 4.0
+top = 4.0
+bottom = 4.0
+
+[styles.option_rounding]
+nw = 2.0
+ne = 2.0
+sw = 2.0
+se = 2.0
+
+[apps]
+app_paths = ["/System/Applications", "/Applications", "/System/Applications/Utilities/", "/Applications/Utilities/"]
+app_extension = ".app"
+
+[calc]
+prefix = "="
+
+[webq.default_searcher]
+label = "Search Google"
+shortname = ""
+template = "https://www.google.com/search?q={0}"
+icon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMjIuNTYgMTIuMjVjMC0uNzgtLjA3LTEuNTMtLjItMi4yNUgxMnY0LjI2aDUuOTJjLS4yNiAxLjM3LTEuMDQgMi41My0yLjIxIDMuMzF2Mi43N2gzLjU3YzIuMDgtMS45MiAzLjI4LTQuNzQgMy4yOC04LjA5eiIgZmlsbD0iIzQyODVGNCIvPjxwYXRoIGQ9Ik0xMiAyM2MyLjk3IDAgNS40Ni0uOTggNy4yOC0yLjY2bC0zLjU3LTIuNzdjLS45OC42Ni0yLjIzIDEuMDYtMy43MSAxLjA2LTIuODYgMC01LjI5LTEuOTMtNi4xNi00LjUzSDIuMTh2Mi44NEMzLjk5IDIwLjUzIDcuNyAyMyAxMiAyM3oiIGZpbGw9IiMzNEE4NTMiLz48cGF0aCBkPSJNNS44NCAxNC4wOWMtLjIyLS42Ni0uMzUtMS4zNi0uMzUtMi4wOXMuMTMtMS40My4zNS0yLjA5VjcuMDdIMi4xOEMxLjQzIDguNTUgMSAxMC4yMiAxIDEycy40MyAzLjQ1IDEuMTggNC45M2wyLjg1LTIuMjIuODEtLjYyeiIgZmlsbD0iI0ZCQkMwNSIvPjxwYXRoIGQ9Ik0xMiA1LjM4YzEuNjIgMCAzLjA2LjU2IDQuMjEgMS42NGwzLjE1LTMuMTVDMTcuNDUgMi4wOSAxNC45NyAxIDEyIDEgNy43IDEgMy45OSAzLjQ3IDIuMTggNy4wN2wzLjY2IDIuODRjLjg3LTIuNiAzLjMtNC41MyA2LjE2LTQuNTN6IiBmaWxsPSIjRUE0MzM1Ii8+PHBhdGggZD0iTTEgMWgyMnYyMkgxeiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg=="
+
+[webq.searchers."Tauri Docs"]
+label = "Tauri Docs"
+shortname = "tauri"
+template = "https://tauri.studio/v1/api/config"
+icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAhCAYAAAC4JqlRAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAPtSURBVHgBzVddbtNAEJ5xA0ICRDgBrppU8JbwQFshNc4JUk7Q9gSkJ2h6AtITkJ6g7QmSIqEWkIifm1RdbhAJimixPczaTrP2rhOn8MBIdmzv7Hzf7M7PBuGOQt2KAwtWA4gcfrX5KsZDLiC64AcHWHd7s+wgzCkRMO4CgZNDXfCMFtbcA/gXBOjkZZvvb2FeQWzj+tcd4xDkFDqpdvhnUx+gHltx+WkUvfPKIDoGEh0msX0nAux5i++7qa9tCGCP93mk6XcrNliSLLZSJLSVmEkgMoaXyqcRz9rA9f5JjrkVntuFSYACBFRXg9OaZYQD7n0CPKDtPOBSGMiVgCl7iZWcSiD0PiD51IQC2FjrP2WjRzCHhCQ4EyZGwQkzKZbCjPkjdNz6DB2IDdp8CWPuB7DPrjZhvBUWNPge6s2Mgeenl7YH3hYibf4mvy7WXogEeDpAM1KOPlS7Su1weTWrEZcMsfuXxaWzYdtD75Jp7vJGjDTw0PNUdhA11SVWvvdU8+MHIwHp9b1rv4+JooNauvHsmmm+8XsA35S34kTVAO6j3yUgW/1OgCKtGxcgkwgDqSdg5JoSz/IOVXB+FqzlXKyW9Cq27h4DaCQEe3sMmrJVUd5u5ySyoHx6vkUEE0Uk179/VRfVqr78Y5F5LqteWILZMEe8qTrGXXP8LIwEmOWu9DnUYc/9wH8zFRzCPJfj+/FlFA7KLVACj4keaQRC79V9R6slVpcF/KXEpVzNFKG254ICWFO9v1gpaz1cpmbhl9ckxGfsRc+///142goxeJHBD0H1Xq2KoAQhIalB0jMZlKkpawKn5xYSdQo3D7t2v1/MAHcYvM+Pql2RPpxMskAJPkuPbH2LItaVhZvHDQ1cnh2iLqjqC60xQUYhCtDSe7zFy24QTJOKPqZ1RdyGBWQSoEmlMxoNwNyC0bBdpPT/8OBCVRN4koA1yU3TgXO4VpZHr3YSnNrDV+UEsTDwiIox8CLv+Y6xLtzyj6X0afCOgZsxgZH34MeiKcJLnwc1iwKbt0mkwU0iM0dUFzMJTNJQlk+MCSAUCzePZCPaS0+IQacC27KZYdAgCDbw55VszVk9I3keKJ0NZOQ6t4M+VQevl13IKaXTgcOzDnlrxjHQG66Wpx5okllASY+DBeuw/PG8AncDB4+87VnztBNRIhYUYh4UOmJtUaT15R4vXPstTP9hQWgNV8p7MC8BKVx0OlxuNw1DR4kzgMwWLkaq15FR6gxWl2d6H+lmiHElclnk1FxZ3smrnnkm5OXb4Xq/jaDUh+nSkweXecCl5PprtvRl0LB82uBtqdz2DK4VfFIekeztiEd5asJ/KX8AbFvFj5lyXX4AAAAASUVORK5CYII="
+
+[webq.searchers.gsa]
+label = "gsa"
+shortname = "gsa"
+template = "https://www.google.com/search?q={0}"
+icon = ""
+
+[webq.searchers.gs]
+label = "gs"
+shortname = "gs"
+template = "https://www.google.com/search?q={0}"
+icon = ""
+
+[webq.searchers.Github]
+label = "Github"
+shortname = "github"
+template = "https://www.github.com"
+icon = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNiAwQzcuMTYgMCAwIDcuMTYgMCAxNkMwIDIzLjA4IDQuNTggMjkuMDYgMTAuOTQgMzEuMThDMTEuNzQgMzEuMzIgMTIuMDQgMzAuODQgMTIuMDQgMzAuNDJDMTIuMDQgMzAuMDQgMTIuMDIgMjguNzggMTIuMDIgMjcuNDRDOCAyOC4xOCA2Ljk2IDI2LjQ2IDYuNjQgMjUuNTZDNi40NiAyNS4xIDUuNjggMjMuNjggNSAyMy4zQzQuNDQgMjMgMy42NCAyMi4yNiA0Ljk4IDIyLjI0QzYuMjQgMjIuMjIgNy4xNCAyMy40IDcuNDQgMjMuODhDOC44OCAyNi4zIDExLjE4IDI1LjYyIDEyLjEgMjUuMkMxMi4yNCAyNC4xNiAxMi42NiAyMy40NiAxMy4xMiAyMy4wNkM5LjU2IDIyLjY2IDUuODQgMjEuMjggNS44NCAxNS4xNkM1Ljg0IDEzLjQyIDYuNDYgMTEuOTggNy40OCAxMC44NkM3LjMyIDEwLjQ2IDYuNzYgOC44MiA3LjY0IDYuNjJDNy42NCA2LjYyIDguOTggNi4yIDEyLjA0IDguMjZDMTMuMzIgNy45IDE0LjY4IDcuNzIgMTYuMDQgNy43MkMxNy40IDcuNzIgMTguNzYgNy45IDIwLjA0IDguMjZDMjMuMSA2LjE4IDI0LjQ0IDYuNjIgMjQuNDQgNi42MkMyNS4zMiA4LjgyIDI0Ljc2IDEwLjQ2IDI0LjYgMTAuODZDMjUuNjIgMTEuOTggMjYuMjQgMTMuNCAyNi4yNCAxNS4xNkMyNi4yNCAyMS4zIDIyLjUgMjIuNjYgMTguOTQgMjMuMDZDMTkuNTIgMjMuNTYgMjAuMDIgMjQuNTIgMjAuMDIgMjYuMDJDMjAuMDIgMjguMTYgMjAgMjkuODggMjAgMzAuNDJDMjAgMzAuODQgMjAuMyAzMS4zNCAyMS4xIDMxLjE4QzI3LjQyIDI5LjA2IDMyIDIzLjA2IDMyIDE2QzMyIDcuMTYgMjQuODQgMCAxNiAwVjBaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K"

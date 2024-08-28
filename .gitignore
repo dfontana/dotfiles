@@ -3,3 +3,5 @@
 config/zsh/werk.zsh
 packer_compiled.lua
 config/helix/runtime/grammars/
+config/lyra/logs/
+config/lyra/cache/
