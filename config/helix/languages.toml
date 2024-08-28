@@ -1,13 +1,19 @@
 [[language]]
 name = "python"
-roots = ["pyproject.toml", "setup.py", "Poetry.lock", ".git"]
-file-types = ["py"]
+# roots = ["pyproject.toml", "setup.py", "Poetry.lock", ".git"]
+# file-types = ["py"]
 comment-token = "#"
-language-servers = ["python-pyright"]
+language-servers = ["pyright"]
 auto-format = true
 formatter = {command = 'black', args = ["--quiet", "-"]}
 
-[language-server.python-pyright]
+[language-server.pyright]
 command = "pyright-langserver"
 args = ["--stdio"]
 
+[language-server.pyright.config]
+reportMissingTypeStubs = false
+
+[language-server.pyright.config.python.analysis]
+typeCheckingMode = "basic"
+autoImportCompletions = true
