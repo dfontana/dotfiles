@@ -7,7 +7,6 @@ Stores configurations related to development environment.
   - All: fzf, rg, fnm, pynvim, starship, miniconda, bat, jenv, kubectx, dive, exa, temurin
   - Linux: xsel
   - Mac: cmake pkg-config
-- Linux: xsel
 - Fonts: Install everything in `fonts/` folder
 
 ## Dot Setup
@@ -30,11 +29,16 @@ pip install ./fancontrol/liquidctl psutil
 sudo pip install psutil
 ```
 
-## Nvim 
+
+---
+
+### (Deprecated)
+
+#### Nvim 
 
 Should bootstrap itself on launch but if you run into issues, check here
 
-### Treesitter reinstalls parsers on each launch 
+#### Treesitter reinstalls parsers on each launch 
 
 Some cache is likely busted and re-installing plugins might help. But if that doesn't, just purge the following paths. It might be lazy's fault, it might not be, but since everything is managed in the dot files this is harmless to purge and reset...
 
@@ -42,10 +46,6 @@ Some cache is likely busted and re-installing plugins might help. But if that do
 ~/.local/share/nvim/lazy/
 ~/.local/state/nvim/lazy/
 ```
-
----
-
-### (Deprecated)
 
 #### LunarVim
 - Located in `~/.local/share/lunarvim/lvim`
