@@ -13,7 +13,7 @@ HYPHEN_INSENSITIVE="true"
 # Init zsh plugins
 fpath=(/usr/local/share/zsh-completions $fpath)
 command -v brew &> /dev/null && FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-plugins=(docker docker-compose fzf ripgrep rust sbt scala ssh-agent zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(docker docker-compose fzf rust sbt scala ssh-agent zsh-autosuggestions zsh-syntax-highlighting)
 
 # Fixes for plugins that dont want to work
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
