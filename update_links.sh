@@ -23,7 +23,11 @@ function link {
 }
 
 LINK_FAN=${LINK_FAN:-0}
+<<<<<<< HEAD
 LINK_LVIM=${LINK_LVIM:-0}
+=======
+LINK_LINUX=${LINK_LINUX:-0}
+>>>>>>> c84f207 (Remove lvim)
 
 # Link Home
 echo "Linking Home"
@@ -38,6 +42,7 @@ for item in config/*; do
   link $item "$HOME/.config/$cln"
 done
 
+<<<<<<< HEAD
 # Link Lvim
 echo "Linking Lvim"
 if [ $LINK_LVIM -eq 1 ]; then
@@ -49,6 +54,24 @@ if [ $LINK_LVIM -eq 1 ]; then
   done
 else
   echo "\t Not linking, pass LINK_LVIM=1 if desired"
+=======
+if [ $LINK_LINUX -eq 1 ]; then
+  echo "Linking bonus bins"
+  mkdir -p $HOME/.local/bin
+  for item in bin/*; do
+    cln=${item#bin/}
+    link $item "$HOME/.local/bin/$cln"
+  done
+
+  echo "Linking bonus .desktop files"
+  mkdir -p $HOME/.local/share/applications
+  for item in desktops/*; do
+    cln=${item#desktops/}
+    link $item "$HOME/.local/share/applications/$cln"
+  done
+else
+  echo "Will not link linux specifics; use LINK_LINUX=1"
+>>>>>>> c84f207 (Remove lvim)
 fi
 
 # Link Fan Control
