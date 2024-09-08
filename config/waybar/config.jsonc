@@ -18,8 +18,7 @@
         "hyprland/workspaces",
     ],
     "modules-right": [
-        // "custom/notification",
-        "custom/vrr",
+        "group/group-info",
         "pulseaudio",
         "bluetooth",
         "clock",
@@ -63,6 +62,14 @@
         "tooltip": false,
         "on-click": "shutdown now"  
     },
+    "group/group-info": {
+        "orientation": "horizontal",
+        "modules": [
+            // "custom/notification",
+            "custom/vrr",
+            "custom/updates",
+        ],
+    },
     "wlr/taskbar": {
         "on-click": "activate",
     },
@@ -87,6 +94,12 @@
         "tooltip": false,
         "format": "{icon}",
         "format-icons": ["󱧧 ", "󰁪 "],
+    },
+    "custom/updates": {
+        "format": "  {}",
+        "interval": 3600,
+        "exec": "dnf check-update -q | wc -l",
+        "on-click": "kitty --hold --detach dnf check-update",
     },
     "pulseaudio": {
         "format": "{icon} {format_source}",
