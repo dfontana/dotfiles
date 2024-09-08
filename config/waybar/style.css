@@ -15,9 +15,7 @@ window#waybar {
 #custom-home,
 #taskbar,
 #workspaces,
-#modules-right,
 #custom-notification,
-#custom-vrr,
 #pulseaudio,
 #bluetooth,
 #clock,
@@ -61,9 +59,31 @@ window#waybar {
   padding: 0 10px;
 }
 
+/* Make the info 'group' */
+#custom-vrr {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 15px;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 5px 0 10px;
+}
+#custom-updates {
+  border-top-left-radius: 0;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 0;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 10px 0 5px;
+}
+
+
 /* Has a hover action */
 #clock:hover,
 #pulseaudio:hover,
+#custom-updates:hover,
 #custom-home:hover,
 #custom-lock:hover,
 #custom-quit:hover,
