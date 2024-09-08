@@ -12,16 +12,17 @@
     "modules-left": [
         "group/group-power",
         "wlr/taskbar",
+        "tray",
     ],
     "modules-center": [
         "hyprland/workspaces",
     ],
     "modules-right": [
         // "custom/notification",
+        "custom/vrr",
         "pulseaudio",
         "bluetooth",
         "clock",
-        "tray",
     ],
     "group/group-power": {
         "orientation": "horizontal",
@@ -79,6 +80,14 @@
             "4": [],
         }
     }, 
+    "custom/vrr": {
+        "exec": "vrr-status DP-1",
+        "return-type": "json",
+        "interval": 10,
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": ["󱧧 ", "󰁪 "],
+    },
     "pulseaudio": {
         "format": "{icon} {format_source}",
         "format-muted": " {format_source}",
