@@ -1,0 +1,28 @@
+#! /bin/bash
+
+# Emits 0 when VRR is off, 1 when it's on
+set -e
+
+if [[ $# -eq 0 ]]; then
+  echo "Please supply monitor (eg DP-1)"
+  exit 1
+fi
+
+status=$(hyprctl monitors |
+  sed -nr '/^(Monitor)|(vrr)/p' |
+  sed 's/\t/  /' |
+  yq 'with_entries(select(.key == "*'"$1"'*")) | .[].vrr')
+
+if [[ -z "$status" ]]; then
+  exit 1
+fi
+
+pct=$(($status * 100))
+class=""
+if [[ $pct == 100 ]]; then
+  class='active'
+else
+  class='inactive'
+fi
+
+echo '{"text":"","alt":"","tooltip":"","class":"'$class'","percentage": '$pct'}'
