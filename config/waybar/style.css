@@ -17,10 +17,11 @@ window#waybar {
 #workspaces,
 #modules-right,
 #custom-notification,
-#tray,
+#custom-vrr,
 #pulseaudio,
 #bluetooth,
-#clock
+#clock,
+#tray
 {
     color: @fg;
     background-color: @bg-module;
@@ -76,6 +77,7 @@ window#waybar {
 }
 
 /* Has muted/passive state */
+#custom-vrr.inactive,
 #tray > .passive,
 #pulseaudio.muted 
 {
@@ -99,8 +101,9 @@ window#waybar {
   transition: all 0.3s ease-in-out;
 }
 
+#custom-vrr,
 #custom-home {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 #clock {}
