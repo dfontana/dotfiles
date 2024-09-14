@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=grimblast
+Comment=Screenshot utility
+Exec=grimblast --notify copysave area
+Terminal=false
+Type=Application
+Categories=Utility;Application;
