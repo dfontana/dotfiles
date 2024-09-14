@@ -25,6 +25,7 @@ function link {
 LINK_FONTS=${LINK_FONTS:-0}
 LINK_FAN=${LINK_FAN:-0}
 LINK_LINUX=${LINK_LINUX:-0}
+LINK_GTK=${LINK_GTK:-0}
 
 # Link Home
 echo "Linking Home"
@@ -55,6 +56,20 @@ if [ $LINK_LINUX -eq 1 ]; then
   done
 else
   echo "Will not link linux specifics; use LINK_LINUX=1"
+fi
+
+if [ $LINK_GTK -eq 1 ]; then
+  echo "Linking icons"
+  git submodule init
+  for item in gtk/icons/*-icons; do
+    pfx=${item#gtk/icons/}
+    cln=${pfx%-icons}
+    link $item "$HOME/.local/share/icons/$cln"
+    # Update GTK caches
+    gtk4-update-icon-cache "$HOME/.local/share/icons/$cln"
+  done
+else
+  echo "Will not link icons; use LINK_GTK=1"
 fi
 
 # Link Fan Control
