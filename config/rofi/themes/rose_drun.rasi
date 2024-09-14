@@ -15,7 +15,7 @@ configuration {
     // display-run:                "RUN";
     // display-filebrowser:        "FILES";
     // display-window:             "WINDOW";
-    display-drun:                "";
+    display-drun:                " ";
     display-run:                 " ";
     display-filebrowser:         " ";
     display-window:              " ";
@@ -25,7 +25,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font:                        "Iosevka Custom Extended 10";
+    font:                        "IosevkaCustom Nerd Font 10";
     background:                  #121518;
     background-alt:              #121518;
     border:                      #B1739C;
@@ -97,7 +97,7 @@ inputbar {
 textbox-prompt-colon {
     enabled:                     true;
     expand:                      false;
-    str:                         "";
+    str:                         " ";
     background-color:            inherit;
     text-color:                  inherit;
 }
