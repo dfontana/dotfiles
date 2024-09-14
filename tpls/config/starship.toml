@@ -1,0 +1,103 @@
+format = """($kubernetes\n)\
+$username\
+$hostname\
+$directory\
+${custom.jj}\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$golang\
+$helm\
+$java\
+$python\
+$rust\
+$terraform\
+$cmd_duration\
+$line_break\
+$jobs\
+$character"""
+
+palette='custom'
+
+[palettes.custom]
+overlay='{{theme.hex.overlay}}'
+text='{{theme.hex.text}}'
+color_1='{{theme.hex.love}}'
+color_2='{{theme.hex.gold}}'
+color_3='{{theme.hex.rose}}'
+color_4='{{theme.hex.pine}}'
+color_5='{{theme.hex.foam}}'
+color_6='{{theme.hex.iris}}'
+
+# K8s
+[kubernetes]
+disabled = false
+format = '[$symbol$context \($namespace\)]($style)'
+style = "bg:overlay fg:color_5"
+[helm]
+format = '[$symbol($version )]($style)'
+style = "bg:overlay fg:color_5"
+
+# Host
+[username]
+style_user = "bold fg:color_2"
+[hostname]
+style = "bold dimmed fg:color_3"
+[directory]
+style = "bold fg:color_5"
+
+# https://gitlab.com/lanastara_foss/starship-jj
+[custom.jj]
+command = "prompt"
+format = "$output"
+ignore_timeout = true
+shell = ["starship-jj", "--ignore-working-copy", "starship"]
+use_stdin = false
+when = true
+
+# Git
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style = "bold fg:color_6"
+[git_commit]
+style = "bold fg:color_4"
+[git_state]
+style = "bold fg:color_2"
+[git_status]
+disabled = false
+style = "bold fg:color_1"
+
+# Langs
+[golang]
+format = '[$symbol($version )]($style)'
+style = "bg:overlay fg:color_3"
+[java]
+format = '[${symbol}(${version} )]($style)'
+style = "bg:overlay fg:color_3"
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+style = "bg:overlay fg:color_3"
+[rust]
+format = '[$symbol($version )]($style)'
+style = "bg:overlay fg:color_3"
+[terraform]
+format = '[$symbol$workspace]($style)'
+style = "bg:overlay fg:color_3"
+
+# Shell
+[cmd_duration]
+style = "bold fg:color_2"
+[jobs]
+style = "bold fg:color_4"
+[character]
+success_symbol = "[❯](bold fg:color_4)"
+error_symbol = "[❯](bold fg:color_1)"
+
+# Disabled items
+[php]
+disabled = true
+[gcloud]
+disabled = true
+[docker_context]
+disabled = true

@@ -1,0 +1,44 @@
+#! /bin/bash
+
+# Utilities for executing from helix via the `:sh hx-bin {command}` syntax.
+# Can then bind this in helix with `[keys.normal...]` syntax
+# Other (eventually) good bindings:
+#   :sh gh browse $fn:$ln
+
+split_pane_down() {
+  # Create a split at the bottom of the active pane (if it does not exist), set the focus to it,
+  # and then bake the id into a function for executing
+
+  bottom=$(kitten @ ls -m neighbor:bottom 2> /dev/null)
+  if [[ $? -eq 1 ]]; then
+  	bottom_pane_id=$(kitten @ launch --location hsplit --bias 10)
+  else
+    bottom_pane_id=$(jq -c -n -e --argjson bottom "$bottom" '$bottom | .[0].tabs[0].windows[0].id')
+    if [[ $? -eq 1 ]]; then
+    	bottom_pane_id=$(kitten @ launch --location hsplit --bias 10)
+    fi
+  fi
+
+  send_to_bottom_pane="kitten @ send-text -m id:$bottom_pane_id --stdin"
+}
+
+# TODO: Needs to be implemented in kitty
+# This is a workaround until https://github.com/helix-editor/helix/pull/11164 lands
+# Could wait until then tbh.
+status_line=$(wezterm cli get-text | rg -e "(?:NORMAL|INSERT|SELECT)\s+[\x{2800}-\x{28FF}]*\s+(\S*)\s[^│]* (\d+):*.*" -o --replace '$1 $2')
+filename=$(echo $status_line | awk '{ print $1}')
+line_number=$(echo $status_line | awk '{ print $2}')
+extension="${filename##*.}"
+
+case "$1" in
+	"test-case")
+		split_pane_down
+		case "$extension" in
+			"rs")
+				test_name=$(head -$line_number $filename | tail -1 | sed -n 's/^.*fn \([^ ]*\)().*$/\1/p')
+        		run_command="cd $pwd/$(echo $filename | sed 's|src/.*$||'); cargo test $test_name; if [ \$status = 0 ]; wezterm cli activate-pane-direction up; end;"
+        		;;
+		esac
+		echo "$run_command" | $send_to_bottom_pane
+		;;
+esac

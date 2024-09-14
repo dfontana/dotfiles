@@ -1,0 +1,12 @@
+@define-color bg rgba(0, 0, 0, 0.0);
+@define-color bg-module #f2e9e1;
+@define-color fg-module #575279;
+
+@define-color fg #d7827e;
+@define-color fg-alt #b4637a;
+@define-color fg-hover #cecacd;
+@define-color fg-persist #9893a5;
+
+* {
+  font-family: Iosevka Nerd Font;
+}

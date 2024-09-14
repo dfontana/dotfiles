@@ -1,0 +1,57 @@
+tpls = [
+  # btop
+  {src="~/code/dotfiles/tpls/config/btop/btop.conf", dst="~/code/dotfiles/config/btop/btop.conf"},
+
+  # dunst
+  {src="~/code/dotfiles/tpls/config/dunst/dunstrc.d/theme.conf", dst="~/code/dotfiles/config/dunst/dunstrc.d/theme.conf"},
+
+  # helix
+  {src="~/code/dotfiles/tpls/config/helix/config.toml", dst="~/code/dotfiles/config/helix/config.toml"},
+
+  # hypr
+  {src="~/code/dotfiles/tpls/config/hypr/hyprland.conf", dst="~/code/dotfiles/config/hypr/hyprland.conf"},
+  {src="~/code/dotfiles/tpls/config/hypr/hyprlock.conf", dst="~/code/dotfiles/config/hypr/hyprlock.conf"},
+  {src="~/code/dotfiles/tpls/config/hypr/hyprpaper.conf", dst="~/code/dotfiles/config/hypr/hyprpaper.conf"},
+  
+  # kitty
+  {src="~/code/dotfiles/tpls/config/kitty/theme.conf", dst="~/code/dotfiles/config/kitty/theme.conf"},
+
+  # rofi
+  {src="~/code/dotfiles/tpls/config/rofi/themes/custom.rasi", dst="~/code/dotfiles/config/rofi/themes/custom.rasi"},
+  
+  # starship
+  {src="~/code/dotfiles/tpls/config/starship.toml", dst="~/code/dotfiles/config/starship.toml"},
+
+  # waybar
+  {src="~/code/dotfiles/tpls/config/waybar/theme.css", dst="~/code/dotfiles/config/waybar/theme.css"},
+]
+
+[font]
+family="IosevkaCustom Nerd Font Mono Extended"
+family_bold="IosevkaCustom Nerd Font Mono Extended Bold"
+family_italic="IosevkaCustom Nerd Font Mono Extended Italic"
+family_bold_italic="IosevkaCustom Nerd Font Mono Extended Bold Oblique"
+family_icon="Iosevka Nerd Font"
+
+[wallpaper]
+env="$HOME/Pictures/wallpapers/img1.png"
+
+[theme]
+# https://rosepinetheme.com/palette/ingredients/
+name = 'rose-pine-dawn'
+[theme.hex]
+base='#faf4ed'
+surface='#fffaf3'
+overlay='#f2e9e1'
+muted='#9893a5'
+subtle='#797593'
+text='#575279'
+love='#b4637a'
+gold='#ea9d34'
+rose='#d7827e'
+pine='#286983'
+foam='#56949f'
+iris='#907aa9'
+hl_low='#f4ede8'
+hl_med='#dfdad9'
+hl_hig='#cecacd'

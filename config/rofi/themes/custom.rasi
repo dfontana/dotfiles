@@ -1,0 +1,240 @@
+/**
+ * Rofi Theme File
+ * Rofi Version: 1.7.3
+ **/
+
+/***** -- GENERIC THEMING -- *****/
+#element.normal.normal {
+    background-color: @normal-background;
+    text-color: @normal-foreground;
+}
+
+#element.normal.urgent {
+    background-color: @urgent-background;
+    text-color: @urgent-foreground;
+}
+
+#element.normal.active {
+    background-color: @active-background;
+    text-color: @active-foreground;
+}
+
+#element.selected.normal {
+    background-color: @selected-normal-background;
+    text-color: @selected-normal-foreground;
+}
+
+#element.selected.urgent {
+    background-color: @selected-urgent-background;
+    text-color: @selected-urgent-foreground;
+}
+
+#element.selected.active {
+    background-color: @selected-active-background;
+    text-color: @selected-active-foreground;
+}
+
+#element.alternate.normal {
+    background-color: @alternate-normal-background;
+    text-color: @alternate-normal-foreground;
+}
+
+#element.alternate.urgent {
+    background-color: @alternate-urgent-background;
+    text-color: @alternate-urgent-foreground;
+}
+
+#element.alternate.active {
+    background-color: @alternate-active-background;
+    text-color: @alternate-active-foreground;
+}
+
+/*****----- Configuration -----*****/
+configuration {
+	show-icons: true;
+	icon-theme: "rose-pine-dawn";
+    display-drun:                " ";
+    display-run:                 " ";
+    display-filebrowser:         " ";
+    display-window:              " ";
+	drun-display-format:        "{name}";
+	window-format:              "{w}{t}";
+	window-thumbnail: false;
+}
+
+/*****----- Global Properties -----*****/
+* {
+    font: "IosevkaCustom Mono Nerd Font 11";
+    border-radius: 15px;
+
+    active-background: #faf4ed;
+    active-foreground: @foreground;
+    normal-background: @background;
+    normal-foreground: @foreground;
+    urgent-background: #9893a5;
+    urgent-foreground: @foreground;
+
+    alternate-active-background: @background;
+    alternate-active-foreground: @foreground;
+    alternate-normal-background: @background;
+    alternate-normal-foreground: @foreground;
+    alternate-urgent-background: @background;
+    alternate-urgent-foreground: @foreground;
+
+    selected-active-background: #d7827e;
+    selected-active-foreground: @foreground;
+    selected-normal-background: #d7827e;
+    selected-normal-foreground: @foreground;
+    selected-urgent-background: #d7827e;
+    selected-urgent-foreground: @foreground;
+
+    background-color: @background;
+    background: #faf4ed;
+    foreground: #575279;
+    border-color: @background;
+    spacing: 2;
+}
+
+/*****----- Main Window -----*****/
+window {
+    /* properties for window widget */
+    transparency: "real";
+    location: center;
+    anchor: center;
+    fullscreen: false;
+    width: 700px;
+    x-offset: 0px;
+    y-offset: 0px;
+    padding: 0px;
+    background-color: @background;
+    border: 0;
+
+    /* properties for all widgets */
+    enabled: true;
+    cursor:  "default";
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    spacing:     0px;
+    orientation: horizontal;
+    children:    [ "imagebox", "listbox" ];
+    padding: 0;
+    border: 2px;
+    border-color: #d7827e;
+}
+
+imagebox {
+    padding:          20px;
+    background-image: url("~/.config/rofi/images/red-flowers.jpg", height);
+    orientation:      vertical;
+    children:         [ "inputbar", "dummy", "mode-switcher" ];
+}
+
+listbox {
+    spacing:     5px;
+    padding:     10px;
+    orientation: vertical;
+    children:    [ "message", "listview" ];
+}
+
+dummy {
+    background-color: transparent;
+}
+
+/*****----- Inputbar -----*****/
+inputbar {
+    enabled:  true;
+    spacing:  10px;
+    padding:  5px;
+    text-color: @normal-foreground;
+    children: [ "textbox-prompt-colon", "entry" ];
+}
+textbox-prompt-colon {
+    enabled: true;
+    expand:  false;
+    str:     " ";
+    border-radius: 0;
+    text-color: @normal-foreground;
+}
+entry {
+    spacing: 0;
+    text-color: @normal-foreground;
+    enabled:     true;
+    cursor:      text;
+    placeholder: "Search";
+    border-radius: 0;
+}
+
+/*****----- Mode Switcher -----*****/
+mode-switcher{
+    enabled:          true;
+    spacing:          80px;
+    background-color: transparent;
+}
+button {
+    padding: 4px;
+    cursor:  pointer;
+    text-color: @normal-foreground;
+}
+button selected {
+    background-color: @selected-normal-background;
+    text-color: @selected-normal-foreground;
+}
+
+/*****----- Listview -----*****/
+listview {
+    enabled:       true;
+    columns:       1;
+    lines:         11;
+    cycle:         true;
+    dynamic:       true;
+    scrollbar:     false;
+    layout:        vertical;
+    reverse:       false;
+    fixed-height:  true;
+    fixed-columns: true;
+    spacing:       5px;
+    cursor:        "default";
+    border: 2px 0px 0px;    border-color: @border-color;
+    padding: 2px 0px 0px;
+}
+
+/*****----- Elements -----*****/
+element {
+    enabled: true;
+    spacing: 15px;
+    padding: 2px 8px;
+    cursor:  pointer;
+    border: 0;
+}
+element-icon {
+    background-color: transparent;
+    size:             24px;
+    cursor:           inherit;
+    border-radius: 0;
+}
+element-text {
+    background-color: transparent;
+    cursor:           inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+}
+
+/*****----- Message -----*****/
+message {
+    border: 2px 0px 0px;
+    border-color: @border-color;
+    padding: 1px;
+}
+textbox {
+    text-color: @foreground;
+    padding:          15px;
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+}
+error-message {
+    padding:       15px;
+}
+
+

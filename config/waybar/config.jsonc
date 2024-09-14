@@ -1,0 +1,136 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top",
+    "position": "top",
+    "margin-top": 7,
+    "margin-left": 7,
+    "margin-right": 7,
+    "margin-bottom": 7,
+    "spacing": 9,
+    "modules-left": [
+        "group/group-power",
+        "wlr/taskbar",
+        "tray",
+    ],
+    "modules-center": [
+        "hyprland/workspaces",
+    ],
+    "modules-right": [
+        "group/group-info",
+        "pulseaudio",
+        "bluetooth",
+        "clock",
+    ],
+    "group/group-power": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/home",
+            "custom/lock",
+            "custom/quit",
+            "custom/reboot",
+            "custom/shutdown",
+        ],
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "not-power",
+            "transition-left-to-right": true,
+        },
+    },
+    "custom/home": {
+        "format": " ",
+        "tooltip": false,
+    },
+    "custom/lock": {
+        "format": " ",
+        "tooltip": false,
+        "on-click": "hyprlock"
+    },
+    "custom/quit": {
+        "format": " ",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch exit"
+    },
+    "custom/reboot": {
+        "format": " ",
+        "tooltip": false,
+        "on-click": "reboot"
+    },
+    "custom/shutdown": {
+        "format": " ",
+        "tooltip": false,
+        "on-click": "shutdown now"  
+    },
+    "group/group-info": {
+        "orientation": "horizontal",
+        "modules": [
+            // "custom/notification",
+            "custom/vrr",
+            "custom/updates",
+        ],
+    },
+    "wlr/taskbar": {
+        "on-click": "activate",
+    },
+    "hyprland/workspaces": {
+        "sort-by": "default",
+        "all-outputs": false,
+        "active-only": false,
+        "move-to-monitor": false,
+        "on-click": "activate",
+        "format": "{id}",
+        "persistent_workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+        }
+    }, 
+    "custom/vrr": {
+        "exec": "vrr-status DP-1",
+        "return-type": "json",
+        "interval": 10,
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": ["󱧧 ", "󰁪 "],
+    },
+    "custom/updates": {
+        "format": "  {}",
+        "interval": 3600,
+        "exec": "dnf check-update -q | wc -l",
+        "on-click": "kitty --hold --detach dnf check-update",
+    },
+    "pulseaudio": {
+        "format": "{icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-icons": {
+            "default": [" ", " ", " ", " "]
+        },
+        "on-click": "pavucontrol"
+    },
+    "bluetooth": {
+        "format": "",
+        "format-connected": "󰂱 {device_alias}",
+        "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
+    },
+    "clock": {
+        "format": "{:%a, %d %b  %H:%M}  ",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "tray": {
+        "icon-size": 24,
+        "spacing": 5,
+        "show-passive-items": true,
+    },
+    "custom/notification": {
+        // TODO: There's a way to do this, I just don't got it atm
+        // https://github.com/Alexays/Waybar/wiki/Module:-Custom:-Simple
+        "format": "",
+        "on-click": "~/.config/bin/notify-history",
+        "on-click-right": "dunstctl close-all",
+        "tooltip-format": "Notifications"
+    },
+}

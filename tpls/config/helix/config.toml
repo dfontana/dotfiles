@@ -1,0 +1,40 @@
+theme = '{{theme.name|replace("-","_")}}'
+
+[editor]
+shell = ["zsh", "-c"]
+cursorline = true
+cursorcolumn = true
+bufferline = "always"
+color-modes = true
+text-width = 120
+
+[editor.statusline]
+left = ["mode", "spinner", "version-control"]
+center = ["file-name"]
+mode.normal = "N"
+mode.insert = "I"
+mode.select = "S"
+
+[editor.lsp]
+display-inlay-hints = true
+
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "underline"
+
+[editor.whitespace.render]
+tab = "all"
+nbsp = "all"
+
+[editor.whitespace.characters]
+tab = "→"
+tabpad = "·"
+nbsp = "·"
+
+[editor.indent-guides]
+render = true
+character = "┆"
+
+[editor.soft-wrap]
+enable = true

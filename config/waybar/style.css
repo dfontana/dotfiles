@@ -1,0 +1,133 @@
+@import url("theme.css");
+
+* {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+window#waybar {
+    background-color: @bg;
+    transition-duration: 0.5s;
+}
+
+/* General pill shapes */
+#custom-home,
+#taskbar,
+#workspaces,
+#custom-notification,
+#pulseaudio,
+#bluetooth,
+#clock,
+#tray
+{
+    color: @fg;
+    background-color: @bg-module;
+    border-radius: 15px;
+    padding: 0 10px;
+}
+
+/* Make the power group look like one pill */
+#custom-home {
+  padding-right: 6;
+}
+#custom-lock {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 15px;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 6px 0 12px;
+}
+#custom-quit {
+  border-radius: 0;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 10px;
+}
+#custom-reboot {
+  border-radius: 0;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 10px;
+}
+#custom-shutdown {
+  border-top-left-radius: 0;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 0;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 10px;
+}
+
+/* Make the info 'group' */
+#custom-vrr {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 15px;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 5px 0 10px;
+}
+#custom-updates {
+  border-top-left-radius: 0;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 0;
+  color: @fg;
+  background-color: @bg-module;
+  padding: 0 10px 0 5px;
+}
+
+
+/* Has a hover action */
+#clock:hover,
+#pulseaudio:hover,
+#custom-updates:hover,
+#custom-home:hover,
+#custom-lock:hover,
+#custom-quit:hover,
+#custom-reboot:hover,
+#custom-shutdown:hover,
+#workspaces button:hover,
+#tray > .needs-attention
+{
+  background-color: @fg-hover;
+  transition: all 0.3s ease-in-out; 
+}
+
+/* Has muted/passive state */
+#custom-vrr.inactive,
+#tray > .passive,
+#pulseaudio.muted 
+{
+  color: @fg-persist;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Modules Start Here */
+#workspaces {}
+#workspaces button {
+  padding: 0px 5px;
+  margin: 5px 3px;
+  border: 0px;
+  color: @fg;    
+  background-color: @fg-module;
+}
+#workspaces button.active {
+  color: @fg-module;
+  background: @fg-alt;
+  min-width: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+#custom-vrr,
+#custom-home {
+  font-size: 18px;
+}
+
+#clock {}
+
+#pulseaudio {}
