@@ -1,3 +1,8 @@
 [submodule "fancontrol/liquidctl"]
 	path = fancontrol/liquidctl
 	url = git@github.com:liquidctl/liquidctl.git
+	ignore = dirty
+[submodule "gtk"]
+	path = gtk
+	url = git@github.com:rose-pine/gtk.git
+	ignore = dirty
