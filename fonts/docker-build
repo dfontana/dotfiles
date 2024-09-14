@@ -1,0 +1,49 @@
+#! /bin/bash
+
+set -e
+
+check_img() {
+  if ! docker images 1> /dev/null; then
+    exit 1
+  fi
+  docker images | grep fontcc
+}
+
+if [[ ! -f private-build-plans.toml ]]; then
+  echo "Run this from the directory with the plans file pls"
+  exit 1
+fi
+
+if ! check_img ; then
+  echo "Building fontcc image"
+  [[ -d /tmp/mkdkimg ]] || git clone --depth=1 https://github.com/be5invis/Iosevka.git /tmp/mkdkimg
+  if ! docker build -t=fontcc /tmp/mkdkimg/docker/; then
+    echo "Docker build failed"
+    exit 1
+  fi
+  if ! check_img ; then
+    echo "Image wasn't built"
+    exit 1
+  fi
+  rm -rf /tmp/mkdkimg/
+else
+  echo "fontcc image exists, using that"
+fi
+
+if [[ ! -d dist/ ]]; then
+  echo "Building font"
+  if ! docker run -it --rm -v $PWD:/work fontcc ttf::IosevkaCustom; then
+    echo "Build failed"
+    exit 1
+  fi
+else
+  echo "Skipping font build, files present"
+fi
+
+if ! docker run --rm -v $PWD/dist/IosevkaCustom/TTF:/in:Z -v $PWD/ttfs:/out:Z nerdfonts/patcher --careful --complete ; then
+  echo "Failed to patch nerd fonts"
+  exit 1
+fi
+
+# Because docker may mount this as the non-user
+sudo rm -rf dist/

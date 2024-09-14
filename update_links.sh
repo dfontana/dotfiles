@@ -8,9 +8,9 @@ function link {
 
   if [ $force -eq 0 ]; then
     echo "\t Forcing..."
-    ln -nsf $pwd/$item $dest &> /dev/null
+    ln -nsf "$pwd/$item" "$dest" &> /dev/null
   else
-    ln -ns $pwd/$item $dest &> /dev/null
+    ln -ns "$pwd/$item" "$dest" &> /dev/null
   fi
 
   
@@ -22,12 +22,9 @@ function link {
   fi
 }
 
+LINK_FONTS=${LINK_FONTS:-0}
 LINK_FAN=${LINK_FAN:-0}
-<<<<<<< HEAD
-LINK_LVIM=${LINK_LVIM:-0}
-=======
 LINK_LINUX=${LINK_LINUX:-0}
->>>>>>> c84f207 (Remove lvim)
 
 # Link Home
 echo "Linking Home"
@@ -42,19 +39,6 @@ for item in config/*; do
   link $item "$HOME/.config/$cln"
 done
 
-<<<<<<< HEAD
-# Link Lvim
-echo "Linking Lvim"
-if [ $LINK_LVIM -eq 1 ]; then
-  for item in lvim/*; do
-    git check-ignore -q $item
-    if [ $? -eq 1 ]; then
-      link $item "$HOME/.config/lvim/" 0
-    fi
-  done
-else
-  echo "\t Not linking, pass LINK_LVIM=1 if desired"
-=======
 if [ $LINK_LINUX -eq 1 ]; then
   echo "Linking bonus bins"
   mkdir -p $HOME/.local/bin
@@ -71,7 +55,6 @@ if [ $LINK_LINUX -eq 1 ]; then
   done
 else
   echo "Will not link linux specifics; use LINK_LINUX=1"
->>>>>>> c84f207 (Remove lvim)
 fi
 
 # Link Fan Control
@@ -84,3 +67,15 @@ else
   echo "\t Not linking, pass LINK_FAN=1 if desired"
 fi
 
+echo "Linking Fonts"
+if [ $LINK_FONTS -eq 1 ]; then
+  font_dir='.local/share/fonts/IosevkaCustom Nerd Font'
+  mkdir -p "$HOME/$font_dir"
+  for item in fonts/ttfs/*.ttf; do
+    cln=${item#"fonts/ttfs/"}
+    link $item "$HOME/$font_dir/$cln"
+  done
+  echo "Fonts linked, don't forget to run: fc-cache -v"
+else
+  echo "\t Not linking, pass LINK_FONTS=1 if desired"
+fi

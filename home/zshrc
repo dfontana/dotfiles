@@ -64,7 +64,7 @@ if uname | grep -i linux &> /dev/null; then
 fi
 
 # Final inits. Note we -A SSH so identity is forwarded to remote server
-command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd)"
+command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(starship init zsh)"
 
 # >>> conda initialize >>>
@@ -81,4 +81,3 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-
