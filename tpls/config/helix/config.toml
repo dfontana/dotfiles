@@ -1,4 +1,4 @@
-theme = 'rose_pine_dawn'
+theme = '{{theme.name|replace("-","_")}}'
 
 [editor]
 shell = ["zsh", "-c"]

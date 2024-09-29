@@ -20,14 +20,14 @@ $character"""
 palette='custom'
 
 [palettes.custom]
-overlay='#f2e9e1'
-text='#575279'
-color_1='#b4637a'
-color_2='#ea9d34'
-color_3='#d7827e'
-color_4='#286983'
-color_5='#56949f'
-color_6='#907aa9'
+overlay='{{theme.hex.overlay}}'
+text='{{theme.hex.text}}'
+color_1='{{theme.hex.love}}'
+color_2='{{theme.hex.gold}}'
+color_3='{{theme.hex.rose}}'
+color_4='{{theme.hex.pine}}'
+color_5='{{theme.hex.foam}}'
+color_6='{{theme.hex.iris}}'
 
 # K8s
 [kubernetes]
