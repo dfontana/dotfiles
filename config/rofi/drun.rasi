@@ -2,7 +2,7 @@
  * Configuration For Rofi Version: 1.7.3
  **/
 
-@theme "rose_drun.rasi"
+@theme "custom.rasi"
 configuration {
 	/*---------- General setting ----------*/
 	modi: "drun,run,window";
