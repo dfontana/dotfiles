@@ -1,0 +1,62 @@
+tpls = [
+  # dunst
+  {src="~/code/dotfiles/tpls/config/dunst/dunstrc.d/theme.conf", dst="~/code/dotfiles/config/dunst/dunstrc.d/theme.conf"},
+
+  # helix
+  {src="~/code/dotfiles/tpls/config/helix/config.toml", dst="~/code/dotfiles/config/helix/config.toml"},
+
+  # kitty
+  {src="~/code/dotfiles/tpls/config/kitty/theme.conf", dst="~/code/dotfiles/config/kitty/theme.conf"},
+
+  # rofi
+  {src="~/code/dotfiles/tpls/config/rofi/themes/custom.rasi", dst="~/code/dotfiles/config/rofi/themes/custom.rasi"},
+  
+  # starship
+  {src="~/code/dotfiles/tpls/config/starship.toml", dst="~/code/dotfiles/config/starship.toml"},
+
+  # hypr
+  {src="~/code/dotfiles/tpls/config/hypr/hyprland.conf", dst="~/code/dotfiles/config/hypr/hyprland.conf"},
+  {src="~/code/dotfiles/tpls/config/hypr/hyprlock.conf", dst="~/code/dotfiles/config/hypr/hyprlock.conf"},
+  {src="~/code/dotfiles/tpls/config/hypr/hyprpaper.conf", dst="~/code/dotfiles/config/hypr/hyprpaper.conf"},
+]
+
+
+# TODO:
+# config/btop/themes <<--- https://github.com/rose-pine/btop
+#      (Create wallust.theme)
+# yazi -> https://yazi-rs.github.io/docs/configuration/theme
+#      (Create a templated flavor https://github.com/yazi-rs/flavors, then customize rest in theme.toml)
+# fzf -> https://github.com/rose-pine/fzf
+#      (Create a file to source in zshrc if present)
+
+# config/waybar/style.css <<-- Fonts
+# config/waybar/theme.css <<-- https://github.com/rose-pine/waybar
+
+[font]
+family="IosevkaCustom Nerd Font Extended"
+family_bold="IosevkaCustom Nerd Font Extended Bold"
+family_italic="IosevkaCustom Nerd Font Extended Italic"
+family_bold_italic="IosevkaCustom Nerd Font Extended Bold Oblique"
+
+[wallpaper]
+env="$HOME/Pictures/wallpapers/img1.png"
+
+[theme]
+# https://rosepinetheme.com/palette/ingredients/
+name = 'rose-pine-dawn'
+[theme.hex]
+base='#faf4ed'
+surface='#fffaf3'
+overlay='#f2e9e1'
+muted='#9893a5'
+subtle='#797593'
+text='#575279'
+love='#b4637a'
+gold='#ea9d34'
+rose='#d7827e'
+pine='#286983'
+foam='#56949f'
+iris='#907aa9'
+hl_low='#f4ede8'
+hl_med='#dfdad9'
+hl_hig='#cecacd'
