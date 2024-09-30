@@ -1,10 +1,18 @@
 tpls = [
+  # btop
+  {src="~/code/dotfiles/tpls/config/btop/btop.conf", dst="~/code/dotfiles/config/btop/btop.conf"},
+
   # dunst
   {src="~/code/dotfiles/tpls/config/dunst/dunstrc.d/theme.conf", dst="~/code/dotfiles/config/dunst/dunstrc.d/theme.conf"},
 
   # helix
   {src="~/code/dotfiles/tpls/config/helix/config.toml", dst="~/code/dotfiles/config/helix/config.toml"},
 
+  # hypr
+  {src="~/code/dotfiles/tpls/config/hypr/hyprland.conf", dst="~/code/dotfiles/config/hypr/hyprland.conf"},
+  {src="~/code/dotfiles/tpls/config/hypr/hyprlock.conf", dst="~/code/dotfiles/config/hypr/hyprlock.conf"},
+  {src="~/code/dotfiles/tpls/config/hypr/hyprpaper.conf", dst="~/code/dotfiles/config/hypr/hyprpaper.conf"},
+  
   # kitty
   {src="~/code/dotfiles/tpls/config/kitty/theme.conf", dst="~/code/dotfiles/config/kitty/theme.conf"},
 
@@ -14,23 +22,9 @@ tpls = [
   # starship
   {src="~/code/dotfiles/tpls/config/starship.toml", dst="~/code/dotfiles/config/starship.toml"},
 
-  # hypr
-  {src="~/code/dotfiles/tpls/config/hypr/hyprland.conf", dst="~/code/dotfiles/config/hypr/hyprland.conf"},
-  {src="~/code/dotfiles/tpls/config/hypr/hyprlock.conf", dst="~/code/dotfiles/config/hypr/hyprlock.conf"},
-  {src="~/code/dotfiles/tpls/config/hypr/hyprpaper.conf", dst="~/code/dotfiles/config/hypr/hyprpaper.conf"},
+  # waybar
+  {src="~/code/dotfiles/tpls/config/waybar/theme.css", dst="~/code/dotfiles/config/waybar/theme.css"},
 ]
-
-
-# TODO:
-# config/btop/themes <<--- https://github.com/rose-pine/btop
-#      (Create wallust.theme)
-# yazi -> https://yazi-rs.github.io/docs/configuration/theme
-#      (Create a templated flavor https://github.com/yazi-rs/flavors, then customize rest in theme.toml)
-# fzf -> https://github.com/rose-pine/fzf
-#      (Create a file to source in zshrc if present)
-
-# config/waybar/style.css <<-- Fonts
-# config/waybar/theme.css <<-- https://github.com/rose-pine/waybar
 
 [font]
 family="IosevkaCustom Nerd Font Extended"

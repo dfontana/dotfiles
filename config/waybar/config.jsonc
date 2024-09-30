@@ -1,7 +1,5 @@
 // -*- mode: jsonc -*-
 {
-    // TODO: Theme is a bit fucked and needs cleanup
-    // Consider customizing https://github.com/Pahasara/HyprDots/tree/main
     "layer": "top",
     "position": "top",
     "margin-top": 7,
