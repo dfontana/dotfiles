@@ -1,7 +1,6 @@
 @import url("theme.css");
 
 * {
-    font-family: IosevkaCustom Nerd Font;
     font-size: 14px;
     font-weight: bolder;
 }
@@ -28,6 +27,9 @@ window#waybar {
 }
 
 /* Make the power group look like one pill */
+#custom-home {
+  padding-right:3;
+}
 #custom-lock {
   border-top-left-radius: 15px;
   border-top-right-radius: 0;
