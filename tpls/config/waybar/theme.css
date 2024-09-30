@@ -1,0 +1,12 @@
+@define-color bg rgba(0, 0, 0, 0.0);
+@define-color bg-module {{theme.hex.overlay}};
+@define-color fg-module {{theme.hex.text}};
+
+@define-color fg {{theme.hex.rose}};
+@define-color fg-alt {{theme.hex.love}};
+@define-color fg-hover {{theme.hex.hl_hig}};
+@define-color fg-persist {{theme.hex.muted}};
+
+* {
+  font-family: {{font.family}};
+}
