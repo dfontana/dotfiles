@@ -5,49 +5,89 @@ $directory\
 $git_branch\
 $git_commit\
 $git_state\
-$git_metrics\
 $git_status\
-$docker_context\
 $golang\
 $helm\
 $java\
 $python\
 $rust\
 $terraform\
-$gcloud\
-$env_var\
-$custom\
 $cmd_duration\
 $line_break\
 $jobs\
-$status\
-$shell\
 $character"""
 
-[git_status]
-disabled = false
-[git_branch]
-format = "[$symbol$branch(:$remote_branch)]($style) "
+palette='custom'
+
+[palettes.custom]
+overlay='#f2e9e1'
+text='#575279'
+color_1='#b4637a'
+color_2='#ea9d34'
+color_3='#d7827e'
+color_4='#286983'
+color_5='#56949f'
+color_6='#907aa9'
+
+# K8s
 [kubernetes]
 disabled = false
 format = '[$symbol$context \($namespace\)]($style)'
+style = "bg:overlay fg:color_5"
 [helm]
 format = '[$symbol($version )]($style)'
-[docker_context]
-disabled = true
-[rust]
-format = '[$symbol($version )]($style)'
-[scala]
-format = '[${symbol}(${version} )]($style)'
-[terraform]
-format = '[$symbol$workspace]($style)'
+style = "bg:overlay fg:color_5"
+
+# Host
+[username]
+style_user = "bold fg:color_2"
+[hostname]
+style = "bold dimmed fg:color_3"
+[directory]
+style = "bold fg:color_5"
+
+# Git
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style = "bold fg:color_6"
+[git_commit]
+style = "bold fg:color_4"
+[git_state]
+style = "bold fg:color_2"
+[git_status]
+disabled = false
+style = "bold fg:color_1"
+
+# Langs
 [golang]
 format = '[$symbol($version )]($style)'
+style = "bg:overlay fg:color_3"
 [java]
 format = '[${symbol}(${version} )]($style)'
+style = "bg:overlay fg:color_3"
 [python]
 format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+style = "bg:overlay fg:color_3"
+[rust]
+format = '[$symbol($version )]($style)'
+style = "bg:overlay fg:color_3"
+[terraform]
+format = '[$symbol$workspace]($style)'
+style = "bg:overlay fg:color_3"
+
+# Shell
+[cmd_duration]
+style = "bold fg:color_2"
+[jobs]
+style = "bold fg:color_4"
+[character]
+success_symbol = "[❯](bold fg:color_4)"
+error_symbol = "[❯](bold fg:color_1)"
+
+# Disabled items
 [php]
 disabled = true
 [gcloud]
+disabled = true
+[docker_context]
 disabled = true

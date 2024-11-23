@@ -10,6 +10,9 @@ ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 HYPHEN_INSENSITIVE="true"
 
+# fzf integration
+source <(fzf --zsh)
+
 # Init zsh plugins
 fpath=(/usr/local/share/zsh-completions $fpath)
 command -v brew &> /dev/null && FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
@@ -49,15 +52,29 @@ alias kn="kubens"
 alias kx="kubectx"
 alias ssh="kitty +kitten ssh -A"
 
+# For writing long commands, open a text editor.
+# Now since you use zsh this is a .zsh file so if your editor has
+# an LSP for this file enabled you also get some help
+alias pipr="edit-command-line"
+
+alias spt="spotify_player"
+
 # Load any extensions we have for this computer in the config
-# directory
+# directory (like werk stuff)
 for conf in "$HOME/.config/zsh/"*.zsh; do
   source "${conf}"
 done
 unset conf
 
+# Load linux specifics
+if uname | grep -i linux &> /dev/null; then
+  alias open='xdg-open'
+  alias pbcopy='wl-copy'
+  alias pbpaste='wl-paste'
+fi
+
 # Final inits. Note we -A SSH so identity is forwarded to remote server
-command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd)"
+command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(starship init zsh)"
 
 # >>> conda initialize >>>
@@ -74,4 +91,3 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-
