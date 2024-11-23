@@ -17,7 +17,7 @@ if [[ -z "$status" ]]; then
   exit 1
 fi
 
-pct=$(($status * 100))
+pct=$((status * 100))
 class=""
 if [[ $pct == 100 ]]; then
   class='active'
