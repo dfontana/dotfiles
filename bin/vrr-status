@@ -17,12 +17,14 @@ if [[ -z "$status" ]]; then
   exit 1
 fi
 
-pct=$((status * 100))
+# Status is either true or false now
 class=""
-if [[ $pct == 100 ]]; then
+if [[ $status == 'true' ]]; then
   class='active'
+  pct=100
 else
   class='inactive'
+  pct=0
 fi
 
 echo '{"text":"","alt":"","tooltip":"","class":"'$class'","percentage": '$pct'}'
