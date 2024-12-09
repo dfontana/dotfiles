@@ -1,0 +1,30 @@
+#! /bin/bash
+
+# Opens the given argument in a helix editor.
+# If there is an active editor in the file's CWD, then it will open in that one. 
+# Otherwise opens in next available editor. Or, if all else fails spawns an editor
+# General idea being that a file tree can execute this on a path to open in editor
+
+if [ $# -ne 1 ]; then
+  echo "Must provide a file or directory to open"
+  exit 1
+fi
+
+if ! [ -e "$1" ]; then 
+  echo "File / Directory does not exist: $1"
+  exit 1
+fi
+
+windows=`kitten @ ls | jq '[.[].tabs[].windows[] | {id:.id,ps:.foreground_processes[0].cmdline[0],cwd:.foreground_processes[0].cwd}]'`
+cwd_hx=$(jq -c -n -e --argjson windows "$windows" '$windows | map(select(.ps == "hx" and .cwd == "/home/koss/code"))[0].id')
+any_hx=$(jq -c -n -e --argjson windows "$windows" '$windows | map(select(.ps == "hx"))[0].id')
+
+if [[ $cwd_hx -ne "null" ]]; then
+  kitten @ send-text -m id:$cwd_hx ":open ${1}\r"
+  kitten @ focus-window -m id:$cwd_hx
+elif [[ $any_hx -ne "null" ]]; then
+  kitten @ send-text -m id:$any_hx ":open ${1}\r"
+  kitten @ focus-window -m id:$any_hx
+else
+  hx $1
+fi
