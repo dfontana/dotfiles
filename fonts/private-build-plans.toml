@@ -1,6 +1,6 @@
 [buildPlans.IosevkaCustom]
 family = "Iosevka Custom"
-spacing = "term"
+spacing = "fontconfig-mono"
 serifs = "slab"
 noCvSs = true
 exportGlyphNames = true

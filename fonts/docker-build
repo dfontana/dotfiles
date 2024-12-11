@@ -40,7 +40,7 @@ else
   echo "Skipping font build, files present"
 fi
 
-if ! docker run --rm -v $PWD/dist/IosevkaCustom/TTF:/in:Z -v $PWD/ttfs:/out:Z nerdfonts/patcher --careful --complete ; then
+if ! docker run --rm -v $PWD/dist/IosevkaCustom/TTF:/in:Z -v $PWD/ttfs:/out:Z nerdfonts/patcher --careful --complete --mono ; then
   echo "Failed to patch nerd fonts"
   exit 1
 fi
