@@ -4,6 +4,7 @@ export PATH="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:$PATH"
 export PATH="$HOME/langs/roc/:$PATH"
 export PATH="$HOME/langs/zig/:$PATH"
 export HELIX_RUNTIME="$HOME/.config/helix/runtime"
+. "$HOME/.cargo/env"
 
 # Creature comforts
 ENABLE_CORRECTION="true"
