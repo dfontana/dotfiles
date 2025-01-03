@@ -8,5 +8,5 @@
 @define-color fg-persist {{theme.hex.muted}};
 
 * {
-  font-family: {{font.family}};
+  font-family: {{font.family_icon}};
 }
