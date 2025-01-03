@@ -64,7 +64,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font: "IosevkaCustom Nerd Font 11";
+    font: "IosevkaCustom Mono Nerd Font 11";
     border-radius: 15px;
 
     active-background: {{theme.hex.base}};
