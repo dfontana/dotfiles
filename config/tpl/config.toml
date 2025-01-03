@@ -31,6 +31,7 @@ family="IosevkaCustom Nerd Font Mono Extended"
 family_bold="IosevkaCustom Nerd Font Mono Extended Bold"
 family_italic="IosevkaCustom Nerd Font Mono Extended Italic"
 family_bold_italic="IosevkaCustom Nerd Font Mono Extended Bold Oblique"
+family_icon="Iosevka Nerd Font"
 
 [wallpaper]
 env="$HOME/Pictures/wallpapers/img1.png"

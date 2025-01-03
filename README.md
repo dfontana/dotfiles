@@ -17,7 +17,8 @@ Stores configurations related to development environment.
 If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Utilize the script `fonts/docker-build` to do all the work.
 
 Note: This will also patch the fonts with [nerd-fonts symbols](https://github.com/ryanoasis/nerd-fonts/wiki/ScriptOptions) for you.
-Note: This also means the font family will now be "IosevkaCustom Nerd Font"
+Note: This also means the font family will now be "IosevkaCustom Nerd Font Mono"
+Note: There's a separate "Iosevka Nerd Font" / "icons" folder for the purpose of Waybar icons
 
 ## Other tools
 ```

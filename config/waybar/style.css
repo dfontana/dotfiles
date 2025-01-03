@@ -2,7 +2,7 @@
 
 * {
     font-size: 14px;
-    font-weight: bolder;
+    font-weight: 600;
 }
 
 window#waybar {
@@ -28,7 +28,7 @@ window#waybar {
 
 /* Make the power group look like one pill */
 #custom-home {
-  padding-right:3;
+  padding-right: 6;
 }
 #custom-lock {
   border-top-left-radius: 15px;
@@ -37,7 +37,7 @@ window#waybar {
   border-bottom-left-radius: 15px;
   color: @fg;
   background-color: @bg-module;
-  padding: 0 10px;
+  padding: 0 6px 0 12px;
 }
 #custom-quit {
   border-radius: 0;

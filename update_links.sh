@@ -85,10 +85,17 @@ fi
 if [ $LINK_FONTS -eq 1 ]; then
   echo "Linking Fonts"
   font_dir='.local/share/fonts/IosevkaCustom Nerd Font Mono'
+  icon_font_dir='.local/share/fonts/Iosevka Nerd Font'
   mkdir -p "$HOME/$font_dir"
   for item in fonts/ttfs/*.ttf; do
     cln=${item#"fonts/ttfs/"}
     link $item "$HOME/$font_dir/$cln"
+  done
+  mkdir -p "$HOME/$icon_font_dir"
+  item='IosevkaNerdFont-Regular.ttf'
+  for item in fonts/icons/*.ttf; do
+    cln=${item#"fonts/icons/"}
+    link $item "$HOME/$icon_font_dir/$cln"
   done
   echo "Fonts linked, don't forget to run: fc-cache -v"
 else
