@@ -84,7 +84,7 @@ fi
 
 if [ $LINK_FONTS -eq 1 ]; then
   echo "Linking Fonts"
-  font_dir='.local/share/fonts/IosevkaCustom Nerd Font'
+  font_dir='.local/share/fonts/IosevkaCustom Nerd Font Mono'
   mkdir -p "$HOME/$font_dir"
   for item in fonts/ttfs/*.ttf; do
     cln=${item#"fonts/ttfs/"}

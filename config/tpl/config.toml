@@ -27,10 +27,10 @@ tpls = [
 ]
 
 [font]
-family="IosevkaCustom Nerd Font Extended"
-family_bold="IosevkaCustom Nerd Font Extended Bold"
-family_italic="IosevkaCustom Nerd Font Extended Italic"
-family_bold_italic="IosevkaCustom Nerd Font Extended Bold Oblique"
+family="IosevkaCustom Nerd Font Mono Extended"
+family_bold="IosevkaCustom Nerd Font Mono Extended Bold"
+family_italic="IosevkaCustom Nerd Font Mono Extended Italic"
+family_bold_italic="IosevkaCustom Nerd Font Mono Extended Bold Oblique"
 
 [wallpaper]
 env="$HOME/Pictures/wallpapers/img1.png"
