@@ -48,9 +48,10 @@ function epoch() {
 function gm () {
     case $* in
     # Create a branch & add to machete
-    c* ) shift 1; git switch -c "$GH_BRANCH_PFX$@" && git machete add ;;
+    'c '* ) shift 1; git switch -c "$GH_BRANCH_PFX$@" && git machete add ;;
     # Add all tracked changes to the last commit without editing
-    m* ) shift 1; git commit --amend --no-edit "$@" && git machete traverse --no-push --no-push-untracked -y --return-to=here ;;
+    m ) ;&
+    'm '* ) shift 1; git commit --amend --no-edit "$@" && git machete traverse --no-push --no-push-untracked -y --return-to=here ;;
     # TODO Move head of branch to another spot by selectively chosing where to place it
     move ) shift 1; echo 'todo' ;;
     # Interactive checkout of a branch
@@ -58,13 +59,17 @@ function gm () {
     # Edit the contents of a PR
     'pr edit'* ) shift 2; gh pr edit "$@" ;;
     # Open active branch's PR
-    pr* ) shift 1; gh pr view --web "$@" ;;
+    pr ) ;&
+    'pr '* ) shift 1; gh pr view --web "$@" ;;
     # Fetch & drop stale branches from start, update each in the tree. This will rebase on master too.
-    sync* ) shift 1; git machete traverse -Wn "$@" ;;
+    sync ) ;&
+    'sync '* ) shift 1; git machete traverse -Wn "$@" ;;
     # Push & Create or Update PR. If a PR already exists it won't be made again.
-    s* ) shift 1; gh pr create -e --template "$GH_BRANCH_TEMPLATE" --fill-first "$@" ;;
+    s ) ;&
+    's '* ) shift 1; gh pr create -e --template "$GH_BRANCH_TEMPLATE" --fill-first "$@" ;;
     # Push all branches in the stack from the root; this does not create PRs to minimize impact.
-    ss* ) shift 1; git machete traverse -yw --return-to=here ;;
+    ss ) ;&
+    'ss '* ) shift 1; git machete traverse -yw --return-to=here ;;
     # Default forward to machete
     * ) git machete "$@" ;;
     esac
