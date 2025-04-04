@@ -37,7 +37,13 @@ command -v jenv &> /dev/null && eval "$(jenv init -)"
 # 3) List orphaned local branches 'cause they were merged remotely
 alias csvdiff='git diff --color-words="[^[:space:],]+"'
 gitgone(){git branch -vv | grep "gone" | awk 'ORS=" " {print $1}';}
-gittouch(){git status -s --porcelain | awk 'ORS=" " {print $2}'}
+gittouch(){
+  if [[ $# -gt 0 ]]; then
+    git status -s --porcelain | grep "$1" | awk 'ORS=" " {print $2}'
+  else
+    git status -s --porcelain | awk 'ORS=" " {print $2}'
+  fi
+}
 function epoch() {
   if [[ -z "$1" ]]; then
     echo "$(($(date +%s) * 1000)) -> $(date)"
@@ -51,20 +57,30 @@ function gm () {
     'c '* ) shift 1; git switch -c "$GH_BRANCH_PFX$@" && git machete add ;;
     # Add all tracked changes to the last commit without editing
     m ) ;&
-    'm '* ) shift 1; git commit --amend --no-edit "$@" && git machete traverse --no-push --no-push-untracked -y --return-to=here ;;
+    'm '* ) shift 1; git commit --amend --no-edit "$@" && git machete traverse --no-push --no-push-untracked -y --start-from=here --return-to=here ;;
     # TODO Move head of branch to another spot by selectively chosing where to place it
     move ) shift 1; echo 'todo' ;;
     # Interactive checkout of a branch
     switch ) shift 1; git branch -v --sort=-committerdate | fzf --layout=reverse-list --bind "enter:execute(git checkout {1})+accept-non-empty" ;;
+    'switch '* ) shift 1;  git checkout "$1" ;;
     # Edit the contents of a PR
     'pr edit'* ) shift 2; gh pr edit "$@" ;;
     # Open active branch's PR
     pr ) ;&
     'pr '* ) shift 1; gh pr view --web "$@" ;;
     # Fetch & drop stale branches from start, update each in the tree. This will rebase on master too.
+    # Mode 'exact' is needed to catch squash merges, as I found the 'simple' default did not.
+    # TODO: This does not delete branches on slide out. Slideout command does if you --delete but it's too late
+    #       if traverse is ran. Delete unmanaged works but only if it's in the branch layout.
+    #       Maybe run the "git branch -D `gitgone`" you have after a sync?
     sync ) ;&
-    'sync '* ) shift 1; git machete traverse -Wn "$@" ;;
+    'sync '* ) shift 1; git machete traverse -Wn --squash-merge-detection=exact "$@" ;;
     # Push & Create or Update PR. If a PR already exists it won't be made again.
+    # TODO: ... but if it already exists it also won't be pushed. Perhaps push then create? See if machete can help with this given it may or may not require a force-with-lease.
+    # TODO: Fill-first with the template doesn't appear to provide the commit body. What can be done about this?
+    # TODO: on first push it always asks to fork or not, can that be turned off?
+    #     (There's no flag, it's supposed to auto-detect & that appears borked in this case :/)
+    # TODO: Template doesn't always exist in each repo, so need to conditionally skip it
     s ) ;&
     's '* ) shift 1; gh pr create -e --template "$GH_BRANCH_TEMPLATE" --fill-first "$@" ;;
     # Push all branches in the stack from the root; this does not create PRs to minimize impact.
