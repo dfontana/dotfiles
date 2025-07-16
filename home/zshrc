@@ -39,9 +39,9 @@ alias csvdiff='git diff --color-words="[^[:space:],]+"'
 gitgone(){git branch -vv | grep "gone" | awk 'ORS=" " {print $1}';}
 gittouch(){
   if [[ $# -gt 0 ]]; then
-    git status -s --porcelain | grep "$1" | awk 'ORS=" " {print $2}'
+    git status -s --porcelain | grep "$1" | awk '$1 != "D" {printf "%s ", $2}'
   else
-    git status -s --porcelain | awk 'ORS=" " {print $2}'
+    git status -s --porcelain | awk '$1 != "D" {printf "%s ", $2}'
   fi
 }
 
@@ -65,6 +65,12 @@ function gm () {
     case $* in
     # Create a branch & add to machete
     'c '* ) shift 1; git switch -c "$GH_BRANCH_PFX$@" && git machete add ;;
+    # TODO: 'ci' would be a nice command to open the gitlab pipes for the active branch
+    # - Need to set the env var below
+    # - Need to fetch current branch & sub in below
+    # - Need to test
+    # Goal post: `open {instance}/{prefixSlug}/-/pipelines?page=1&scope=all&ref={branch}`
+    'ci' ) shift 1;  open "$GH_GITLAB_INSTANCE/`gh repo view --json nameWithOwner | jq '.nameWithOwner'`-/pipelines?page=1&scope=all&ref={branch}"/;;
     # Cleanup gone branches from the remote
     delete ) shift 1; git fetch --prune && git branch -D `git branch -vv | grep "gone" | awk 'ORS=" " {print $1}';` ;;
     # Add all tracked changes to the last commit without editing
@@ -79,7 +85,6 @@ function gm () {
     'pr edit'* ) shift 2; gh pr edit "$@" ;;
     # Open active branch's PR
     pr ) ;&
-    # TODO: 'ci' would be a nice command to open the gitlab pipes for the active branch
     'pr '* ) shift 1; gh pr view --web "$@" ;;
     # Fetch & drop stale branches from start, update each in the tree. This will rebase on master too.
     # Mode 'exact' is needed to catch squash merges, as I found the 'simple' default did not.
