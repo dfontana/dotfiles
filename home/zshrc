@@ -102,6 +102,36 @@ function gm () {
     esac
 }
 
+pr-comments() {
+ gh api graphql -f query='
+  query($owner: String!, $repo: String!, $pr: Int!) {
+    repository(owner: $owner, name: $repo) {
+      pullRequest(number: $pr) {
+        reviewThreads(first: 100) {
+          nodes {
+            isResolved
+            path
+            line
+            comments(first: 100) {
+              nodes {
+                author {
+                  login
+                }
+                body
+                createdAt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+' -f owner=$(gh repo view --json owner -q .owner.login) \
+  -f repo=$(gh repo view --json name -q .name) \
+  -F pr=$(gh pr view --json number -q .number) \
+  | jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)]'
+}
+
 # Aliases because some of these commands are just too easy to forget
 alias mvn="mvn -T 4 -ntp"
 alias kc="kubectl"
@@ -133,6 +163,9 @@ fi
 # Final inits. Note we -A SSH so identity is forwarded to remote server
 command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(starship init zsh)"
+
+# Tab Completions
+source <(jj util completion zsh)
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

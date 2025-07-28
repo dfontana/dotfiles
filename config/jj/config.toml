@@ -1,0 +1,32 @@
+"$schema" = "https://jj-vcs.github.io/jj/latest/config-schema.json"
+
+[user]
+name = "Dylan Fontana"
+email = "dyfontana@gmail.com"
+
+[templates]
+git_push_bookmark = '"dylan.fontana/" ++ change_id.short()'
+
+[diff]
+tool = "delta"
+
+[ui]
+diff-editor = ":builtin"
+default-command = "log"
+
+# Use delta for diff/show, and open in a pager
+[[--scope]]
+--when.commands = ["diff", "show"]
+[--scope.ui]
+pager = "delta"
+diff-formatter = ":git"
+
+# Use the default pager for log but quit & keep
+# the screen if it all fits on one screen
+[[--scope]]
+--when.commands = ["log"]
+[--scope.ui]
+pager = "less -FRX"
+
+[git]
+executable-path = "/opt/homebrew/bin/git"
