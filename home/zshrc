@@ -163,6 +163,7 @@ fi
 # Final inits. Note we -A SSH so identity is forwarded to remote server
 command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(starship init zsh)"
+source <(jj util completion zsh)
 
 # Tab Completions
 source <(jj util completion zsh)
@@ -181,3 +182,7 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
