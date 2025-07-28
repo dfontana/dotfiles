@@ -38,3 +38,9 @@ character = "┆"
 
 [editor.soft-wrap]
 enable = true
+
+[keys.normal.space.space]
+# Open the github UI for the given line
+# But note this expects a path relative to the repo root
+# and buffer_name is just the path that's open.
+g = { o = ":sh gh browse \"%{buffer_name}:%{cursor_line}\""}

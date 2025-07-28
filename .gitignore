@@ -1,6 +1,7 @@
 .DS_Store
 .zsh_custom/
 config/zsh/werk.zsh
+config/jj/werk.toml
 packer_compiled.lua
 config/helix/runtime/grammars/
 config/lyra/logs/
