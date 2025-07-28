@@ -163,7 +163,6 @@ fi
 # Final inits. Note we -A SSH so identity is forwarded to remote server
 command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(starship init zsh)"
-source <(jj util completion zsh)
 
 # Tab Completions
 source <(jj util completion zsh)
