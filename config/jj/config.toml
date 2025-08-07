@@ -7,6 +7,12 @@ email = "dyfontana@gmail.com"
 [templates]
 git_push_bookmark = '"dylan.fontana/" ++ change_id.short()'
 
+[aliases]
+# After making changes to a 'branch' advance the nearest bookmark forward for pushing
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
+rebase-all = ["rebase", "-s", "all:roots(trunk()..mutable())", "-d", "trunk()"]
+branch = ["log", "-r", "ancestors(@) & heads(bookmarks())", "-T", "local_bookmarks.map(|c| c.name())", "-n", "1", "--no-graph"]
+
 [diff]
 tool = "delta"
 
@@ -30,3 +36,4 @@ pager = "less -FRX"
 
 [git]
 executable-path = "/opt/homebrew/bin/git"
+auto-local-bookmark = false
