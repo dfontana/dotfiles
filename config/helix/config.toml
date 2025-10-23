@@ -44,3 +44,11 @@ enable = true
 # But note this expects a path relative to the repo root
 # and buffer_name is just the path that's open.
 g = { o = ":sh gh browse \"%{buffer_name}:%{cursor_line}\""}
+left = "jump_view_left"
+A-left = "swap_view_left"
+right = "jump_view_right"
+A-right = "swap_view_right"
+up = "jump_view_up"
+A-up = "swap_view_up"
+down = "jump_view_down"
+A-down = "swap_view_down"
