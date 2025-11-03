@@ -10,8 +10,10 @@ git_push_bookmark = '"dylan.fontana/" ++ change_id.short()'
 [aliases]
 # After making changes to a 'branch' advance the nearest bookmark forward for pushing
 tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
-rebase-all = ["rebase", "-s", "all:roots(trunk()..mutable())", "-d", "trunk()"]
-branch = ["log", "-r", "ancestors(@) & heads(bookmarks())", "-T", "local_bookmarks.map(|c| c.name())", "-n", "1", "--no-graph"]
+rebase-all = ["rebase", "-s", "roots(trunk()..mutable()) ~ immutable()", "-d", "trunk()"]
+# Note: Bookmarks() can be wrapped in Heads() if you want just the 'leafs' but when
+#       introducing bookmarks mid-stack it will cause those refs to be omitted 
+branch = ["log", "-r", "ancestors(@) & bookmarks()", "-T", "local_bookmarks.map(|c| c.name())", "-n", "1", "--no-graph"]
 
 [diff]
 tool = "delta"
@@ -19,6 +21,7 @@ tool = "delta"
 [ui]
 diff-editor = ":builtin"
 default-command = "log"
+show-cryptographic-signatures = true
 
 # Use delta for diff/show, and open in a pager
 [[--scope]]
@@ -37,3 +40,6 @@ pager = "less -FRX"
 [git]
 executable-path = "/opt/homebrew/bin/git"
 auto-local-bookmark = false
+
+[signing]
+behavior = "own"

@@ -44,6 +44,15 @@ gittouch(){
     git status -s --porcelain | awk '$1 != "D" {printf "%s ", $2}'
   fi
 }
+jjtouch(){
+  if [[ $# -gt 1 ]]; then
+    jj diff --types -r "$1" | grep "$2" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
+  elif [[ $# -eq 1 ]]; then
+    jj diff --types -r @- | grep "$1" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
+  else
+    jj diff --types -r @- | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
+  fi
+}
 
 function template_or_fill_first() {
   # Github CLI will just error if the template doesn't exist, where-as I want it to dynamically
@@ -138,6 +147,7 @@ alias kc="kubectl"
 alias kn="kubens"
 alias kx="kubectx"
 alias ssh="kitty +kitten ssh -A"
+alias jj="nocorrect jj" # Stop telling me I'm wrong you jerk
 
 # For writing long commands, open a text editor.
 # Now since you use zsh this is a .zsh file so if your editor has
