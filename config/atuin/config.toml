@@ -1,0 +1,47 @@
+## where to store your database, default is your system data directory
+## linux/mac: ~/.local/share/atuin/history.db
+# db_path = "~/.history.db"
+
+## where to store your encryption key, default is your system data directory
+## linux/mac: ~/.local/share/atuin/key
+# key_path = "~/.key"
+
+## where to store your auth session token, default is your system data directory
+## linux/mac: ~/.local/share/atuin/session
+# session_path = "~/.session"
+
+auto_sync = false
+update_check = true
+search_mode = "fuzzy"
+filter_mode = "global"
+enter_accept = false
+command_chaining = false
+
+keymap_mode = "vim-insert"
+keymap_cursor = { vim_insert = "blink-block", vim_normal = "steady-block" }
+
+style = "compact"
+history_format = "{command}\t{duration}"
+inline_height = 20
+max_preview_height = 8
+auto_hide_height = 8
+invert = false
+show_preview = true
+show_numeric_shortcuts = true
+show_tabs = true
+show_help = true
+
+[preview]
+strategy = "auto"
+
+[keys]
+scroll_exits = false
+exit_past_line_start = false
+accept_past_line_end = false
+accept_past_line_start = false
+accept_with_backspace = false
+
+[sync]
+records = true
+[daemon]
+enabled = false
