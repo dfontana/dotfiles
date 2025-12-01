@@ -23,9 +23,9 @@ keymap_cursor = { vim_insert = "blink-block", vim_normal = "steady-block" }
 style = "compact"
 history_format = "{command}\t{duration}"
 inline_height = 20
-max_preview_height = 8
+max_preview_height = 20
 auto_hide_height = 8
-invert = false
+invert = true
 show_preview = true
 show_numeric_shortcuts = true
 show_tabs = true
