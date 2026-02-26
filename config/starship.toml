@@ -47,6 +47,15 @@ style = "bold dimmed fg:color_3"
 [directory]
 style = "bold fg:color_5"
 
+# https://gitlab.com/lanastara_foss/starship-jj
+[custom.jj]
+command = "prompt"
+format = "$output"
+ignore_timeout = true
+shell = ["starship-jj", "--ignore-working-copy", "starship"]
+use_stdin = false
+when = true
+
 # Git
 [git_branch]
 format = "[$symbol$branch(:$remote_branch)]($style) "
@@ -58,15 +67,6 @@ style = "bold fg:color_2"
 [git_status]
 disabled = false
 style = "bold fg:color_1"
-
-# https://gitlab.com/lanastara_foss/starship-jj
-[custom.jj]
-command = "prompt"
-format = "$output"
-ignore_timeout = true
-shell = ["starship-jj", "--ignore-working-copy", "starship"]
-use_stdin = false
-when = true
 
 # Langs
 [golang]
