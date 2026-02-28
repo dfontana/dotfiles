@@ -6,3 +6,5 @@ packer_compiled.lua
 config/helix/runtime/grammars/
 config/lyra/logs/
 config/lyra/cache/
+bun.lock
+node_modules

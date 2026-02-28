@@ -1,0 +1,7 @@
+{
+  "suppressWhenFocused": true,
+  "messages": {
+    "finished": "opencode finished",
+    "needsAttention": "opencode needs attention"
+  }
+}

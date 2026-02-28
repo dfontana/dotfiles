@@ -1,0 +1,19 @@
+{
+  "name": "opencode-plugins",
+  "description": "Local opencode plugins",
+  "version": "1.0.0",
+  "plugins": {
+    "no-git": {
+      "file": "no-git.js",
+      "location": "global"
+    },
+    "notify": {
+      "file": "notify.js",
+      "location": "global"
+    }
+  },
+  "hooks": {
+    "tool": ["tool.execute.before"],
+    "event": ["session.idle", "session.error", "permission.asked", "question.asked"]
+  }
+}
