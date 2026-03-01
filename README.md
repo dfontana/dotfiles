@@ -4,7 +4,7 @@ Stores configurations related to development environment.
 ## Prerequisites
 - oh-my-zsh is expected to already be installed.
 - Need these: 
-  - All: dive, fd, fzf, fnm, jenv, git-delta, kubectx, miniconda, rg, starship, temurin
+  - All: dive, fd, fzf, fnm, jenv, git-delta, kubectx, miniconda, rg, starship, temurin, zellij
   - Linux: xsel
   - Mac: cmake pkg-config
 - Fonts: Install everything in `fonts/` folder
