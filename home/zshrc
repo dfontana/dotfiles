@@ -77,6 +77,71 @@ jjl() {
       --bind "enter:become(jj show {1} --color=always | less -R)"
 }
 
+# Interactive jj workspace manager powered by fzf.
+# enter: cd into workspace  ctrl-x: jj forget + rm -rf  ctrl-n: create new workspace
+_jjw_new() {
+  local name
+  printf "Workspace name: " >&2
+  read -r name
+  [[ -z "$name" ]] && return 1
+
+  local ws_path="$HOME/workspaces/$name"
+  local tmpl='change_id.short(8) ++ " " ++ separate(" ", local_bookmarks.map(|b| "[" ++ b.name() ++ "]").join(""), description.first_line()) ++ "\n"'
+
+  local rev
+  rev=$(
+    jj log -r "ancestors(@, 40)" --no-graph -T "$tmpl" --color=always |
+      fzf --ansi --no-sort --layout=reverse \
+          --prompt="revision for '$name'> " \
+          --header="Select parent revision (esc to cancel)" \
+          --preview "jj show {1} --color=always" \
+          --preview-window "right:60%:wrap" |
+      awk '{print $1}'
+  )
+  [[ -z "$rev" ]] && return 1
+
+  mkdir -p "$HOME/workspaces"
+  jj workspace add "$ws_path" -r "$rev" || return 1
+
+  # Per-repo init hook: <repo_root>/.jj-workspace-init called with workspace path as $1
+  local init
+  init="$(jj root 2>/dev/null)/.jj-workspace-init"
+  [[ -x "$init" ]] && "$init" "$ws_path"
+
+  echo "$ws_path"
+}
+
+jjw() {
+  local tmpl='name ++ "  " ++ working_copy_commit.description().first_line() ++ "\t" ++ path ++ "\n"'
+
+  local result
+  result=$(
+    jj workspace list -T "$tmpl" |
+      fzf \
+        --ansi \
+        --no-sort \
+        --delimiter=$'\t' \
+        --with-nth=1 \
+        --prompt="workspaces> " \
+        --header=$'enter: cd | ctrl-x: delete (forget + rm) | ctrl-n: new' \
+        --preview "jj -R {2} log --color=always" \
+        --preview-window "right:60%:wrap" \
+        --bind "ctrl-x:execute(jj workspace forget {1} && rm -rf {2})+reload(jj workspace list -T '$tmpl')" \
+        --bind "ctrl-n:become(echo __new__)" \
+        --bind "enter:become(echo {2})"
+  )
+
+  case "$result" in
+    __new__)
+      local new_path
+      new_path=$(_jjw_new)
+      [[ -n "$new_path" ]] && cd "$new_path"
+      ;;
+    "") ;;
+    *) cd "$result" ;;
+  esac
+}
+
 function template_or_fill_first() {
   # Github CLI will just error if the template doesn't exist, where-as I want it to dynamically
   # use the first commit or the template, preferring the template if set
