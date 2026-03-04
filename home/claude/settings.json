@@ -96,5 +96,13 @@
   "enabledPlugins": {
     "pyright-lsp@claude-plugins-official": true
   },
-  "effortLevel": "medium"
+  "effortLevel": "medium",
+  "hooks": {
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/on-session-start.sh" }] }],
+    "Stop": [{ "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/notification.sh" }] }],
+    "Notification": [{ "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/notification.sh" }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/restore.sh" }] }],
+    "PreToolUse": [{ "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/restore.sh" }] }],
+    "SessionEnd": [{ "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/restore.sh" }, { "type": "command", "command": "$HOME/.claude/hooks/kitty-tab/on-session-end.sh" }] }]
+  }
 }
