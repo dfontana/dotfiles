@@ -15,10 +15,7 @@ rebase-all = ["rebase", "-s", "roots(trunk()..mutable()) ~ immutable()", "-d", "
 #       introducing bookmarks mid-stack it will cause those refs to be omitted
 branch = ["log", "-r", "ancestors(@) & bookmarks()", "-T", "local_bookmarks.map(|c| c.name())", "-n", "1", "--no-graph"]
 # Narrow log views
-la  = ["log", "-r", "ancestors(@)"]
-lab = ["log", "-r", "ancestors(@) & bookmarks()"]
-lb  = ["log", "-r", "bookmarks()"]
-lmb = ["log", "-r", "heads(mutable())"]
+la = ["log", "-r", "trunk()::@"]
 
 [diff]
 tool = "delta"

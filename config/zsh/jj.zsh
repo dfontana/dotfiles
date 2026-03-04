@@ -1,7 +1,35 @@
 alias jj="nocorrect jj" # Stop telling me I'm wrong you jerk
 
+# gh doesn't work in jj workspaces, this fixes it. If you aren't in a jj workspace
+# we just pass through to the actual
+gh() {
+  local root repo git_target git_dir head_branch
+  if root=$(jj root 2>/dev/null) && [[ -f "$root/.jj/repo" ]]; then
+    repo=$(cat "$root/.jj/repo")
+    git_target=$(cat "$repo/store/git_target")
+    git_dir=$(realpath "$repo/store/$git_target")
+
+    # Parse -H/--head to create local branch ref if it only exists on remote
+    local args=("$@")
+    for ((i = 1; i <= ${#args}; i++)); do
+      if [[ "${args[$i]}" == "-H" || "${args[$i]}" == "--head" ]]; then
+        head_branch="${args[$((i + 1))]}"
+        break
+      fi
+    done
+    if [[ -n "$head_branch" ]]; then
+      GIT_DIR="$git_dir" git show-ref --verify --quiet "refs/heads/$head_branch" 2>/dev/null ||
+        GIT_DIR="$git_dir" git branch "$head_branch" "origin/$head_branch" 2>/dev/null || true
+    fi
+
+    GIT_DIR="$git_dir" command gh "$@"
+  else
+    command gh "$@"
+  fi
+}
+
 # What files have been touched (when workng with jj)?
-jjtouch(){
+jjtouch() {
   if [[ $# -gt 1 ]]; then
     jj diff --types -r "$1" | grep "$2" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
   elif [[ $# -eq 1 ]]; then
@@ -13,25 +41,25 @@ jjtouch(){
 
 # Interactive jj log viewer powered by fzf.
 # Default view: ancestors of @. Toggle modes with keybindings.
-# ctrl-a: all revisions  ctrl-d: ancestors of @  ctrl-b: bookmark heads
-# ctrl-m: mutable heads  enter: full jj show     ctrl-e: jj edit rev
+# ctrl-a: all revisions  ctrl-d: stack (trunk..@)  ctrl-b: bookmark heads
+# enter: jj new on rev    ctrl-e: jj edit rev
 jjl() {
   local tmpl='change_id.short(8) ++ " " ++ separate(" ", local_bookmarks.map(|b| "[" ++ b.name() ++ "]").join(""), description.first_line()) ++ "\n"'
-  jj log -r "ancestors(@, 40)" --no-graph -T "$tmpl" --color=always |
+  jj log -r 'bookmarks()' --no-graph -T "$tmpl" --color=always |
     fzf \
       --ansi \
       --no-sort \
       --layout=reverse \
-      --prompt="ancestors(@)> " \
-      --header=$'ctrl-a: all | ctrl-d: ancestors | ctrl-b: bookmarks | ctrl-m: mutable heads\nenter: show diff | ctrl-e: edit rev' \
-      --preview "jj show {1} --color=always" \
+      --prompt="bookmarks> " \
+      --header=$'ctrl-a: all | ctrl-d: stack | ctrl-b: bookmarks | esc: reset\nenter: new on rev | ctrl-e: edit rev' \
+      --preview "jj log -r 'trunk()::{1}' --color=always" \
       --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' \
       --bind "ctrl-a:reload[jj log --no-graph -T '$tmpl' --color=always]+change-prompt[all> ]" \
-      --bind "ctrl-d:reload[jj log -r 'ancestors(@, 40)' --no-graph -T '$tmpl' --color=always]+change-prompt[ancestors(@)> ]" \
+      --bind "ctrl-d:reload[jj log -r 'trunk()::{1}' --no-graph -T '$tmpl' --color=always]+change-prompt[stack> ]" \
       --bind "ctrl-b:reload[jj log -r 'bookmarks()' --no-graph -T '$tmpl' --color=always]+change-prompt[bookmarks> ]" \
-      --bind "ctrl-m:reload[jj log -r 'heads(mutable())' --no-graph -T '$tmpl' --color=always]+change-prompt[mutable heads> ]" \
+      --bind "esc:reload[jj log -r 'bookmarks()' --no-graph -T '$tmpl' --color=always]+change-prompt[bookmarks> ]" \
       --bind "ctrl-e:execute(jj edit {1})" \
-      --bind "enter:become(jj show {1} --color=always | less -R)"
+      --bind "enter:become(jj new {1})"
 }
 
 # Interactive jj workspace manager powered by fzf.
@@ -47,12 +75,12 @@ _jjw_new() {
 
   local rev
   rev=$(
-    jj log -r "ancestors(@, 40)" --no-graph -T "$tmpl" --color=always |
+    jj log --no-graph -T "$tmpl" --color=always |
       fzf --ansi --no-sort --layout=reverse \
-          --prompt="revision for '$name'> " \
-          --header="Select parent revision (esc to cancel)" \
-          --preview "jj show {1} --color=always" \
-          --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' |
+        --prompt="revision for '$name'> " \
+        --header="Select parent revision (esc to cancel)" \
+        --preview "jj show {1} --color=always" \
+        --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' |
       awk '{print $1}'
   )
   [[ -z "$rev" ]] && return 1
@@ -69,7 +97,7 @@ _jjw_new() {
 }
 
 jjw() {
-  local tmpl='name ++ "  " ++ working_copy.description().first_line() ++ "\t" ++ path ++ "\n"'
+  local tmpl='self.name() ++ "  " ++ self.target().description().first_line() ++ "\n"'
 
   local result
   result=$(
@@ -77,15 +105,14 @@ jjw() {
       fzf \
         --ansi \
         --no-sort \
-        --delimiter=$'\t' \
-        --with-nth=1 \
+        --layout=reverse \
         --prompt="workspaces> " \
         --header=$'enter: cd | ctrl-x: delete (forget + rm) | ctrl-n: new' \
-        --preview "jj -R {2} log --color=always" \
+        --preview "jj log -r 'trunk()::{1}@' -s --color=always" \
         --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' \
-        --bind "ctrl-x:execute[jj workspace forget {1} && rm -rf {2}]+reload[jj workspace list -T '$tmpl']" \
+        --bind "ctrl-x:execute[p=\$(jj workspace root --name {1}) && jj workspace forget {1} && rm -rf \$p]+reload[jj workspace list -T '$tmpl']" \
         --bind "ctrl-n:become(echo __new__)" \
-        --bind "enter:become(echo {2})"
+        --bind "enter:become(echo \$(jj workspace root --name {1}))"
   )
 
   case "$result" in
