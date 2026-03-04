@@ -68,7 +68,7 @@ jjl() {
       --prompt="ancestors(@)> " \
       --header=$'ctrl-a: all | ctrl-d: ancestors | ctrl-b: bookmarks | ctrl-m: mutable heads\nenter: show diff | ctrl-e: edit rev' \
       --preview "jj show {1} --color=always" \
-      --preview-window "right:60%:wrap" \
+      --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' \
       --bind "ctrl-a:reload(jj log --no-graph -T '$tmpl' --color=always)+change-prompt(all> )" \
       --bind "ctrl-d:reload(jj log -r 'ancestors(@, 40)' --no-graph -T '$tmpl' --color=always)+change-prompt(ancestors(@)> )" \
       --bind "ctrl-b:reload(jj log -r 'bookmarks()' --no-graph -T '$tmpl' --color=always)+change-prompt(bookmarks> )" \
@@ -95,7 +95,7 @@ _jjw_new() {
           --prompt="revision for '$name'> " \
           --header="Select parent revision (esc to cancel)" \
           --preview "jj show {1} --color=always" \
-          --preview-window "right:60%:wrap" |
+          --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' |
       awk '{print $1}'
   )
   [[ -z "$rev" ]] && return 1
@@ -125,7 +125,7 @@ jjw() {
         --prompt="workspaces> " \
         --header=$'enter: cd | ctrl-x: delete (forget + rm) | ctrl-n: new' \
         --preview "jj -R {2} log --color=always" \
-        --preview-window "right:60%:wrap" \
+        --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' \
         --bind "ctrl-x:execute(jj workspace forget {1} && rm -rf {2})+reload(jj workspace list -T '$tmpl')" \
         --bind "ctrl-n:become(echo __new__)" \
         --bind "enter:become(echo {2})"
