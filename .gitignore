@@ -1,6 +1,6 @@
 .DS_Store
 .zsh_custom/
-config/zsh/
+config/zsh/*werk.zsh
 config/jj/repos/
 config/jj/werk.toml
 packer_compiled.lua
