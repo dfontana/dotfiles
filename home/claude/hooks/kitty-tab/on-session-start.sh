@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 [[ -z "$KITTY_WINDOW_ID" ]] && exit 0
-cat >/dev/null  # discard stdin
+cat >/dev/null # discard stdin
 
 desc=""
 
 # 1. jj named workspace (workspace root != repo root)
 if jj_ws=$(jj workspace root --no-pager 2>/dev/null) &&
-   jj_repo=$(jj root --no-pager 2>/dev/null) &&
-   [[ "$jj_ws" != "$jj_repo" ]]; then
+  jj_repo=$(jj root --no-pager 2>/dev/null) &&
+  [[ "$jj_ws" != "$jj_repo" ]]; then
   desc=$(basename "$jj_ws")
 fi
 
@@ -24,4 +24,6 @@ fi
 # 3. Fallback: basename of cwd
 [[ -z "$desc" ]] && desc=$(basename "$PWD")
 
-kitty @ set-tab-title "Claude Code - $desc"
+KITTY_OPTS=()
+[[ -n "${KITTY_LISTEN_ON:-}" ]] && KITTY_OPTS=(--to "$KITTY_LISTEN_ON")
+kitty @ "${KITTY_OPTS[@]}" set-tab-title --match "id:$KITTY_WINDOW_ID" "Claude Code - $desc" >/dev/null 2>&1
