@@ -12,5 +12,7 @@ home/claude/**
 !home/claude/statusline.sh
 !home/claude/hooks/
 !home/claude/hooks/**
+!home/claude/skills/
+!home/claude/skills/**
 bun.lock
 node_modules

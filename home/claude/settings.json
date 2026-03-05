@@ -161,6 +161,15 @@
             "command": "$HOME/.claude/hooks/kitty-tab/on-session-start.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/jujutsu/detect-jj.sh",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "Stop": [

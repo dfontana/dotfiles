@@ -1,0 +1,1 @@
+../../../../config/opencode/skills/jujutsu/SKILL.md
