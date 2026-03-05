@@ -2,7 +2,7 @@
 .zsh_custom/
 config/zsh/*werk.zsh
 config/jj/repos/
-config/jj/werk.toml
+config/jj/conf.d/werk.toml
 packer_compiled.lua
 config/helix/runtime/grammars/
 config/lyra/logs/
