@@ -151,15 +151,7 @@
       "mcp__atlassian__searchJiraIssuesUsingJql"
     ]
   },
-  "model": "sonnet",
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline.sh"
-  },
-  "enabledPlugins": {
-    "pyright-lsp@claude-plugins-official": true
-  },
-  "effortLevel": "medium",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -229,5 +221,12 @@
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true
   }
 }
