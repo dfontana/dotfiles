@@ -6,6 +6,7 @@ gh() {
   local root repo git_target git_dir head_branch
   if root=$(jj root 2>/dev/null) && [[ -f "$root/.jj/repo" ]]; then
     repo=$(cat "$root/.jj/repo")
+    [[ "$repo" != /* ]] && repo=$(realpath "$root/.jj/$repo")
     git_target=$(cat "$repo/store/git_target")
     git_dir=$(realpath "$repo/store/$git_target")
 
