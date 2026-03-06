@@ -91,7 +91,7 @@ _jjw_new() {
   # Per-repo init hook: <repo_root>/.jj-workspace-init called with workspace path as $1
   local init
   init="$(jj root 2>/dev/null)/.jj-workspace-init"
-  [[ -x "$init" ]] && "$init" "$ws_path"
+  [[ -x "$init" ]] && "$init" "$ws_path" >&2
 
   echo "$ws_path"
 }
