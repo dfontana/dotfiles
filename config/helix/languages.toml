@@ -5,7 +5,7 @@ name = "python"
 comment-token = "#"
 language-servers = ["pyright"]
 auto-format = true
-formatter = {command = 'black', args = ["--quiet", "-"]}
+formatter = {command = 'ruff', args = ["--quiet", "-"]}
 
 [language-server.pyright]
 command = "pyright-langserver"
