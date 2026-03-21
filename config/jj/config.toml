@@ -45,3 +45,8 @@ auto-local-bookmark = false
 
 [signing]
 behavior = "own"
+backend = "ssh"
+key = "~/.ssh/id_ed25519_signing.pub"
+
+[signing.backends.ssh]
+allowed-signers = "~/.ssh/allowed_signers"
