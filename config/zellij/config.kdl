@@ -14,7 +14,7 @@ keybinds clear-defaults=true {
         bind "f" { ToggleFloatingPanes; SwitchToMode "normal"; }
     }
     tab {
-        bind "Shift Super t" { SwitchToMode "normal"; }
+        bind "Super t" { SwitchToMode "normal"; }
         bind "left" { GoToPreviousTab; }
         bind "down" { GoToNextTab; }
         bind "up" { GoToPreviousTab; }
@@ -37,11 +37,11 @@ keybinds clear-defaults=true {
         bind "tab" { ToggleTab; }
     }
     resize {
-        bind "Shift Super n" { SwitchToMode "normal"; }
-        bind "left" { Resize "Increase left"; }
-        bind "down" { Resize "Increase down"; }
-        bind "up" { Resize "Increase up"; }
-        bind "right" { Resize "Increase right"; }
+        bind "Super r" { SwitchToMode "normal"; }
+        bind "w" { Resize "Increase right"; }
+        bind "n" { Resize "Decrease right"; }
+        bind "t" { Resize "Increase down"; }
+        bind "s" { Resize "Decrease down"; }
     }
     move {
         bind "Shift Super m" { SwitchToMode "normal"; }
@@ -94,6 +94,26 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
     }
+    normal {
+        bind "Super 1" { GoToTab 1; }
+        bind "Super 2" { GoToTab 2; }
+        bind "Super 3" { GoToTab 3; }
+        bind "Super 4" { GoToTab 4; }
+        bind "Super 5" { GoToTab 5; }
+        bind "Super 6" { GoToTab 6; }
+        bind "Super 7" { GoToTab 7; }
+        bind "Super 8" { GoToTab 8; }
+        bind "Super 9" { GoToTab 9; }
+        bind "Ctrl 1" { GoToTab 1; }
+        bind "Ctrl 2" { GoToTab 2; }
+        bind "Ctrl 3" { GoToTab 3; }
+        bind "Ctrl 4" { GoToTab 4; }
+        bind "Ctrl 5" { GoToTab 5; }
+        bind "Ctrl 6" { GoToTab 6; }
+        bind "Ctrl 7" { GoToTab 7; }
+        bind "Ctrl 8" { GoToTab 8; }
+        bind "Ctrl 9" { GoToTab 9; }
+    }
     shared {
         bind "Shift left" { MoveFocus "left"; }
         bind "Shift right" { MoveFocus "right"; }
@@ -118,13 +138,13 @@ keybinds clear-defaults=true {
         bind "Shift Super h" { SwitchToMode "scroll"; }
     }
     shared_except "locked" "tab" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
-        bind "Shift Super t" { SwitchToMode "tab"; }
+        bind "Super t" { SwitchToMode "tab"; }
     }
     shared_except "locked" "pane" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
         bind "Shift Super p" { SwitchToMode "pane"; }
     }
     shared_except "locked" "resize" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
-        bind "Shift Super n" { SwitchToMode "resize"; }
+        bind "Super r" { SwitchToMode "resize"; }
     }
     shared_except "normal" "locked" "entersearch" {
         bind "enter" { SwitchToMode "normal"; }
