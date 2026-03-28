@@ -14,7 +14,7 @@ keybinds clear-defaults=true {
         bind "f" { ToggleFloatingPanes; SwitchToMode "normal"; }
     }
     tab {
-        bind "Shift Super t" { SwitchToMode "normal"; }
+        bind "Super t" { SwitchToMode "normal"; }
         bind "left" { GoToPreviousTab; }
         bind "down" { GoToNextTab; }
         bind "up" { GoToPreviousTab; }
@@ -37,7 +37,6 @@ keybinds clear-defaults=true {
         bind "tab" { ToggleTab; }
     }
     resize {
-        bind "Shift Super n" { SwitchToMode "normal"; }
         bind "Super r" { SwitchToMode "normal"; }
         bind "left" { Resize "Increase left"; }
         bind "down" { Resize "Increase down"; }
@@ -143,14 +142,12 @@ keybinds clear-defaults=true {
         bind "Shift Super h" { SwitchToMode "scroll"; }
     }
     shared_except "locked" "tab" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
-        bind "Shift Super t" { SwitchToMode "tab"; }
         bind "Super t" { SwitchToMode "tab"; }
     }
     shared_except "locked" "pane" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
         bind "Shift Super p" { SwitchToMode "pane"; }
     }
     shared_except "locked" "resize" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
-        bind "Shift Super n" { SwitchToMode "resize"; }
         bind "Super r" { SwitchToMode "resize"; }
     }
     shared_except "normal" "locked" "entersearch" {
