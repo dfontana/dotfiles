@@ -128,7 +128,7 @@ keybinds clear-defaults=true {
     }
     shared_except "locked" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
         bind "Shift Super g" { SwitchToMode "locked"; }
-        bind "Shift Super q" { Quit; }
+        bind "Shift Super z" { Quit; }
     }
     shared_except "locked" "entersearch" "renametab" "renamepane" "session" "prompt" "tmux" {
         bind "Shift Super o" { SwitchToMode "session"; }
@@ -214,9 +214,17 @@ plugins {
 load_plugins {
     zellij:link
 }
-web_client {
-    font "monospace"
-}
+
+// Can't copy without this apparently?
+copy_on_select true
+
+// Need mouse mode to click inside things like helix,
+// but means that the selection rules differ than what kitty has :(
+mouse_mode true
+advanced_mouse_actions false 
+mouse_hover_effects false
+focus_follows_mouse true
+mouse_click_through true
  
 theme "rose-pine-dawn"
 themes {
@@ -358,15 +366,6 @@ themes {
 // 
 // theme_dir "/tmp"
  
-// Toggle enabling the mouse mode.
-// On certain configurations, or terminals this could
-// potentially interfere with copying text.
-// Options:
-//   - true (default)
-//   - false
-// 
-// mouse_mode false
- 
 // Configure the scroll back buffer size
 // This is the number of lines zellij stores for each pane in the scroll back
 // buffer. Excess number of lines are discarded in a FIFO fashion.
@@ -375,32 +374,6 @@ themes {
 // Default value: 10000
 // 
 // scroll_buffer_size 10000
- 
-// Provide a command to execute when copying text. The text will be piped to
-// the stdin of the program to perform the copy. This can be used with
-// terminal emulators which do not support the OSC 52 ANSI control sequence
-// that will be used by default if this option is not set.
-// Examples:
-//
-// copy_command "xclip -selection clipboard" // x11
-// copy_command "wl-copy"                    // wayland
-// copy_command "pbcopy"                     // osx
-// 
-// copy_command "pbcopy"
- 
-// Choose the destination for copied text
-// Allows using the primary selection buffer (on x11/wayland) instead of the system clipboard.
-// Does not apply when using copy_command.
-// Options:
-//   - system (default)
-//   - primary
-// 
-// copy_clipboard "primary"
- 
-// Enable automatic copying (and clearing) of selection when releasing mouse
-// Default: true
-// 
-// copy_on_select true
  
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL
@@ -456,24 +429,7 @@ attach_to_session true
 // Default: true
 // 
 show_startup_tips false
-
-// Whether to enable mouse hover effects and pane grouping functionality
-// default is true
-// advanced_mouse_actions false
- 
-// Whether to enable mouse hover visual effects (frame highlight and help text)
-// default is true
-// mouse_hover_effects false
  
 // Whether to show visual bell indicators (pane/tab frame flash and [!] suffix)
 // default is true
 // visual_bell true
- 
-// Whether to focus panes on mouse hover
-// default is false
-// focus_follows_mouse false
- 
-// Whether clicking a pane to focus it also sends the click into the pane
-// default is false
-// mouse_click_through false
- 
