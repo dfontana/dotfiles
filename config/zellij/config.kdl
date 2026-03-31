@@ -41,10 +41,10 @@ keybinds clear-defaults=true {
     }
     resize {
         bind "Super r" { SwitchToMode "normal"; }
-        bind "w" { Resize "Increase right"; }
-        bind "n" { Resize "Decrease right"; }
-        bind "t" { Resize "Increase down"; }
-        bind "s" { Resize "Decrease down"; }
+        bind "left" { Resize "Increase left"; }
+        bind "down" { Resize "Increase down"; }
+        bind "up" { Resize "Increase up"; }
+        bind "right" { Resize "Increase right"; }
     }
     scroll {
         bind "Shift Super h" { SwitchToMode "normal"; }
