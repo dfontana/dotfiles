@@ -20,10 +20,10 @@ keybinds clear-defaults=true {
         bind "Ctrl 9" { GoToTab 9; }
     }
     shared_except "locked" "entersearch" "renametab" "renamepane" "prompt" "tmux" {
-        bind "Shift Super q" { Quit; }
+        bind "Shift Super x" { Quit; }
     }
     shared_among "entersearch" "renametab" "renamepane" "prompt" "tmux" {
-        bind "Shift Super q" { Quit; }
+        bind "Shift Super x" { Quit; }
         bind "Shift Super g" { SwitchToMode "locked"; }
         bind "Shift Super p" { SwitchToMode "pane"; }
         bind "Shift Super t" { SwitchToMode "tab"; }
@@ -158,6 +158,7 @@ keybinds clear-defaults=true {
     shared_except "locked" {
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
+        bind "Alt l" { NextSwapLayout; }
     }
     shared_except "normal" "locked" "entersearch" {
         bind "enter" { SwitchToMode "normal"; }
