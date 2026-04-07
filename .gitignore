@@ -15,3 +15,4 @@ home/claude/**
 !home/claude/skills/**
 bun.lock
 node_modules
+config/zellij/layouts/werk-*
