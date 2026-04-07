@@ -47,10 +47,10 @@ keybinds clear-defaults=true {
         bind "r" { SwitchToMode "renamepane"; PaneNameInput 0; }
         bind "h" { NewPane "down"; SwitchToMode "normal"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "normal"; }
-        bind "Shift f" { ToggleFocusFullscreen; SwitchToMode "normal"; }
+        bind "f" { ToggleFocusFullscreen; SwitchToMode "normal"; }
         bind "p" { TogglePanePinned; SwitchToMode "normal"; }
         bind "v" { NewPane "right"; SwitchToMode "normal"; }
-        bind "f" { ToggleFloatingPanes; SwitchToMode "normal"; }
+        bind "Shift f" { ToggleFloatingPanes; SwitchToMode "normal"; }
         bind "left" { MovePane "left"; }
         bind "down" { MovePane "down"; }
         bind "up" { MovePane "up"; }
