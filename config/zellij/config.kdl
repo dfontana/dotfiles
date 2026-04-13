@@ -215,7 +215,11 @@ plugins {
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
     zellij:link
-    // claude-tab: renames tabs to track Claude Code session state
+    // claude-tab: animates tab title while Claude works; shows notify_icon when waiting.
+    // All keys are optional — remove the block entirely to use defaults.
+    //   throbber    each char is one animation frame  default "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+    //   interval_ms milliseconds between frames       default "250"
+    //   notify_icon prefix shown when waiting         default "●"
     file:~/.config/zellij/plugins/zellij-claude-tab.wasm
 }
 
