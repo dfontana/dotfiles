@@ -64,3 +64,10 @@ the situation.
 - `jj commit` = finalize `@` and create a new empty one (like `git commit -a` + fresh branch)
 - `jj describe` = change the message of `@` without creating a new revision
 - `jj new` = explicitly start a new empty revision without finalizing the current one
+
+## Using gh CLI to create Pull Requests
+
+`gh` works out of the box, however you must **ALWAYS** supply the `-H {bookmark}` argument 
+to ensure the correct bookmark/branch is detected. Sometimes you may need to supply `-B {bookmark}`
+to specify the base branch if stacking PRs. By default, the trunk branch is always used and is
+correct when not stacking.
