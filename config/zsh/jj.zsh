@@ -97,6 +97,35 @@ _jjw_new() {
   echo "$ws_path"
 }
 
+# Create a new workspace with the given name, then cd into it.
+# Usage: jj_new_workspace <name> [revision]
+# If revision is omitted, defaults to trunk().
+jj_new_workspace() {
+  local name="$1"
+  local revision="${2:-trunk()}"
+  if [[ -z "$name" ]]; then
+    echo "Usage: jj_new_workspace <name> [revision]" >&2
+    return 1
+  fi
+
+  local ws_path="$HOME/workspaces/$name"
+  local rev
+  rev=$(jj log -r "$revision" --no-graph -T 'change_id.short(8)' 2>/dev/null | head -1)
+  if [[ -z "$rev" ]]; then
+    echo "jj_new_workspace: could not resolve revision '$revision'" >&2
+    return 1
+  fi
+
+  mkdir -p "$HOME/workspaces"
+  jj workspace add "$ws_path" -r "$rev" || return 1
+
+  local init
+  init="$(jj root 2>/dev/null)/.jj-workspace-init"
+  [[ -x "$init" ]] && "$init" "$ws_path" >&2
+
+  cd "$ws_path"
+}
+
 jjw() {
   local tmpl='self.name() ++ "  " ++ self.target().description().first_line() ++ "\n"'
 
