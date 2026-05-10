@@ -3,6 +3,7 @@
 config/zsh/*werk.zsh
 config/jj/repos/
 config/jj/conf.d/werk.toml
+config/jj/conf.d/linux.toml
 packer_compiled.lua
 config/helix/runtime/grammars/
 config/lyra/logs/

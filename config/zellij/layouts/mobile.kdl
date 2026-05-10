@@ -1,0 +1,43 @@
+layout {
+    pane
+    pane size=1 borderless=true {
+        plugin location="zellij:compact-bar"
+    }
+}
+
+pane_frames false
+copy_on_select false
+show_startup_tips false
+default_mode "locked"
+
+keybinds clear-defaults=true {
+    locked {
+        bind "Ctrl b" { SwitchToMode "tmux"; }
+    }
+    tmux {
+        bind "esc" { SwitchToMode "locked"; }
+        bind "Ctrl b" { SwitchToMode "locked"; }
+        bind "d" { Detach; }
+        bind "x" { Quit; }
+        bind "t" { SwitchToMode "tab"; }
+    }
+    tab {
+        bind "esc" { SwitchToMode "tmux"; }
+        bind "n" { NewTab; SwitchToMode "locked"; }
+        bind "x" { CloseTab; SwitchToMode "locked"; }
+        bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "1" { GoToTab 1; SwitchToMode "locked"; }
+        bind "2" { GoToTab 2; SwitchToMode "locked"; }
+        bind "3" { GoToTab 3; SwitchToMode "locked"; }
+        bind "4" { GoToTab 4; SwitchToMode "locked"; }
+        bind "5" { GoToTab 5; SwitchToMode "locked"; }
+        bind "6" { GoToTab 6; SwitchToMode "locked"; }
+        bind "7" { GoToTab 7; SwitchToMode "locked"; }
+        bind "8" { GoToTab 8; SwitchToMode "locked"; }
+        bind "9" { GoToTab 9; SwitchToMode "locked"; }
+    }
+    renametab {
+        bind "esc" { UndoRenameTab; SwitchToMode "locked"; }
+        bind "enter" { SwitchToMode "locked"; }
+    }
+}
