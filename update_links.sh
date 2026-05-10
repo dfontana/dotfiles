@@ -31,6 +31,15 @@ LINK_GTK=${LINK_GTK:-0}
 echo "Linking Home"
 for item in home/*; do
   cln=${item#"home/"}
+  # .claude is a runtime dir managed by Claude Code — link its contents individually
+  if [ "$cln" = "claude" ]; then
+    echo "Linking .claude (individual items)"
+    for subitem in home/claude/*; do
+      subcln=${subitem#"home/claude/"}
+      link $subitem "$HOME/.claude/$subcln"
+    done
+    continue
+  fi
   link $item "$HOME/.$cln"
 done
 
