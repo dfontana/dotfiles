@@ -155,3 +155,14 @@ jjw() {
     *) cd "$result" ;;
   esac
 }
+
+jj-restack() {
+  # Fetch a given branch and restack that branch's descendents against the updated pointed. Like rebase-all but just focused on a given stack
+  # Required argument: branch to restack on.
+  local name="$1"
+  if [[ -z "$name" ]]; then
+    echo "Usage: jj-restack <branch>" >&2
+    return 1
+  fi
+  jj git fetch -b "$name" && jj rebase -s "roots($name..mutable()) ~ immutable()" -d "$name"
+}
