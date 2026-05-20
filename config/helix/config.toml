@@ -43,7 +43,7 @@ enable = true
 # Open the github UI for the given line
 # But note this expects a path relative to the repo root
 # and buffer_name is just the path that's open.
-g = { o = ":sh gh browse \"%{buffer_name}:%{cursor_line}\""}
+g = { o = ":sh GH_REPO=$(jj git remote list 2>/dev/null | awk '$1==\"origin\"{url=$2; gsub(/.*github[.]com./,\"\",url); gsub(/[.]git$/,\"\",url); print url}') gh browse \"%{buffer_name}:%{cursor_line}\""}
 left = "jump_view_left"
 A-left = "swap_view_left"
 right = "jump_view_right"
