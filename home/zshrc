@@ -1,10 +1,12 @@
 # Init Oh-my-zsh and path vars
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:$PATH"
+export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/langs/roc/:$PATH"
 export PATH="$HOME/langs/zig/:$PATH"
 export HELIX_RUNTIME="$HOME/.config/helix/runtime"
 . "$HOME/.cargo/env"
+command -v brew &>/dev/null && export PATH="$(brew --prefix rustup)/bin:$PATH"
 
 # Creature comforts
 ENABLE_CORRECTION="true"
