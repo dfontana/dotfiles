@@ -1,0 +1,15 @@
+[package]
+name = "zellij-claude-tab"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+name = "zellij_claude_tab"
+
+[dependencies]
+zellij-tile = "0.42"
+
+[profile.release]
+opt-level = "s"
+strip = true
