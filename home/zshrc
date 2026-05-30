@@ -44,7 +44,13 @@ alias mvn="mvn -T 4 -ntp"
 alias kc="kubectl"
 alias kn="kubens"
 alias kx="kubectx"
-[[ "$TERM" == "xterm-kitty" && -z "$ZELLIJ" ]] && alias ssh="kitty +kitten ssh -A"
+if [[ "$TERM" == "xterm-kitty" ]]; then
+  if [[ -n "$ZELLIJ" ]]; then
+    alias ssh="TERM=xterm-256color ssh"
+  else
+    alias ssh="kitty +kitten ssh -A"
+  fi
+fi
 alias spt="spotify_player"
 
 # Load any extensions we have for this computer in the config
