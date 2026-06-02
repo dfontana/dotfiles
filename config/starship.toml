@@ -42,8 +42,10 @@ style = "bg:overlay fg:color_5"
 # Host
 [username]
 style_user = "bold fg:color_2"
+format = "[$user]($style)"
 [hostname]
 style = "bold dimmed fg:color_3"
+format = "[@$hostname]($style) "
 [directory]
 style = "bold fg:color_5"
 
