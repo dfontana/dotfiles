@@ -44,10 +44,4 @@ command = "roc_language_server"
 name = "roc"
 source = { git = "https://github.com/faldor20/tree-sitter-roc.git", rev = "ef46edd0c03ea30a22f7e92bc68628fb7231dc8a" }
 
-[[language]]
-name = "markdown"
-language-servers = [ "iwe" ] # you might want more LSPs in here
-auto-format = true # optional, enable format-on-save
-[language-server.iwe]
-command = "iwes"
 

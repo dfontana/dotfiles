@@ -151,7 +151,7 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
     }
-    shared {
+    shared_except "locked" {
         bind "Shift left" { MoveFocus "left"; }
         bind "Shift right" { MoveFocus "right"; }
         bind "Shift up" { MoveFocus "up"; }
