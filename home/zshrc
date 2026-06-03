@@ -53,19 +53,19 @@ if [[ "$TERM" == "xterm-kitty" ]]; then
 fi
 alias spt="spotify_player"
 
-# Load any extensions we have for this computer in the config
-# directory (like werk stuff)
-for conf in "$HOME/.config/zsh/"*.zsh; do
-  source "${conf}"
-done
-unset conf
-
 # Load linux specifics
 if uname | grep -i linux &> /dev/null; then
   alias open='xdg-open'
   alias pbcopy='wl-copy'
   alias pbpaste='wl-paste'
 fi
+
+# Load any extensions we have for this computer in the config
+# directory (like werk stuff)
+for conf in "$HOME/.config/zsh/"*.zsh; do
+  source "${conf}"
+done
+unset conf
 
 # Final inits. Note we -A SSH so identity is forwarded to remote server
 command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
