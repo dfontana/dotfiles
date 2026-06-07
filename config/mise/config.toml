@@ -3,7 +3,7 @@
 "github:dfontana/starjj" = "latest"
 "github:dfontana/tpl" = "latest"
 bat = "latest"
-btop = "latest"
+btop = {version = "latest", os = ["linux"] }
 delta = "latest"
 eza = "latest"
 fd = "latest"
