@@ -8,11 +8,6 @@ export HELIX_RUNTIME="$HOME/.config/helix/runtime"
 export VISUAL=hx
 export EDITOR="$VISUAL"
 
-# mise -- all your devtools
-# envs: home, home-linux, work, workbox
-[ -f "$HOME/.mise_env" ] && source "$HOME/.mise_env"
-command -v mise &> /dev/null && eval "$(mise activate zsh)"
-
 # Creature comforts for omz settings
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
@@ -40,6 +35,11 @@ for conf in "$HOME/.config/zsh/"*.zsh; do
   source "${conf}"
 done
 unset conf
+
+# mise -- all your devtools
+# envs: home, home-linux, work, workbox
+[ -f "$HOME/.mise_env" ] && source "$HOME/.mise_env"
+command -v mise &> /dev/null && eval "$(mise activate zsh)"
 
 # Tool hooks
 source <(fzf --zsh)

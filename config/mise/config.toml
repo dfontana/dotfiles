@@ -27,6 +27,7 @@ starship = "latest"
 taplo = "latest"
 yq = "latest"
 zellij = "latest"
+pi = "latest"
 
 [shell_alias]
 erd = "eza --tree"
