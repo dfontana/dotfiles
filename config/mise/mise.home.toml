@@ -1,0 +1,5 @@
+[tools]
+zola = "latest"
+
+[shell_alias]
+spt="spotify_player"

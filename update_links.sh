@@ -1,4 +1,5 @@
 #!/bin/bash
+# set -euo pipefail
 pwd=$(pwd)
 
 function link {
@@ -22,6 +23,26 @@ function link {
   fi
 }
 
+# Idempotently ensure a line exists in a file.
+# Usage: ensure_line <file> <line> [position]   position: append (default) | prepend
+function ensure_line {
+  local file=$1
+  local line=$2
+  local position=${3:-append}
+
+  mkdir -p "$(dirname "$file")"
+  if [ -f "$file" ] && grep -qF -- "$line" "$file"; then
+    echo -e "\t[$file] Already present"
+    return
+  fi
+  if [ "$position" = "prepend" ] && [ -f "$file" ]; then
+    printf '%s\n\n%s' "$line" "$(cat "$file")" > "$file"
+  else
+    printf '%s\n' "$line" >> "$file"
+  fi
+  echo -e "\t[$file] Added line"
+}
+
 LINK_FONTS=${LINK_FONTS:-0}
 LINK_FAN=${LINK_FAN:-0}
 LINK_LINUX=${LINK_LINUX:-0}
@@ -31,17 +52,27 @@ LINK_GTK=${LINK_GTK:-0}
 echo "Linking Home"
 for item in home/*; do
   cln=${item#"home/"}
-  # .claude is a runtime dir managed by Claude Code — link its contents individually
-  if [ "$cln" = "claude" ]; then
-    echo "Linking .claude (individual items)"
-    for subitem in home/claude/*; do
-      subcln=${subitem#"home/claude/"}
-      link $subitem "$HOME/.claude/$subcln"
+  # These are runtime dirs that should be linked individually
+  if [[ "$cln" = "claude" || "$cln" = "ssh" ]]; then
+    echo "Linking "$cln" (individual items)"
+    for subitem in home/"$cln"/*; do
+      subcln=${subitem#"home/$cln/"}
+      link $subitem "$HOME/.$cln/$subcln"
     done
     continue
   fi
   link $item "$HOME/.$cln"
 done
+
+echo "Including ssh config"
+ensure_line "$HOME/.ssh/config" "Include ~/.ssh/config.local" prepend
+
+echo "Ensuring mise shims on PATH for all zsh invocations"
+# Static, fork-free, portable (mise's shims dir is ~/.local/share/mise/shims on
+# macOS and Linux). .zshenv is the only file every zsh reads, so non-interactive
+# `zsh -c` and zsh scripts resolve mise tools; bash shebang scripts inherit PATH.
+mise_shims='case ":$PATH:" in *":$HOME/.local/share/mise/shims:"*) ;; *) export PATH="$HOME/.local/share/mise/shims:$PATH" ;; esac'
+ensure_line "$HOME/.zshenv" "$mise_shims"
 
 echo "Linking .config"
 for item in config/*; do
@@ -62,6 +93,13 @@ if [ $LINK_LINUX -eq 1 ]; then
   for item in desktops/*; do
     cln=${item#desktops/}
     link $item "$HOME/.local/share/applications/$cln"
+  done
+
+  echo "Linking user systemd units"
+  mkdir -p "$HOME/.config/systemd/user"
+  for item in systemd/user/*.service; do
+    cln=${item#systemd/user/}
+    link $item "$HOME/.config/systemd/user/$cln" 0
   done
 else
   echo "Will not link linux specifics; use LINK_LINUX=1"

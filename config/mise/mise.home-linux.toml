@@ -1,0 +1,7 @@
+[tools]
+"github:dfontana/arrus" = "latest"
+
+[shell_alias]
+open="xdg-open"
+pbcopy="wl-copy"
+pbpaste="wl-paste"

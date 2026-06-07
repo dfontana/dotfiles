@@ -1,0 +1,8 @@
+Host *
+	AddKeysToAgent yes        # Auto add to agent on first use
+	IgnoreUnknown UseKeychain # This is macos only
+	UseKeychain yes           # Pull from macos keychain
+
+# Pull from 1password for the ssh key on these hosts
+Host kossserver.*
+	IdentityAgent ~/.1password/agent.sock

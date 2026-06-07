@@ -1,0 +1,16 @@
+[tools]
+colima = "latest"
+coursier = "latest"
+crane = "latest"
+dive = "latest"
+duckdb = "latest"
+helm = "latest"
+kubectl = "latest"
+kubectx = "latest"
+java = ["openjdk-17", "openjdk-21"]
+sbt = "latest"
+terraformer = "latest"
+
+[shell_alias]
+kc="kubectl"
+kn="kubens"

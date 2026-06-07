@@ -1,0 +1,33 @@
+[tools]
+"github:dfontana/epc" = "latest"
+"github:dfontana/starjj" = "latest"
+"github:dfontana/tpl" = "latest"
+bat = "latest"
+btop = "latest"
+delta = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+gh = "latest"
+helix = "latest"
+jj = "latest"
+jq = "latest"
+node = "latest"
+ripgrep = "latest"
+ruff = "latest"
+rust = {
+  version = "latest",
+  profile = "default",
+  components = "rust-analyzer"
+  # Note: can set targets for cross compilation too
+}
+shellcheck = "latest"
+shfmt = "latest"
+starship = "latest"
+taplo = "latest"
+yq = "latest"
+zellij = "latest"
+
+[shell_alias]
+erd = "eza --tree"
+csvdiff='git diff --color-words="[^[:space:],]+"'
