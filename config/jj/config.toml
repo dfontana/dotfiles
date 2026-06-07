@@ -40,8 +40,13 @@ diff-formatter = ":git"
 pager = "less -FRX"
 
 [git]
-executable-path = "/opt/homebrew/bin/git"
 auto-local-bookmark = false
+
+# Homebrew installs git under /opt/homebrew on macOS only
+[[--scope]]
+--when.platforms = ["macos"]
+[--scope.git]
+executable-path = "/opt/homebrew/bin/git"
 
 [signing]
 behavior = "own"
