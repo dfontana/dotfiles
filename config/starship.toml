@@ -49,12 +49,12 @@ format = "[@$hostname]($style) "
 [directory]
 style = "bold fg:color_5"
 
-# https://gitlab.com/lanastara_foss/starship-jj
+# https://gitlab.com/dfontana/starjj
 [custom.jj]
 command = "prompt"
 format = "$output"
 ignore_timeout = true
-shell = ["starship-jj", "--ignore-working-copy", "starship"]
+shell = ["starjj"]
 use_stdin = false
 when = true
 
