@@ -28,6 +28,7 @@ taplo = "latest"
 yq = "latest"
 zellij = "latest"
 pi = "latest"
+ty = "latest"
 
 [shell_alias]
 erd = "eza --tree"

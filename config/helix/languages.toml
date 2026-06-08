@@ -3,7 +3,7 @@ name = "python"
 # roots = ["pyproject.toml", "setup.py", "Poetry.lock", ".git"]
 # file-types = ["py"]
 comment-token = "#"
-language-servers = ["pyright"]
+language-servers = ["ty"]
 auto-format = true
 formatter = {command = 'ruff', args = ["--quiet", "-"]}
 
