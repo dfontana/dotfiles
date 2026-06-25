@@ -30,14 +30,23 @@ gh() {
 }
 
 # What files have been touched (when workng with jj)?
+# When used inside a command substitution (e.g. `ruff format \`jjtouch @ '.py'\``),
+# finding no files sends SIGINT to the parent shell, aborting the outer command entirely.
 jjtouch() {
+  local result
   if [[ $# -gt 1 ]]; then
-    jj diff --types -r "$1" | grep "$2" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
+    result=$(jj diff --types -r "$1" | grep "$2" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}')
   elif [[ $# -eq 1 ]]; then
-    jj diff --types -r @- | grep "$1" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
+    result=$(jj diff --types -r @- | grep "$1" | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}')
   else
-    jj diff --types -r @- | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}'
+    result=$(jj diff --types -r @- | awk 'substr($1, 2, 1) != "-" {printf "%s ", $2}')
   fi
+  if [[ -z $result ]]; then
+    print -u2 "jjtouch: no matching files"
+    kill -INT $$
+    return 1
+  fi
+  printf '%s' "$result"
 }
 
 # Interactive jj log viewer powered by fzf.
