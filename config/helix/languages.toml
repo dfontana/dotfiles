@@ -18,6 +18,15 @@ reportMissingTypeStubs = false
 typeCheckingMode = "basic"
 autoImportCompletions = true
 
+[language-server.fennel-ls]
+command = "fennel-ls"
+
+[[language]]
+name = "fennel"
+scope = "source.fennel"
+file-types = ["fnl"]
+language-servers = ["fennel-ls"]
+
 [[language]]
 name = "roc"
 scope = "source.roc"
