@@ -1,4 +1,5 @@
 format = """($kubernetes\n)\
+(${env_var.ZMX_SESSION})\
 $username\
 $hostname\
 $directory\
@@ -29,6 +30,13 @@ color_3='#d7827e'
 color_4='#286983'
 color_5='#56949f'
 color_6='#907aa9'
+
+# zmx
+[env_var.ZMX_SESSION]
+symbol = " "
+format = "[$symbol$env_value]($style) "
+description = "zmx session name"
+style = "bold magenta"
 
 # K8s
 [kubernetes]

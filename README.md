@@ -4,9 +4,8 @@ Stores configurations related to development environment.
 ## Prerequisites
 - oh-my-zsh is expected to already be installed.
 - Need these: 
-  - All: dive, fd, fzf, fnm, jenv, git-delta, kubectx, miniconda, rg, starship, temurin, zellij
-  - Linux: xsel
   - Mac: cmake pkg-config
+  - Linux: Install kitty manually, dnf version is slow updates: https://sw.kovidgoyal.net/kitty/binary/
 - Fonts: Install everything in `fonts/` folder
   - On [Fedora](https://docs.fedoraproject.org/en-US/quick-docs/fonts/#user-fonts--command-line) this means making directory `~/.local/share/fonts/IosevkaCustom\ Nerd\ Font/` and copy all the `.ttf` files into. Then run `fc-cache -v` to update. Orrrrr pass the `LINK_FONTS=1` flag to `update_links.sh`
 

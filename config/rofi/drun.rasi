@@ -10,7 +10,7 @@ configuration {
 	filter: "";
 	scroll-method: 0;
 	steal-focus: false;
-	terminal: "kitty";
+	terminal: "~/.local/kitty.app/bin/kitty";
 	threads: 0;
 	click-to-exit: true;
     timeout {
