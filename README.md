@@ -33,6 +33,59 @@ git config --global merge.conflictStyle zdiff3
 
 ---
 
+---
+
+## zmx — persistent remote terminal sessions
+
+[zmx](https://zmx.sh) replaces tmux/zellij for remote session persistence. Sessions
+live on the remote host; closing a terminal window detaches (session keeps running),
+`exit`/Ctrl-D kills the session. Installed automatically via mise (`config.toml`).
+
+### SSH config (manual step — not managed by dotfiles)
+
+For each remote host, add a block to `~/.ssh/config.local` so SSH auto-attaches
+to zmx and multiplexes panes over one connection:
+
+```
+Host kossserver
+    HostName <ip-or-hostname>          # real network address
+    User <remote-user>
+    RemoteCommand zmx attach %k        # %k = the name you typed → zmx session name
+    RequestTTY yes
+    ControlMaster auto
+    ControlPath ~/.ssh/ctl-%C.socket
+    ControlPersist 1s                  # master exits 1s after last channel closes
+    ForwardAgent yes
+    ServerAliveInterval 120
+    AddressFamily inet
+```
+
+`ControlPersist 1s` keeps sessions detached (not killed) when all panes close.
+`ForwardAgent yes` lets the remote use your local SSH key for git etc.
+
+### Host resolution — where `ZMX_HOST` comes from
+
+`zp`/`zd`/`zpick` (defined in `config/zsh/zmx.zsh`) call `_zmx_host()` to find
+the target SSH alias. Override `_zmx_host()` in a private zsh config to add
+custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
+
+| Machine | Source |
+|---|---|
+| Home Mac | `config/mise/mise.home.toml` → `[env] ZMX_HOST = "homeserver"` |
+| Work Mac | `werk.zsh` (gitignored) → `_zmx_host()` override |
+
+### Kitty keybindings (`cmd+shift+w`)
+
+| Key | Action |
+|---|---|
+| `>h` / `>v` | New hsplit / vsplit / tab — auto-named zmx session |
+| `>r` | Resume: fzf picker (`zpick`) to reattach an existing session |
+| `>d` | Detach all (drops SSH ControlMaster; sessions persist) |
+| `>s` | Save current tab layout (background, auto-named timestamp) |
+| `>o` | Restore a saved layout in a new tab (fzf-picks the layout) |
+
+Saved layouts live in `config/kitty/layouts/` and can be committed.
+
 ### (Deprecated)
 
 #### FanControl

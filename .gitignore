@@ -8,6 +8,7 @@ packer_compiled.lua
 config/helix/runtime/grammars/
 config/lyra/logs/
 config/lyra/cache/
+config/kitty/layouts/**
 home/claude/**
 !home/claude/statusline.sh
 !home/claude/hooks/
