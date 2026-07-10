@@ -1,8 +1,25 @@
 # zmx session management helpers — runs on both mac (no zmx) and remote (has zmx).
 # See https://github.com/neurosnap/zmx#ssh-workflow for the ssh wiring.
-if command -v zmx &>/dev/null; then
+if [[ -o interactive ]] && command -v zmx &>/dev/null; then
   eval "$(zmx completions zsh)"
 fi
+
+# zmx-attach [name] — the single entry point into a zmx session.
+# Announces the session to the controlling kitty terminal (so smart_split.py and
+# zls can read it via the zmx_session user var), then hands off to `zmx attach`.
+# Every attach path (zp, zpick, manual ssh) invokes this on the REMOTE side as:
+#   zsh -c 'source ~/.config/zsh/zmx.zsh; zmx-attach <name>'
+# The OSC must hit the raw ssh pty *before* `zmx attach` takes over — zmx drops
+# OSC 1337 as unimplemented, so a hook inside the session never reaches kitty.
+zmx-attach() {
+  local session="${1:?zmx-attach: session name required}"
+  # kitty user var via OSC 1337 SetUserVar (value base64); kitty terminals only.
+  if [[ "$TERM" == xterm-kitty* ]]; then
+    printf '\033]1337;SetUserVar=zmx_session=%s\007' \
+      "$(printf %s "$session" | base64 | tr -d '\n')"
+  fi
+  exec zmx attach "$session"
+}
 
 # ---------------------------------------------------------------------------
 # Remote session commands (meaningful only where zmx is installed)
@@ -57,18 +74,15 @@ fi
 # zp [name] — open a pane attached to a named zmx session on the remote host.
 # If no name is given, auto-generates one (p<HHMMSS>). The session is created
 # if it doesn't exist, or reattached if it does.
-# Tags the kitty window with the session name so zls can capture it.
+# Routes through zmx-attach (sourced on the remote) so the kitty window gets
+# tagged with the session name — covers zp, zpick and manual ssh uniformly.
 zp() {
   [[ "${1:-}" == "--pick" ]] && { zpick; return; }
   local host session
   host="$(_zmx_host)" || return 1
   session="${1:-p$(date +%H%M%S)}"
-  if [[ -n "${KITTY_WINDOW_ID:-}" ]]; then
-    kitten @ set-user-vars --match "id:${KITTY_WINDOW_ID}" \
-      "zmx_session=${session}" 2>/dev/null || true
-  fi
   exec command ssh -t \
-    -o "RemoteCommand=zmx attach ${session}" \
+    -o "RemoteCommand=zsh -c 'source ~/.config/zsh/zmx.zsh; zmx-attach ${session}'" \
     "${host}"
 }
 

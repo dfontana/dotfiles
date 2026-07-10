@@ -43,4 +43,6 @@ else
   exit 130
 fi
 
-exec zmx attach "$session_name"
+# Route through zmx-attach (defined in zmx.zsh) so the kitty window gets tagged
+# with the session name — single choke point shared with zp / manual ssh.
+exec zsh -c "source ~/.config/zsh/zmx.zsh; zmx-attach '$session_name'"

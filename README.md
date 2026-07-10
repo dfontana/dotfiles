@@ -47,17 +47,12 @@ For each remote host, add a block to `~/.ssh/config.local` so SSH auto-attaches
 to zmx and multiplexes panes over one connection:
 
 ```
-Host kossserver
-    HostName <ip-or-hostname>          # real network address
-    User <remote-user>
-    RemoteCommand zmx attach %k        # %k = the name you typed → zmx session name
+Host kossserver.*
     RequestTTY yes
     ControlMaster auto
     ControlPath ~/.ssh/ctl-%C.socket
     ControlPersist 1s                  # master exits 1s after last channel closes
     ForwardAgent yes
-    ServerAliveInterval 120
-    AddressFamily inet
 ```
 
 `ControlPersist 1s` keeps sessions detached (not killed) when all panes close.
