@@ -1,4 +1,4 @@
-# Init Oh-my-zsh and path vars
+# Oh-my-zsh + core env
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:$PATH"
 export PATH="$HOME/langs/roc/:$PATH"
@@ -8,14 +8,60 @@ export HELIX_RUNTIME="$HOME/.config/helix/runtime"
 export VISUAL=hx
 export EDITOR="$VISUAL"
 
-# Creature comforts for omz settings
+# omz behaviour
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 HYPHEN_INSENSITIVE="true"
 
-# Init zsh plugins
+# evalcache: memoize `eval "$(tool init)"`. Cache key is the sanitized command, so
+# editing it auto-invalidates; run `zshcache-rebuild` after upgrading a tool.
+export ZSH_EVALCACHE_DIR="$ZSH/cache/evalcache"
+_evalcache() {
+  local name="$1" key="${(j:_:)@}"
+  local cacheFile="$ZSH_EVALCACHE_DIR/init-${key//[^A-Za-z0-9._-]/_}.zsh"
+  if [[ "$ZSH_EVALCACHE_DISABLE" = true ]]; then
+    eval "${(q)@}"
+  elif [[ -s "$cacheFile" ]]; then
+    source "$cacheFile"
+  elif command -v "$name" >/dev/null; then
+    mkdir -p "$ZSH_EVALCACHE_DIR"
+    eval "${(q)@}" >| "$cacheFile" && zcompile "$cacheFile" && source "$cacheFile"
+  fi
+}
+zshcache-rebuild() {  # clear all shell-startup caches; they rebuild on next shell
+  rm -rf "$ZSH_EVALCACHE_DIR" "${ZSH_CACHE_DIR:-$ZSH/cache}/completions"
+  rm -f "${ZSH_CACHE_DIR:-$ZSH/cache}/brew-prefix" "${ZDOTDIR:-$HOME}"/.zcompdump*
+  echo "cleared caches; open a new shell to rebuild"
+}
+
+# Generate tool completions once into OMZ's compdir (on $fpath) so compinit caches
+# them in .zcompdump. Add a tool to the map and it self-installs on the next shell.
+_zsh_install_completions() {
+  local cache="${ZSH_CACHE_DIR:-$ZSH/cache}/completions" tool new=0
+  local -A comps=(jj 'jj util completion zsh' docker 'docker completion zsh' rustup 'rustup completions zsh')
+  mkdir -p "$cache"
+  for tool in ${(k)comps}; do
+    [[ -f "$cache/_$tool" ]] && continue
+    command -v "$tool" &>/dev/null || continue
+    eval "${comps[$tool]}" >| "$cache/_$tool" 2>/dev/null && new=1 || rm -f "$cache/_$tool"
+  done
+  (( new )) && rm -f "${ZDOTDIR:-$HOME}"/.zcompdump*  # reindex this startup
+}
+
+# brew completions on $fpath; memoize slow `brew --prefix` (fork-free read after 1st run)
+_zsh_brew_fpath() {
+  local cache="${ZSH_CACHE_DIR:-$ZSH/cache}/brew-prefix" prefix
+  if [[ -s "$cache" ]]; then prefix="$(<"$cache")"
+  elif command -v brew &>/dev/null; then
+    mkdir -p "${cache:h}"; prefix="$(brew --prefix)" && print -r -- "$prefix" >| "$cache"
+  fi
+  [[ -n "$prefix" ]] && FPATH="$prefix/share/zsh/site-functions:$FPATH"
+}
+
+# Plugins + oh-my-zsh (fpath/completions must be prepared before compinit runs)
 fpath=(/usr/local/share/zsh-completions $fpath)
-command -v brew &> /dev/null && FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+_zsh_brew_fpath
+_zsh_install_completions
 plugins=(zsh-autosuggestions zsh-syntax-highlighting)
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -29,25 +75,15 @@ if [[ "$TERM" == "xterm-kitty" ]]; then
   fi
 fi
 
-# Load any extensions we have for this computer in the config
-# directory (like werk stuff)
-for conf in "$HOME/.config/zsh/"*.zsh; do
-  source "${conf}"
-done
+# Per-machine extensions (~/.config/zsh/*.zsh)
+for conf in "$HOME/.config/zsh/"*.zsh; do source "$conf"; done
 unset conf
 
-# mise -- all your devtools
-# envs: home, home-linux, work, workbox
+# mise (envs: home, home-linux, work, workbox)
 [ -f "$HOME/.mise_env" ] && source "$HOME/.mise_env"
-command -v mise &> /dev/null && eval "$(mise activate zsh)"
+command -v mise &>/dev/null && eval "$(mise activate zsh)"
 
-# Tool hooks
-command -v fzf &> /dev/null && source <(fzf --zsh)
+# fzf --zsh sets keybindings/widgets, so it's sourced (memoized) not fpath'd
+command -v fzf &>/dev/null && _evalcache fzf --zsh
 
-# Completions. These may want to be cached eventually
-command -v jj &> /dev/null && source <(jj util completion zsh)
-command -v docker &> /dev/null && source <(docker completion zsh)
-command -v rustup &> /dev/null && source <(rustup completions zsh)
-
-# Prompt line
 eval "$(starship init zsh)"
