@@ -1,3 +1,32 @@
+[dotfiles]
+"~/.local/bin/*" = "../../bin/*"
+"~/.local/share/applications/*" = "../../desktops/*"
+"~/.config/systemd/user/*.service" = "tasks.d/home-linux/systemd/user/*.service"
+"~/.local/share/fonts/IosevkaCustom Nerd Font Mono/*.ttf" = "tasks.d/home-linux/fonts/ttfs/*.ttf"
+"~/.local/share/fonts/Iosevka Nerd Font/*.ttf" = "tasks.d/home-linux/fonts/icons/*.ttf"
+"~/.local/share/icons/*" = "../../gtk/icons/*-icons"
+
+[bootstrap.hooks.pre-dotfiles]
+run = '''
+repo=$(dirname "$(dirname "$(realpath "${XDG_CONFIG_HOME:-$HOME/.config}/mise")")")
+git -C "$repo" submodule update --init --recursive gtk
+'''
+
+[bootstrap.hooks.post-dotfiles]
+run = '''
+font_dir="$HOME/.local/share/fonts/IosevkaCustom Nerd Font Mono"
+icon_font_dir="$HOME/.local/share/fonts/Iosevka Nerd Font"
+fc-cache -f "$font_dir" "$icon_font_dir"
+for theme in "$HOME"/.local/share/icons/*; do
+  if [ -L "$theme" ] && [ -f "$theme/index.theme" ]; then
+    gtk4-update-icon-cache "$theme"
+  fi
+done
+'''
+
+[vars]
+pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
+
 [env]
 ZMX_HOST = "kossserver"
 

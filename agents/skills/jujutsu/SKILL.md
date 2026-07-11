@@ -21,8 +21,7 @@ Before writing any code, complete these steps in order:
      code on top of an existing revision without explicit instruction.
 2. **Declare intent**: run `jj describe -m "<what this revision will contain>"`
    before writing any code. The description is a stated plan, not an
-   afterthought. Include a "Co-Authored-By: Claude <noreply@anthropic.com>" as
-   the last line of the description ONLY IF YOU ARE CLAUDE.
+   afterthought.
 
 ## Subagent Restrictions
 
@@ -39,8 +38,8 @@ the situation.
 
 - Each revision must contain one logical chunk of work.
 - `jj commit -m "..."` finalizes the current revision and opens a fresh empty `@`.
-- IF YOU ARE CLAUDE ALWAYS include "Co-Authored-By: Claude <noreply@anthropic.com>"
-  at the end of the commit/description
+- If your harness requires a co-author trailer on commits, follow its rules;
+  this skill imposes none.
 - Related work across multiple revisions should be squashed before presenting
   to the user: `jj squash -r <rev> --into <target>`
 

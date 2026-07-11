@@ -1,0 +1,14 @@
+{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultThinkingLevel": "high",
+  "packages": [
+    "{{ vars.pi_extensions_path }}",
+    "npm:@plannotator/pi-extension",
+    "npm:@tintinweb/pi-tasks",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@tintinweb/pi-subagents"
+  ],
+  "theme": "rose-pine-dawn",
+  "npmCommand": ["mise", "exec", "node", "--", "npm"]
+}

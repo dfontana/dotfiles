@@ -1,4 +1,3 @@
-# TODO: The exec behavior is becoming unfun. It closes panes when attach is lost, even if it means I have to double exit (but also I can just kill the pane :thinkies:). We should not exec attach and instead ensure it's a proper new pane+ssh+attach, so detach drops us to the local terminal again
 # zmx session management helpers — runs on both mac (no zmx) and remote (has zmx).
 # See https://github.com/neurosnap/zmx#ssh-workflow for the ssh wiring.
 if [[ -o interactive ]] && command -v zmx &>/dev/null; then
@@ -24,8 +23,6 @@ zmx-attach() {
 
 # ---------------------------------------------------------------------------
 # Remote session commands (meaningful only where zmx is installed)
-# TODO: It feels like I could us a little cli-like wrapper on this with help & tab completions
-#       easier to find them if I could do like `zx <tab>` and do subcommands that way
 # ---------------------------------------------------------------------------
 
 # zx — interactive session picker. zmx-pick is the standalone implementation;

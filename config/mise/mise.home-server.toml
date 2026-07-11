@@ -1,3 +1,17 @@
+[vars]
+pi_extensions_path = "{{ env.HOME }}/opencode/pi-extensions"
+
+# Home-server service management (see home-server/README.md).
+[task_config]
+includes = [
+  "~/.config/mise/tasks.d/home-server/server-units.toml",
+  "~/.config/mise/tasks.d/home-server/server-init.toml",
+]
+
 [tools]
 deno = "latest"
 zola = "latest"
+
+[tools."github:yt-dlp/yt-dlp"]
+version = "latest"
+bin = "yt-dlp"

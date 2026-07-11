@@ -1,0 +1,28 @@
+# romm Quadlet container unit
+[Unit]
+Description=RomM Game Library Manager
+After=network-online.target romm-db.service
+Requires=romm-db.service
+
+[Container]
+Image=docker.io/rommapp/romm:latest
+ContainerName=romm
+Network=romm.network
+PublishPort=3460:8080
+Volume=romm-resources:/romm/resources
+Volume=romm-redis-data:/redis-data
+Volume=%h/servers/romm:/romm/library
+Volume=%h/servers/romm:/romm/assets
+Volume=%h/servers/romm:/romm/config
+Environment=DB_HOST=romm-db
+Environment=DB_NAME=romm
+Environment=HASHEOUS_API_ENABLED=true
+# DB_USER, DB_PASSWD, ROMM_AUTH_SECRET_KEY (see secrets.example.env)
+EnvironmentFile=%h/servers/secrets.env
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

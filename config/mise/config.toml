@@ -1,9 +1,59 @@
+[settings]
+dotfiles.default_mode = "symlink"
+
+[dotfiles]
+"~/.zshrc" = "../../home/zshrc"
+"~/.ssh/config.local" = "../../home/ssh/config.local"
+"~/.config/*" = "../../config/*"
+
+"~/.agents/skills" = "../../agents/skills"
+"~/.claude/skills" = "../../agents/skills"
+"~/.claude/hooks" = "../../agents/claude/hooks"
+"~/.claude/CLAUDE.md" = "../../agents/AGENTS.md"
+"~/.pi/agent/AGENTS.md" = "../../agents/AGENTS.md"
+"~/.pi/agent/agents/*" = "../../agents/pi/agent/agents/*"
+"~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
+"~/.pi/agent/subagents.json" = "../../agents/pi/agent/subagents.json"
+"~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
+
+# .zshenv is read by every zsh. The suffix names this managed line; it is not
+# a child path on disk.
+[dotfiles."~/.zshenv/mise-shims"]
+line = '''case ":$PATH:" in *":$HOME/.local/share/mise/shims:"*) ;; *) export PATH="$HOME/.local/share/mise/shims:$PATH" ;; esac'''
+
+[tasks.bootstrap]
+description = "Finish shared setup and converge home-server services when selected"
+shell = "bash -c"
+run = '''
+set -e
+line='Include ~/.ssh/config.local'
+file="$HOME/.ssh/config"
+mkdir -p "$(dirname "$file")"
+
+if [[ -f "$file" ]] && [[ "$(head -n 1 "$file")" == "$line" ]] &&
+  [[ "$(grep -cxF -- "$line" "$file")" -eq 1 ]]; then
+  echo "SSH Include already first in $file"
+else
+  tmp=$(mktemp)
+  printf '%s\n' "$line" >"$tmp"
+  if [[ -f "$file" ]]; then
+    awk -v line="$line" '$0 != line' "$file" >>"$tmp"
+  fi
+  mv "$tmp" "$file"
+  chmod 600 "$file"
+  echo "Put SSH Include first in $file"
+fi
+
+if [[ "${MISE_ENV:-}" == "home-server" ]]; then
+  mise run server-units
+fi
+'''
+
 [tools]
 "github:dfontana/epc" = "latest"
 "github:dfontana/starjj" = "latest"
 "github:dfontana/tpl" = "latest"
 bat = "latest"
-btop = {version = "latest", os = ["linux"] }
 delta = "latest"
 eza = "latest"
 fd = "latest"
@@ -13,24 +63,19 @@ helix = "latest"
 jj = "latest"
 jq = "latest"
 node = "latest"
+"npm:@earendil-works/pi-coding-agent" = "latest"
 ripgrep = "latest"
 ruff = "latest"
-rust = {
-  version = "latest",
-  profile = "default",
-  components = "rust-analyzer"
-  # Note: can set targets for cross compilation too
-}
+rust = { version = "latest", profile = "default", components = "rust-analyzer" }
 shellcheck = "latest"
 shfmt = "latest"
 starship = "latest"
 taplo = "latest"
 yq = "latest"
 zellij = "latest"
-pi = "latest"
 ty = "latest"
 "github:neurosnap/zmx" = "latest"
 
 [shell_alias]
 erd = "eza --tree"
-csvdiff='git diff --color-words="[^[:space:],]+"'
+csvdiff = 'git diff --color-words="[^[:space:],]+"'

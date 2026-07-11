@@ -1,0 +1,6 @@
+[Unit]
+Description=Upgrade yt-dlp with mise
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/mise upgrade yt-dlp

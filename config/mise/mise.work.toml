@@ -1,6 +1,9 @@
 [settings]
 idiomatic_version_file_enable_tools = ["java"]
 
+[vars]
+pi_extensions_path = "{{ env.HOME }}/pi-extensions"
+
 [tools]
 colima = "latest"
 coursier = "latest"

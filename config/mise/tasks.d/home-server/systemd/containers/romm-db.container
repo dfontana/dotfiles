@@ -1,0 +1,25 @@
+# romm-db Quadlet container unit (MariaDB)
+[Unit]
+Description=RomM MariaDB Database
+After=network-online.target
+
+[Container]
+Image=docker.io/library/mariadb:latest
+ContainerName=romm-db
+Network=romm.network
+Volume=romm-mysql-data:/var/lib/mysql
+Environment=MARIADB_DATABASE=romm
+# MARIADB_ROOT_PASSWORD, MARIADB_USER, MARIADB_PASSWORD (see secrets.example.env)
+EnvironmentFile=%h/servers/secrets.env
+HealthCmd=healthcheck.sh --connect --innodb_initialized
+HealthStartPeriod=30s
+HealthInterval=10s
+HealthTimeout=5s
+HealthRetries=5
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

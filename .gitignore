@@ -18,3 +18,4 @@ home/claude/**
 bun.lock
 node_modules
 config/zellij/layouts/werk-*
+.pi/

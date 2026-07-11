@@ -1,0 +1,25 @@
+[server-init]
+description = "One-time home-server setup: firewall ports + user linger (sudo)"
+shell = "bash -c"
+run = '''
+echo "==> Configuring firewall..."
+fw_changed=false
+for port_comment in "3450/tcp:disbot admin UI" "3460/tcp:romm"; do
+  port="${port_comment%%:*}"
+  comment="${port_comment##*:}"
+  if ! sudo firewall-cmd --permanent --query-port="$port" &>/dev/null; then
+    echo "  Adding $port ($comment)"
+    sudo firewall-cmd --permanent --add-port="$port"
+    fw_changed=true
+  else
+    echo "  $port ($comment) already open, skipping"
+  fi
+done
+if [ "$fw_changed" = true ]; then
+  sudo firewall-cmd --reload
+fi
+
+echo "==> Enabling user linger (services survive logout / start at boot)..."
+sudo loginctl enable-linger "$USER"
+echo "Done."
+'''

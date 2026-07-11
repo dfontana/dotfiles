@@ -1,0 +1,14 @@
+[Unit]
+Description=Disbot Service File
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=%h/servers/disbot/disbot-prod prod --web-bind-address lan
+WorkingDirectory=%h/servers/disbot
+Environment="PATH=/usr/local/bin:/usr/bin:%h/.local/bin"
+
+[Install]
+WantedBy=default.target

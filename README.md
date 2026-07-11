@@ -3,17 +3,37 @@ Stores configurations related to development environment.
 
 ## Prerequisites
 - oh-my-zsh is expected to already be installed.
-- Need these: 
+- Need these:
   - Mac: cmake pkg-config
   - Linux: Install kitty manually, dnf version is slow updates: https://sw.kovidgoyal.net/kitty/binary/
-- Fonts: Install everything in `fonts/` folder
-  - On [Fedora](https://docs.fedoraproject.org/en-US/quick-docs/fonts/#user-fonts--command-line) this means making directory `~/.local/share/fonts/IosevkaCustom\ Nerd\ Font/` and copy all the `.ttf` files into. Then run `fc-cache -v` to update. Orrrrr pass the `LINK_FONTS=1` flag to `update_links.sh`
+- Fonts: tracked fonts in `config/mise/tasks.d/home-linux/fonts/` are linked
+  and cached automatically by `mise bootstrap` on home-linux.
 
 ## Dot Setup
-- Run `./update_links.sh` from within this directory. No it's not perfect, but it will link things.
+Linking and tool installation are managed by `mise bootstrap` (see
+`mise-migrate-dots.md` for the design, fresh-machine seed step, and rollout):
+
+```sh
+git clone <this repo> && cd dotfiles
+mkdir -p ~/.config
+ln -ns "$PWD/config/mise" ~/.config/mise
+printf "export MISE_ENV='%s'\n" '<machine>' >~/.mise_env
+export MISE_ENV='<machine>' # home | home-linux | home-server | work
+
+mise bootstrap --dry-run
+mise bootstrap --yes
+mise bootstrap status --missing
+```
+
+Machine identity comes from `MISE_ENV` in `~/.mise_env`. On home-linux,
+bootstrap initializes the GTK submodule, links the required fonts and icon
+themes, and refreshes their caches. On home-server, bootstrap also validates
+`~/servers/secrets.env`, links the tracked user units and Quadlets, reloads
+systemd, and enables/starts inactive units without restarting running services.
+The privileged `mise run server-init` task remains a one-time manual step.
 
 ## Font Rebuild
-If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Utilize the script `fonts/docker-build` to do all the work.
+If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `config/mise/tasks.d/home-linux/fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Utilize the script `docker-build` in that same folder to do all the work.
 
 Note: This will also patch the fonts with [nerd-fonts symbols](https://github.com/ryanoasis/nerd-fonts/wiki/ScriptOptions) for you.
 Note: This also means the font family will now be "IosevkaCustom Nerd Font Mono"
@@ -41,9 +61,11 @@ git config --global merge.conflictStyle zdiff3
 live on the remote host; closing a terminal window detaches (session keeps running),
 `exit`/Ctrl-D kills the session. Installed automatically via mise (`config.toml`).
 
-### SSH config (manual step — not managed by dotfiles)
+### SSH config
 
-For each remote host, add a block to `~/.ssh/config.local` so SSH auto-attaches
+Bootstrap links `~/.ssh/config.local` and keeps its Include first in the
+otherwise user-owned `~/.ssh/config`. Add host blocks to the tracked
+`home/ssh/config.local` so SSH auto-attaches
 to zmx and multiplexes panes over one connection:
 
 ```
@@ -81,20 +103,3 @@ custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 
 Saved layouts live in `config/kitty/layouts/` and can be committed.
 
-### (Deprecated)
-
-#### FanControl
-
-For linux fan profile management.
-
-- Init the submodule (or update it):
-```
-Init module:    git submodule update --init --recursive
-Update module:  git submodule update --remote --merge
-```
-
-- Install python deps:
-```
-pip install ./fancontrol/liquidctl psutil
-sudo pip install psutil
-```
