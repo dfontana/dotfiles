@@ -1,14 +1,14 @@
 [server-units]
-description = "Install home-server units (disbot, romm, yt-dlp); never restarts running services"
+description = "Install home-server static units (romm, yt-dlp); never restarts running services"
 shell = "bash -c"
 run = '''
+{% raw %}
 set -e
-. "${XDG_CONFIG_HOME:-$HOME/.config}/mise/lib.sh"
-SRC=config/mise/tasks.d/home-server
+source_root="${XDG_CONFIG_HOME:-$HOME/.config}/mise/tasks.d/home-server"
 secrets_file="$HOME/servers/secrets.env"
 if [[ ! -f "$secrets_file" ]]; then
   echo "error: ~/servers/secrets.env not found." >&2
-  echo "Copy $SRC/secrets.example.env there, fill it in, chmod 600 it." >&2
+  echo "Copy ~/.config/mise/tasks.d/home-server/secrets.example.env there, fill it in, chmod 600 it." >&2
   exit 1
 fi
 if [[ "$(stat -c '%a' "$secrets_file")" != "600" ]]; then
@@ -64,24 +64,11 @@ if [[ "${validated[DB_USER]}" != "${validated[MARIADB_USER]}" ]] ||
   exit 1
 fi
 
-echo "==> Linking units..."
-mkdir -p "$HOME/.config/systemd/user" "$HOME/.config/containers/systemd"
-for f in "$REPO/$SRC"/systemd/user/*; do
-  link "$SRC/systemd/user/$(basename "$f")" "$HOME/.config/systemd/user/$(basename "$f")" 0
-done
-for f in "$REPO/$SRC"/systemd/containers/*; do
-  link "$SRC/systemd/containers/$(basename "$f")" "$HOME/.config/containers/systemd/$(basename "$f")" 0
-done
-
-echo "==> Linking romm config..."
-mkdir -p "$HOME/servers/romm"
-link "$SRC/romm/config.yml" "$HOME/servers/romm/config.yml" 0
-
 echo "==> Reloading daemon (also regenerates Quadlet units)..."
 systemctl --user daemon-reload
 
 echo "==> Enabling services (timers own activation of paired services)..."
-for f in "$REPO/$SRC"/systemd/user/*.service "$REPO/$SRC"/systemd/user/*.timer; do
+for f in "$source_root"/systemd/user/*.service "$source_root"/systemd/user/*.timer; do
   [ -e "$f" ] || continue
   unit=$(basename "$f")
   if [[ "$unit" == *.service && -f "${f%.service}.timer" ]]; then
@@ -89,9 +76,10 @@ for f in "$REPO/$SRC"/systemd/user/*.service "$REPO/$SRC"/systemd/user/*.timer; 
   fi
   systemctl --user enable --now "$unit"
 done
-for f in "$REPO/$SRC"/systemd/containers/*.container; do
+for f in "$source_root"/systemd/containers/*.container; do
   [ -e "$f" ] || continue
   systemctl --user start "$(basename "${f%.container}").service"
 done
 echo "Done. Restart services manually after unit changes."
+{% endraw %}
 '''

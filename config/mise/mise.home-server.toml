@@ -1,12 +1,32 @@
 [vars]
 pi_extensions_path = "{{ env.HOME }}/opencode/pi-extensions"
 
+[dotfiles]
+"~/.config/systemd/user/yt-dlp-update.service" = "tasks.d/home-server/systemd/user/yt-dlp-update.service"
+"~/.config/systemd/user/yt-dlp-update.timer" = "tasks.d/home-server/systemd/user/yt-dlp-update.timer"
+"~/.config/containers/systemd/*" = "tasks.d/home-server/systemd/containers/*"
+"~/servers/romm/config.yml" = "tasks.d/home-server/romm/config.yml"
+
+# Native mise unit: ~/.config/systemd/user/dev.mise.disbot-prod.service.
+[bootstrap.linux.systemd.units.disbot-prod]
+description = "Disbot Service File"
+after = ["network.target"]
+exec_start = "~/servers/disbot/disbot-prod prod --web-bind-address lan"
+working_directory = "~/servers/disbot"
+environment = { PATH = "/usr/local/bin:/usr/bin:%h/.local/bin" }
+restart = "always"
+restart_sec = "1"
+
 # Home-server service management (see home-server/README.md).
 [task_config]
 includes = [
   "~/.config/mise/tasks.d/home-server/server-units.toml",
   "~/.config/mise/tasks.d/home-server/server-init.toml",
 ]
+
+[tasks.bootstrap]
+description = "Converge home-server services after declarative bootstrap"
+depends = ["server-units"]
 
 [tools]
 deno = "latest"

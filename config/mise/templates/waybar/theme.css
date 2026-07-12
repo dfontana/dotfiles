@@ -1,0 +1,12 @@
+@define-color bg rgba(0, 0, 0, 0.0);
+@define-color bg-module {{ vars.theme_overlay }};
+@define-color fg-module {{ vars.theme_text }};
+
+@define-color fg {{ vars.theme_rose }};
+@define-color fg-alt {{ vars.theme_love }};
+@define-color fg-hover {{ vars.theme_hl_high }};
+@define-color fg-persist {{ vars.theme_muted }};
+
+* {
+  font-family: {{ vars.font_family_icon }};
+}

@@ -2,16 +2,14 @@
 Stores configurations related to development environment.
 
 ## Prerequisites
-- oh-my-zsh is expected to already be installed.
-- Need these:
-  - Mac: cmake pkg-config
-  - Linux: Install kitty manually, dnf version is slow updates: https://sw.kovidgoyal.net/kitty/binary/
-- Fonts: tracked fonts in `config/mise/tasks.d/home-linux/fonts/` are linked
-  and cached automatically by `mise bootstrap` on home-linux.
+- Install Git, [mise](https://mise.jdx.dev/getting-started.html), and
+  [oh-my-zsh](https://ohmyz.sh/) with the `zsh-autosuggestions` and
+  `zsh-syntax-highlighting` plugins.
+- On Linux, install [Kitty](https://sw.kovidgoyal.net/kitty/binary/) directly.
+  `home-linux` also requires `fc-cache` and `gtk4-update-icon-cache`.
 
 ## Dot Setup
-Linking and tool installation are managed by `mise bootstrap` (see
-`mise-migrate-dots.md` for the design, fresh-machine seed step, and rollout):
+Clone this repo and choose its machine environment:
 
 ```sh
 git clone <this repo> && cd dotfiles
@@ -19,21 +17,21 @@ mkdir -p ~/.config
 ln -ns "$PWD/config/mise" ~/.config/mise
 printf "export MISE_ENV='%s'\n" '<machine>' >~/.mise_env
 export MISE_ENV='<machine>' # home | home-linux | home-server | work
-
-mise bootstrap --dry-run
 mise bootstrap --yes
-mise bootstrap status --missing
 ```
 
-Machine identity comes from `MISE_ENV` in `~/.mise_env`. On home-linux,
-bootstrap initializes the GTK submodule, links the required fonts and icon
-themes, and refreshes their caches. On home-server, bootstrap also validates
-`~/servers/secrets.env`, links the tracked user units and Quadlets, reloads
-systemd, and enables/starts inactive units without restarting running services.
-The privileged `mise run server-init` task remains a one-time manual step.
+`MISE_ENV` is `home` (macOS), `home-linux` (Fedora desktop), `home-server`
+(Fedora server), or `work` (work laptop). It is loaded from `~/.mise_env` in
+new shells.
+
+For `home-server`, ensure the private `~/servers` runtime is in place. Before
+the first bootstrap, create `~/servers/secrets.env` from
+`config/mise/tasks.d/home-server/secrets.example.env`, fill in its values, and
+run `chmod 600 ~/servers/secrets.env`. Run `mise run server-init` once after
+bootstrap to configure the firewall and user linger.
 
 ## Font Rebuild
-If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `config/mise/tasks.d/home-linux/fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Utilize the script `docker-build` in that same folder to do all the work.
+If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `config/mise/tasks.d/home-linux/fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Run `mise run fonts:rebuild` to do all the work (see `mise tasks ls` for the individual `fonts:*` steps).
 
 Note: This will also patch the fonts with [nerd-fonts symbols](https://github.com/ryanoasis/nerd-fonts/wiki/ScriptOptions) for you.
 Note: This also means the font family will now be "IosevkaCustom Nerd Font Mono"
@@ -63,9 +61,10 @@ live on the remote host; closing a terminal window detaches (session keeps runni
 
 ### SSH config
 
-Bootstrap links `~/.ssh/config.local` and keeps its Include first in the
-otherwise user-owned `~/.ssh/config`. Add host blocks to the tracked
-`home/ssh/config.local` so SSH auto-attaches
+Bootstrap manages the complete `~/.ssh/config`. It includes untracked,
+machine-local `~/.ssh/config.private` first and then tracked
+`~/.ssh/config.local`. Put private or work-specific host blocks in the former;
+add shared personal host blocks to `home/ssh/config.local` so SSH auto-attaches
 to zmx and multiplexes panes over one connection:
 
 ```

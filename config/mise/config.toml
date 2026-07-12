@@ -1,10 +1,57 @@
 [settings]
 dotfiles.default_mode = "symlink"
 
+[vars]
+font_family = "IosevkaCustom Nerd Font Mono Extended"
+font_family_bold = "IosevkaCustom Nerd Font Mono Extended Bold"
+font_family_italic = "IosevkaCustom Nerd Font Mono Extended Italic"
+font_family_bold_italic = "IosevkaCustom Nerd Font Mono Extended Bold Oblique"
+font_family_icon = "Iosevka Nerd Font"
+wallpaper = "$$HOME/Pictures/wallpapers/img1.png"
+theme_name = "rose-pine-dawn"
+theme_base = "#faf4ed"
+theme_surface = "#fffaf3"
+theme_overlay = "#f2e9e1"
+theme_muted = "#9893a5"
+theme_subtle = "#797593"
+theme_text = "#575279"
+theme_love = "#b4637a"
+theme_gold = "#ea9d34"
+theme_rose = "#d7827e"
+theme_pine = "#286983"
+theme_foam = "#56949f"
+theme_iris = "#907aa9"
+theme_hl_low = "#f4ede8"
+theme_hl_med = "#dfdad9"
+theme_hl_high = "#cecacd"
+
 [dotfiles]
 "~/.zshrc" = "../../home/zshrc"
+"~/.ssh/config" = "../../home/ssh/config"
 "~/.ssh/config.local" = "../../home/ssh/config.local"
-"~/.config/*" = "../../config/*"
+
+"~/.config/btop" = { source = "../../config/btop", mode = "symlink-each" }
+"~/.config/dunst" = { source = "../../config/dunst", mode = "symlink-each" }
+"~/.config/helix" = { source = "../../config/helix", mode = "symlink-each" }
+"~/.config/kitty" = { source = "../../config/kitty", mode = "symlink-each" }
+"~/.config/rofi" = { source = "../../config/rofi", mode = "symlink-each" }
+"~/.config/waybar" = { source = "../../config/waybar", mode = "symlink-each" }
+"~/.config/jj" = "../../config/jj"
+"~/.config/lyra" = "../../config/lyra"
+"~/.config/mise" = "../../config/mise"
+"~/.config/zellij" = "../../config/zellij"
+"~/.config/zsh" = "../../config/zsh"
+
+"~/.config/btop/btop.conf" = { source = "templates/btop/btop.conf", mode = "template" }
+"~/.config/dunst/dunstrc.d/theme.conf" = { source = "templates/dunst/dunstrc.d/theme.conf", mode = "template" }
+"~/.config/helix/config.toml" = { source = "templates/helix/config.toml", mode = "template" }
+"~/.config/hypr/hyprland.conf" = { source = "templates/hypr/hyprland.conf", mode = "template" }
+"~/.config/hypr/hyprlock.conf" = { source = "templates/hypr/hyprlock.conf", mode = "template" }
+"~/.config/hypr/hyprpaper.conf" = { source = "templates/hypr/hyprpaper.conf", mode = "template" }
+"~/.config/kitty/theme.conf" = { source = "templates/kitty/theme.conf", mode = "template" }
+"~/.config/rofi/themes/custom.rasi" = { source = "templates/rofi/themes/custom.rasi", mode = "template" }
+"~/.config/starship.toml" = { source = "templates/starship.toml", mode = "template" }
+"~/.config/waybar/theme.css" = { source = "templates/waybar/theme.css", mode = "template" }
 
 "~/.agents/skills" = "../../agents/skills"
 "~/.claude/skills" = "../../agents/skills"
@@ -21,38 +68,9 @@ dotfiles.default_mode = "symlink"
 [dotfiles."~/.zshenv/mise-shims"]
 line = '''case ":$PATH:" in *":$HOME/.local/share/mise/shims:"*) ;; *) export PATH="$HOME/.local/share/mise/shims:$PATH" ;; esac'''
 
-[tasks.bootstrap]
-description = "Finish shared setup and converge home-server services when selected"
-shell = "bash -c"
-run = '''
-set -e
-line='Include ~/.ssh/config.local'
-file="$HOME/.ssh/config"
-mkdir -p "$(dirname "$file")"
-
-if [[ -f "$file" ]] && [[ "$(head -n 1 "$file")" == "$line" ]] &&
-  [[ "$(grep -cxF -- "$line" "$file")" -eq 1 ]]; then
-  echo "SSH Include already first in $file"
-else
-  tmp=$(mktemp)
-  printf '%s\n' "$line" >"$tmp"
-  if [[ -f "$file" ]]; then
-    awk -v line="$line" '$0 != line' "$file" >>"$tmp"
-  fi
-  mv "$tmp" "$file"
-  chmod 600 "$file"
-  echo "Put SSH Include first in $file"
-fi
-
-if [[ "${MISE_ENV:-}" == "home-server" ]]; then
-  mise run server-units
-fi
-'''
-
 [tools]
 "github:dfontana/epc" = "latest"
 "github:dfontana/starjj" = "latest"
-"github:dfontana/tpl" = "latest"
 bat = "latest"
 delta = "latest"
 eza = "latest"

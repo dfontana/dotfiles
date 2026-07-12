@@ -1,6 +1,14 @@
-# Remove GTK?
-Context: GTK icons are available as a submodule in here, which I think was used for some version of home-linux. It needs to be verified if it's actually used.
-Ask: Remove the GTK submodule and setup code if it's notused. Evaluate if it's needed if it's actually setup on the home desktop.
+# Evaluate remaining mise-native bootstrap migrations
+
+These were intentionally deferred after the native dotfile/template migration;
+evaluate behavior on the affected machines before implementing them.
+
+## Task-local server secret vars
+
+Evaluate loading `~/servers/secrets.env` through task-local `vars._.file`, with
+required/redacted vars and Tera validation. Preserve the current mode-600,
+non-`TBD`, and cross-field equality checks without exposing secrets globally or
+in mise output; keep the runtime `EnvironmentFile` used by Quadlets.
 
 # kitty theme.conf for zmx
 Context: It's hard to tell the current pane is a remote session over zmx. We should update the window title to conditionally indicate it's a remote session using the ZMX_SESSION variable we use elsewhere in the zmx scripts

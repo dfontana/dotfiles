@@ -1,4 +1,0 @@
-[submodule "gtk"]
-	path = gtk
-	url = git@github.com:rose-pine/gtk.git
-	ignore = dirty

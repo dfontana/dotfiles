@@ -15,14 +15,15 @@ Semantics:
 - All setup must be idempotent or documented, making it reproducable and safe to setup multiple times
 
 Setup:
-- Linking and tool installation are done by `mise bootstrap` (see
-  mise-migrate-dots.md). Machine identity comes from MISE_ENV (~/.mise_env);
-  config/mise/mise.<env>.toml adds that machine's declarations and hooks.
-- On home-linux, bootstrap initializes the GTK submodule before linking, then
-  refreshes the tracked font and GTK icon caches.
-- On home-server, bootstrap validates secrets and runs the selective systemd
-  link/enable/start task automatically; privileged firewall/linger setup stays
-  explicit.
+- Linking and tool installation are done by `mise bootstrap`. Machine identity
+  comes from MISE_ENV (~/.mise_env); config/mise/mise.<env>.toml adds that
+  machine's declarations and hooks.
+- On home-linux, bootstrap clones the Rose Pine icon repo (see
+  config/mise/tasks.d/home-linux/gtk-icons/) before linking, then refreshes
+  the font and GTK icon caches in separate post-dotfiles hooks.
+- On home-server, dotfiles link service configuration before bootstrap runs
+  secret validation and selective enable/start automatically; privileged
+  firewall/linger setup stays explicit.
 - Machine-specific assets co-locate under config/mise/tasks.d/ (home-linux/,
   home-server/). update_links.sh and the general link tasks are deleted.
 
