@@ -61,9 +61,11 @@ live on the remote host; closing a terminal window detaches (session keeps runni
 
 ### SSH config
 
-Bootstrap manages the complete `~/.ssh/config`. It includes untracked,
-machine-local `~/.ssh/config.private` first and then tracked
-`~/.ssh/config.local`. Put private or work-specific host blocks in the former;
+On `home` and `home-linux`, bootstrap manages the complete
+`~/.ssh/config`. It includes untracked, machine-local `~/.ssh/config.private`
+first and then tracked `~/.ssh/config.local`; the `home` template also includes
+Colima's `~/.colima/ssh_config` when present. Put private or work-specific host
+blocks in the former;
 add shared personal host blocks to `home/ssh/config.local` so SSH auto-attaches
 to zmx and multiplexes panes over one connection:
 

@@ -27,7 +27,6 @@ theme_hl_high = "#cecacd"
 
 [dotfiles]
 "~/.zshrc" = "../../home/zshrc"
-"~/.ssh/config" = "../../home/ssh/config"
 
 "~/.config/helix" = { source = "../../config/helix", mode = "symlink-each" }
 "~/.config/kitty" = { source = "../../config/kitty", mode = "symlink-each" }

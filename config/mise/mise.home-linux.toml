@@ -1,4 +1,5 @@
 [dotfiles]
+"~/.ssh/config" = "../../home/ssh/config"
 "~/.ssh/config.local" = "../../home/ssh/config.local"
 "~/.local/bin/*" = "../../bin/*"
 "~/.local/share/applications/*" = "../../desktops/*"

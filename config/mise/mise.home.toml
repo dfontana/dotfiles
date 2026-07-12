@@ -1,4 +1,5 @@
 [dotfiles]
+"~/.ssh/config" = { source = "templates/ssh/config", mode = "template" }
 "~/.ssh/config.local" = "../../home/ssh/config.local"
 
 [vars]

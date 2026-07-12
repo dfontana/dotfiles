@@ -1,0 +1,3 @@
+Include {{ env.HOME }}/.ssh/config.private
+Include {{ env.HOME }}/.ssh/config.local
+Include {{ env.HOME }}/.colima/ssh_config
