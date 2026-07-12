@@ -28,30 +28,18 @@ theme_hl_high = "#cecacd"
 [dotfiles]
 "~/.zshrc" = "../../home/zshrc"
 "~/.ssh/config" = "../../home/ssh/config"
-"~/.ssh/config.local" = "../../home/ssh/config.local"
 
-"~/.config/btop" = { source = "../../config/btop", mode = "symlink-each" }
-"~/.config/dunst" = { source = "../../config/dunst", mode = "symlink-each" }
 "~/.config/helix" = { source = "../../config/helix", mode = "symlink-each" }
 "~/.config/kitty" = { source = "../../config/kitty", mode = "symlink-each" }
-"~/.config/rofi" = { source = "../../config/rofi", mode = "symlink-each" }
-"~/.config/waybar" = { source = "../../config/waybar", mode = "symlink-each" }
 "~/.config/jj" = "../../config/jj"
 "~/.config/lyra" = "../../config/lyra"
 "~/.config/mise" = "../../config/mise"
 "~/.config/zellij" = "../../config/zellij"
 "~/.config/zsh" = "../../config/zsh"
 
-"~/.config/btop/btop.conf" = { source = "templates/btop/btop.conf", mode = "template" }
-"~/.config/dunst/dunstrc.d/theme.conf" = { source = "templates/dunst/dunstrc.d/theme.conf", mode = "template" }
 "~/.config/helix/config.toml" = { source = "templates/helix/config.toml", mode = "template" }
-"~/.config/hypr/hyprland.conf" = { source = "templates/hypr/hyprland.conf", mode = "template" }
-"~/.config/hypr/hyprlock.conf" = { source = "templates/hypr/hyprlock.conf", mode = "template" }
-"~/.config/hypr/hyprpaper.conf" = { source = "templates/hypr/hyprpaper.conf", mode = "template" }
 "~/.config/kitty/theme.conf" = { source = "templates/kitty/theme.conf", mode = "template" }
-"~/.config/rofi/themes/custom.rasi" = { source = "templates/rofi/themes/custom.rasi", mode = "template" }
 "~/.config/starship.toml" = { source = "templates/starship.toml", mode = "template" }
-"~/.config/waybar/theme.css" = { source = "templates/waybar/theme.css", mode = "template" }
 
 "~/.agents/skills" = "../../agents/skills"
 "~/.claude/skills" = "../../agents/skills"

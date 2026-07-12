@@ -1,6 +1,19 @@
 [dotfiles]
+"~/.ssh/config.local" = "../../home/ssh/config.local"
 "~/.local/bin/*" = "../../bin/*"
 "~/.local/share/applications/*" = "../../desktops/*"
+"~/.config/btop" = { source = "../../config/btop", mode = "symlink-each" }
+"~/.config/dunst" = { source = "../../config/dunst", mode = "symlink-each" }
+"~/.config/rofi" = { source = "../../config/rofi", mode = "symlink-each" }
+"~/.config/waybar" = { source = "../../config/waybar", mode = "symlink-each" }
+
+"~/.config/btop/btop.conf" = { source = "templates/btop/btop.conf", mode = "template" }
+"~/.config/dunst/dunstrc.d/theme.conf" = { source = "templates/dunst/dunstrc.d/theme.conf", mode = "template" }
+"~/.config/hypr/hyprland.conf" = { source = "templates/hypr/hyprland.conf", mode = "template" }
+"~/.config/hypr/hyprlock.conf" = { source = "templates/hypr/hyprlock.conf", mode = "template" }
+"~/.config/hypr/hyprpaper.conf" = { source = "templates/hypr/hyprpaper.conf", mode = "template" }
+"~/.config/rofi/themes/custom.rasi" = { source = "templates/rofi/themes/custom.rasi", mode = "template" }
+"~/.config/waybar/theme.css" = { source = "templates/waybar/theme.css", mode = "template" }
 "~/.local/share/fonts/IosevkaCustom Nerd Font Mono/*.ttf" = "tasks.d/home-linux/fonts/ttfs/*.ttf"
 "~/.local/share/fonts/Iosevka Nerd Font/*.ttf" = "tasks.d/home-linux/fonts/icons/*.ttf"
 "~/.local/share/icons/*" = "tasks.d/home-linux/gtk-icons/rose-pine/icons/*-icons"
@@ -46,6 +59,7 @@ pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
 ZMX_HOST = "kossserver"
 
 [tools]
+btop = "latest"
 "github:dfontana/arrus" = "latest"
 
 [shell_alias]
