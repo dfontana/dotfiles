@@ -1,15 +1,3 @@
-# Evaluate remaining mise-native bootstrap migrations
-
-These were intentionally deferred after the native dotfile/template migration;
-evaluate behavior on the affected machines before implementing them.
-
-## Task-local server secret vars
-
-Evaluate loading `~/servers/secrets.env` through task-local `vars._.file`, with
-required/redacted vars and Tera validation. Preserve the current mode-600,
-non-`TBD`, and cross-field equality checks without exposing secrets globally or
-in mise output; keep the runtime `EnvironmentFile` used by Quadlets.
-
 # kitty theme.conf for zmx
 Context: It's hard to tell the current pane is a remote session over zmx. We should update the window title to conditionally indicate it's a remote session using the ZMX_SESSION variable we use elsewhere in the zmx scripts
 Ask: Can identify the zmx session a pane is attached to in the window title, but only when it's a session (otherwise nothing is shown)
