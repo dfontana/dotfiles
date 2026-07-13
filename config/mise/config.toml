@@ -30,7 +30,8 @@ theme_hl_high = "#cecacd"
 
 "~/.config/helix" = { source = "../../config/helix", mode = "symlink-each" }
 "~/.config/kitty" = { source = "../../config/kitty", mode = "symlink-each" }
-"~/.config/jj" = "../../config/jj"
+# Keep JJ's mutable per-repository metadata beside managed configuration.
+"~/.config/jj" = { source = "../../config/jj", mode = "symlink-each" }
 "~/.config/lyra" = "../../config/lyra"
 "~/.config/mise" = "../../config/mise"
 "~/.config/zellij" = "../../config/zellij"
