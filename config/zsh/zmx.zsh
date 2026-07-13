@@ -6,19 +6,27 @@ fi
 
 # zmx-attach [name] — the single entry point into a zmx session.
 # Announces the session to the controlling kitty terminal (so smart_split.py and
-# zls can read it via the zmx_session user var), then hands off to `zmx attach`.
+# zls can read it via the zmx_session user var), then runs `zmx attach`.
 # Every attach path (zp, zx, manual ssh) invokes this on the REMOTE side as:
 #   zsh -c 'source ~/.config/zsh/zmx.zsh; zmx-attach <name>'
 # The OSC must hit the raw ssh pty *before* `zmx attach` takes over — zmx drops
 # OSC 1337 as unimplemented, so a hook inside the session never reaches kitty.
+# Clear the marker when attach returns so conditional kitty key bindings never
+# treat the resulting local shell as an active zmx client.
 zmx-attach() {
   local session="${1:?zmx-attach: session name required}"
+  local attach_status
   # kitty user var via OSC 1337 SetUserVar (value base64); kitty terminals only.
   if [[ "$TERM" == xterm-kitty* ]]; then
     printf '\033]1337;SetUserVar=zmx_session=%s\007' \
       "$(printf %s "$session" | base64 | tr -d '\n')"
   fi
-  exec zmx attach "$session"
+  zmx attach "$session"
+  attach_status=$?
+  if [[ "$TERM" == xterm-kitty* ]]; then
+    printf '\033]1337;SetUserVar=zmx_session\007'
+  fi
+  return "$attach_status"
 }
 
 # ---------------------------------------------------------------------------

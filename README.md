@@ -114,7 +114,8 @@ custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 |---|---|
 | `>h` / `>v` | New hsplit / vsplit / tab — auto-named zmx session |
 | `>r` | Resume: fzf picker (`zx`) to reattach an existing session |
-| `>d` | Detach all (drops SSH ControlMaster; sessions persist) |
+| `>d` | Detach the focused active zmx pane (the session persists) |
+| `>D` | Detach all (drops SSH ControlMaster; sessions persist) |
 | `>s` | Save current tab layout (background, auto-named timestamp) |
 | `>o` | Restore a saved layout in a new tab (fzf-picks the layout) |
 
