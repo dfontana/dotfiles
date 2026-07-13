@@ -57,7 +57,7 @@ includes = ["~/.config/mise/tasks.d/home-linux/fonts/tasks.toml"]
 pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
 
 [env]
-ZMX_HOST = "kossserver"
+ZMX_HOST = "kossserver.home"
 
 [tools]
 btop = "latest"

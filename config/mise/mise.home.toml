@@ -6,7 +6,7 @@
 pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
 
 [env]
-ZMX_HOST = "kossserver"
+ZMX_HOST = "kossserver.home"
 
 [tools]
 zola = "latest"
