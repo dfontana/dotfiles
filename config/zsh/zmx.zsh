@@ -59,7 +59,11 @@ zmx-pick() {
   key=$(printf '%s\n' "$output" | sed -n '2p')
   selected=$(printf '%s\n' "$output" | sed -n '3p')
 
-  if [[ "$key" == ctrl-n && -n "$query" ]]; then
+  if [[ "$key" == ctrl-n ]]; then
+    if [[ -z "$query" ]]; then
+      echo "zmx-pick: enter a session name before pressing Ctrl-N" >&2
+      return 1
+    fi
     session_name=$query
   elif [[ $rc -eq 0 && -n "$selected" ]]; then
     session_name=${selected%%[[:space:]]*}
