@@ -1,6 +1,7 @@
-# kitty theme.conf for zmx
-Context: It's hard to tell the current pane is a remote session over zmx. We should update the window title to conditionally indicate it's a remote session using the ZMX_SESSION variable we use elsewhere in the zmx scripts
-Ask: Can identify the zmx session a pane is attached to in the window title, but only when it's a session (otherwise nothing is shown)
+# kitty title prefix for zmx
+Context: `zmx-attach` already sends Kitty's OSC 1337 `SetUserVar=zmx_session`, preserving the remote session identity even when applications such as Helix replace the title. We want title bars to show `[$ZMX_SESSION] ` before Kitty's normal dynamic title only for those windows.
+Blocker: `window_title_template` cannot interpolate user variables; `set-user-vars` only supports remote-control matching. `set-window-title --temporary` lets applications replace the prefix, while its permanent mode prevents application titles entirely.
+Ask: Decide whether Kitty's `window_title_bar.py` custom-title hook (which can read the user var and return the normal title with a prefix) is an acceptable minimal extension, and verify it has no local-title regressions before enabling it.
 
 # kitty.zsh split storage
 Context: Kitty has a keybind setup to save and restore layouts, but it doesn't store the actual split layout and sizes so restoring just stacks the panes. Ideally we restore the actual layout of the panes, in addition to the panes themselves.
