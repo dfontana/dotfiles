@@ -1,0 +1,30 @@
+# Rendered by the main Starship config only outside Jujutsu workspaces.
+format = """$git_branch\
+$git_commit\
+$git_state\
+$git_status"""
+
+palette = "custom"
+
+[palettes.custom]
+overlay = "{{ vars.theme_overlay }}"
+text = "{{ vars.theme_text }}"
+color_1 = "{{ vars.theme_love }}"
+color_2 = "{{ vars.theme_gold }}"
+color_3 = "{{ vars.theme_rose }}"
+color_4 = "{{ vars.theme_pine }}"
+color_5 = "{{ vars.theme_foam }}"
+color_6 = "{{ vars.theme_iris }}"
+
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style = "bold fg:color_6"
+
+[git_commit]
+style = "bold fg:color_4"
+
+[git_state]
+style = "bold fg:color_2"
+
+[git_status]
+style = "bold fg:color_1"

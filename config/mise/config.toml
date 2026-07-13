@@ -39,6 +39,7 @@ theme_hl_high = "#cecacd"
 "~/.config/helix/config.toml" = { source = "templates/helix/config.toml", mode = "template" }
 "~/.config/kitty/theme.conf" = { source = "templates/kitty/theme.conf", mode = "template" }
 "~/.config/starship.toml" = { source = "templates/starship.toml", mode = "template" }
+"~/.config/starship-git.toml" = { source = "templates/starship-git.toml", mode = "template" }
 
 "~/.agents/skills" = "../../agents/skills"
 "~/.claude/skills" = "../../agents/skills"

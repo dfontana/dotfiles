@@ -4,10 +4,7 @@ $username\
 $hostname\
 $directory\
 ${custom.jj}\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status\
+${custom.git}\
 $golang\
 $helm\
 $java\
@@ -66,17 +63,13 @@ shell = ["starjj"]
 use_stdin = false
 when = true
 
-# Git
-[git_branch]
-format = "[$symbol$branch(:$remote_branch)]($style) "
-style = "bold fg:color_6"
-[git_commit]
-style = "bold fg:color_4"
-[git_state]
-style = "bold fg:color_2"
-[git_status]
-disabled = false
-style = "bold fg:color_1"
+# Git outside Jujutsu workspaces; see starship-git.toml.
+[custom.git]
+command = 'STARSHIP_CONFIG="$HOME/.config/starship-git.toml" starship prompt'
+format = "$output"
+ignore_timeout = true
+shell = ["zsh", "--no-rcs"]
+when = "! jj root >/dev/null 2>&1"
 
 # Langs
 [golang]
