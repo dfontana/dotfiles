@@ -84,6 +84,27 @@ zmx-pick() {
   zmx-attach "$session_name"
 }
 
+# zmx-split-from <origin-session> <new-session> — attach a new session that
+# starts in the origin session's current working directory. The pid reported by
+# `zmx list` is the session's shell process, so /proc/<pid>/cwd tracks its live
+# cwd; fall back to the recorded start_dir (non-Linux hosts, dead pid), then
+# $HOME. Used by smart_split.py via `zp --from` so remote splits keep the cwd.
+zmx-split-from() {
+  local origin="${1:?zmx-split-from: origin session required}"
+  local session="${2:?zmx-split-from: new session name required}"
+  local line pid start_dir dir
+  line=$(zmx list 2>/dev/null | grep -F "name=${origin}"$'\t')
+  pid=${line#*pid=}
+  pid=${pid%%$'\t'*}
+  start_dir=${line#*start_dir=}
+  start_dir=${start_dir%%$'\t'*}
+  dir=$(readlink "/proc/${pid}/cwd" 2>/dev/null)
+  [[ -d "$dir" ]] || dir="$start_dir"
+  [[ -d "$dir" ]] || dir="$HOME"
+  cd "$dir" || cd "$HOME"
+  zmx-attach "$session"
+}
+
 # zk — kill the current zmx session (requires $ZMX_SESSION to be set by zmx)
 zk() {
   if [[ -z "${ZMX_SESSION:-}" ]]; then
@@ -124,10 +145,12 @@ if ! typeset -f _zmx_host >/dev/null 2>&1; then
   }
 fi
 
-# zp [name] — open a pane attached to a named zmx session on the remote host.
-# If no name is given, auto-generates one (p<HHMMSS>). The session is created
-# if it doesn't exist, or reattached if it does. When the SSH connection ends,
-# the local shell remains open.
+# zp [--from <session>] [name] — open a pane attached to a named zmx session on
+# the remote host. If no name is given, auto-generates one (p<HHMMSS>). The
+# session is created if it doesn't exist, or reattached if it does. When the
+# SSH connection ends, the local shell remains open.
+# --from <session> starts the new session in <session>'s current working
+# directory (via zmx-split-from on the remote) — used by smart_split.py.
 # Routes through zmx-attach (sourced on the remote) so the kitty window gets
 # tagged with the session name — covers zp, zx and manual ssh uniformly.
 zp() {
@@ -135,11 +158,21 @@ zp() {
     zx
     return
   }
-  local host session
+  local host session origin remote_cmd
+  if [[ "${1:-}" == "--from" ]]; then
+    origin="${2:?zp: --from requires a session name}"
+    shift 2
+  fi
   host="$(_zmx_host)" || return 1
   session="${1:-p$(date +%H%M%S)}"
+  if [[ -n "${origin:-}" ]]; then
+    # (qqq) double-quotes the names — safe inside the single-quoted zsh -c below
+    remote_cmd="zmx-split-from ${(qqq)origin} ${(qqq)session}"
+  else
+    remote_cmd="zmx-attach ${session}"
+  fi
   command ssh -t \
-    -o "RemoteCommand=zsh -c 'source ~/.config/zsh/zmx.zsh; zmx-attach ${session}'" \
+    -o "RemoteCommand=zsh -c 'source ~/.config/zsh/zmx.zsh; ${remote_cmd}'" \
     "${host}"
 }
 
