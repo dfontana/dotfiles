@@ -19,14 +19,6 @@ Ask: Opening a "smart_split" maintains the cwd in the new pane regardless of loc
 Context: CUrrently detach keybind will close all active connections but in reality we should have `d` detach just that one pane/connection, while all `shift+d` detaches everything. This will require detecting the active pane so we only detach if it's an active zmx session that's focused, otherwise nothing.
 Ask: Setup the specified keybind and behavior, identifying how to do this with the focus behavior desired
 
-# zmx.zsh exec removal
-Context: zmx helpers currently exec when running ssh so a drop in connection causes the entire pane to be closed. Ideally we don't lose the pane altogether. This trades off needing to double close the pane when I actually want to remove it, but this is likely more ergonomic.
-Ask: Remove `exec` style ssh from helpers and make it just a normal ssh. ssh connection lost or `exit` of a ssh connection should restore local terminal for that pane.
-
 # zmx.zsh wrapper cli?
-Context: There's a number of small helpers now (zp, zx, zpick, zk, zka, etc) which makes it less than ideal for memorizing themall. Esp since zp, zpick, zx all overlap. Ideally we create a small utility to wrap all this functionality into a CLI, so it's easier to discover and interact with the commands.
+Context: There's a number of small helpers now (zp, zmx-pick, zx, zk, zka, etc) which makes it less than ideal for memorizing them all. Especially since zp, zx, and zmx-pick overlap. Ideally we create a small utility to wrap all this functionality into a CLI, so it's easier to discover and interact with the commands.
 Ask: A single entrypoint to all these commands, with tab completion support.
-
-# zmx-pick installation
-Context: Currently only linked on home-linux but we need this utility on any remote server running zmx. So it's actually linked on the wrong machine. We should restructure `bin/` to instead be co-located with home-linux and then move the `bin/zmx-pick` to be colocated with the `home-server`. Ideally this utility would just be part of `zmx.zsh` and we integrate that onto all systems (everything nicely co-located / 1 file to rule them all)either leverage the zmx commands directly where it makes sense, or we create  
-Ask: Bundle and deploy zmx-pick in a more portable manner, scoped to the right server if we can't integrate with zmx.zsh

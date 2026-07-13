@@ -99,7 +99,7 @@ Host kossserver.*
 
 ### Host resolution — where `ZMX_HOST` comes from
 
-`zp`/`zd`/`zpick` (defined in `config/zsh/zmx.zsh`) call `_zmx_host()` to find
+`zp`/`zd`/`zx` (defined in `config/zsh/zmx.zsh`) call `_zmx_host()` to find
 the target SSH alias. Override `_zmx_host()` in a private zsh config to add
 custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 
@@ -113,7 +113,7 @@ custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 | Key | Action |
 |---|---|
 | `>h` / `>v` | New hsplit / vsplit / tab — auto-named zmx session |
-| `>r` | Resume: fzf picker (`zpick`) to reattach an existing session |
+| `>r` | Resume: fzf picker (`zx`) to reattach an existing session |
 | `>d` | Detach all (drops SSH ControlMaster; sessions persist) |
 | `>s` | Save current tab layout (background, auto-named timestamp) |
 | `>o` | Restore a saved layout in a new tab (fzf-picks the layout) |
