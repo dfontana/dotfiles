@@ -24,6 +24,22 @@ mise bootstrap --yes
 (Fedora server), or `work` (work laptop). It is loaded from `~/.mise_env` in
 new shells.
 
+### Migrating from direct linking
+
+Before bootstrapping an existing machine, replace any whole-directory symlink
+that now contains separately managed templates with a real directory. Otherwise
+mise may render into the repository or create self-referential links:
+
+```sh
+# Repeat for each affected directory (for example: helix or kitty).
+name=helix
+unlink "$HOME/.config/$name" # removes only the symlink, not its repository target
+mkdir -p "$HOME/.config/$name"
+
+# Run after migrating every affected directory.
+mise bootstrap --yes
+```
+
 For `home-server`, ensure the private `~/servers` runtime is in place. Before
 the first bootstrap, create `~/servers/secrets.env` from
 `config/mise/tasks.d/home-server/secrets.example.env`, fill in its values, and
