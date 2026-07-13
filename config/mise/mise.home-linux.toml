@@ -1,6 +1,8 @@
 [dotfiles]
 "~/.ssh/config" = "../../home/ssh/config"
 "~/.ssh/config.local" = "../../home/ssh/config.local"
+"~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
+"~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
 "~/.local/bin/*" = "../../bin/*"
 "~/.local/share/applications/*" = "../../desktops/*"
 "~/.config/btop" = { source = "../../config/btop", mode = "symlink-each" }

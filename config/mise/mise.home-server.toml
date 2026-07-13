@@ -2,6 +2,8 @@
 pi_extensions_path = "{{ env.HOME }}/opencode/pi-extensions"
 
 [dotfiles]
+"~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
+"~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
 "~/.config/systemd/user/yt-dlp-update.service" = "tasks.d/home-server/systemd/user/yt-dlp-update.service"
 "~/.config/systemd/user/yt-dlp-update.timer" = "tasks.d/home-server/systemd/user/yt-dlp-update.timer"
 "~/.config/containers/systemd/*" = "tasks.d/home-server/systemd/containers/*"

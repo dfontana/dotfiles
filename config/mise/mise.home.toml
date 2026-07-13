@@ -1,6 +1,8 @@
 [dotfiles]
 "~/.ssh/config" = { source = "templates/ssh/config", mode = "template" }
 "~/.ssh/config.local" = "../../home/ssh/config.local"
+"~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
+"~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
 
 [vars]
 pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"

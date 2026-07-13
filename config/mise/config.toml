@@ -44,12 +44,10 @@ theme_hl_high = "#cecacd"
 "~/.agents/skills" = "../../agents/skills"
 "~/.claude/skills" = "../../agents/skills"
 "~/.claude/hooks" = "../../agents/claude/hooks"
-"~/.claude/CLAUDE.md" = "../../agents/AGENTS.md"
-"~/.pi/agent/AGENTS.md" = "../../agents/AGENTS.md"
-"~/.pi/agent/agents/*" = "../../agents/pi/agent/agents/*"
-"~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
+"~/.claude/CLAUDE.md" = { source = "../../agents/pi/agent/AGENTS.md.tmpl", mode = "template" }
+"~/.pi/agent/AGENTS.md" = { source = "../../agents/pi/agent/AGENTS.md.tmpl", mode = "template" }
+"~/.pi/agent/agents" = { source = "../../agents/pi/agent/agents", mode = "symlink-each" }
 "~/.pi/agent/subagents.json" = "../../agents/pi/agent/subagents.json"
-"~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
 
 # .zshenv is read by every zsh. The suffix names this managed line; it is not
 # a child path on disk.

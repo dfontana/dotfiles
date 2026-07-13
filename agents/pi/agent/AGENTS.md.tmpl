@@ -1,0 +1,3 @@
+{{ read_file(path="../../agents/AGENTS.md") | trim }}{% if mise_env is defined and "work" in mise_env %}{% set work_instructions = exec(command="test -f ../../agents/AGENTS.work.md && cat ../../agents/AGENTS.work.md || true") | trim %}
+{% if work_instructions | length > 0 %}
+{{ work_instructions }}{% endif %}{% endif %}
