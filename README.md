@@ -2,18 +2,52 @@
 Stores configurations related to development environment.
 
 ## Prerequisites
-- oh-my-zsh is expected to already be installed.
-- Need these: 
-  - Mac: cmake pkg-config
-  - Linux: Install kitty manually, dnf version is slow updates: https://sw.kovidgoyal.net/kitty/binary/
-- Fonts: Install everything in `fonts/` folder
-  - On [Fedora](https://docs.fedoraproject.org/en-US/quick-docs/fonts/#user-fonts--command-line) this means making directory `~/.local/share/fonts/IosevkaCustom\ Nerd\ Font/` and copy all the `.ttf` files into. Then run `fc-cache -v` to update. Orrrrr pass the `LINK_FONTS=1` flag to `update_links.sh`
+- Install Git, [mise](https://mise.jdx.dev/getting-started.html), and
+  [oh-my-zsh](https://ohmyz.sh/) with the `zsh-autosuggestions` and
+  `zsh-syntax-highlighting` plugins.
+- On Linux, install [Kitty](https://sw.kovidgoyal.net/kitty/binary/) directly.
+  `home-linux` also requires `fc-cache` and `gtk4-update-icon-cache`.
 
 ## Dot Setup
-- Run `./update_links.sh` from within this directory. No it's not perfect, but it will link things.
+Clone this repo and choose its machine environment:
+
+```sh
+git clone <this repo> && cd dotfiles
+mkdir -p ~/.config
+ln -ns "$PWD/config/mise" ~/.config/mise
+printf "export MISE_ENV='%s'\n" '<machine>' >~/.mise_env
+export MISE_ENV='<machine>' # home | home-linux | home-server | work
+mise bootstrap --yes
+```
+
+`MISE_ENV` is `home` (macOS), `home-linux` (Fedora desktop), `home-server`
+(Fedora server), or `work` (work laptop). It is loaded from `~/.mise_env` in
+new shells.
+
+### Migrating from direct linking
+
+Before bootstrapping an existing machine, replace any whole-directory symlink
+that now contains separately managed templates with a real directory. Otherwise
+mise may render into the repository or create self-referential links:
+
+```sh
+# Repeat for each affected directory (for example: helix or kitty).
+name=helix
+unlink "$HOME/.config/$name" # removes only the symlink, not its repository target
+mkdir -p "$HOME/.config/$name"
+
+# Run after migrating every affected directory.
+mise bootstrap --yes
+```
+
+For `home-server`, ensure the private `~/servers` runtime is in place. Before
+the first bootstrap, create `~/servers/secrets.env` from
+`config/mise/tasks.d/home-server/secrets.example.env`, fill in its values, and
+run `chmod 600 ~/servers/secrets.env`. Run `mise run server-init` once after
+bootstrap to configure the firewall and user linger.
 
 ## Font Rebuild
-If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Utilize the script `fonts/docker-build` to do all the work.
+If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `config/mise/tasks.d/home-linux/fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Run `mise run fonts:rebuild` to do all the work (see `mise tasks ls` for the individual `fonts:*` steps).
 
 Note: This will also patch the fonts with [nerd-fonts symbols](https://github.com/ryanoasis/nerd-fonts/wiki/ScriptOptions) for you.
 Note: This also means the font family will now be "IosevkaCustom Nerd Font Mono"
@@ -41,9 +75,14 @@ git config --global merge.conflictStyle zdiff3
 live on the remote host; closing a terminal window detaches (session keeps running),
 `exit`/Ctrl-D kills the session. Installed automatically via mise (`config.toml`).
 
-### SSH config (manual step — not managed by dotfiles)
+### SSH config
 
-For each remote host, add a block to `~/.ssh/config.local` so SSH auto-attaches
+On `home` and `home-linux`, bootstrap manages the complete
+`~/.ssh/config`. It includes untracked, machine-local `~/.ssh/config.private`
+first and then tracked `~/.ssh/config.local`; the `home` template also includes
+Colima's `~/.colima/ssh_config` when present. Put private or work-specific host
+blocks in the former;
+add shared personal host blocks to `home/ssh/config.local` so SSH auto-attaches
 to zmx and multiplexes panes over one connection:
 
 ```
@@ -81,20 +120,3 @@ custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 
 Saved layouts live in `config/kitty/layouts/` and can be committed.
 
-### (Deprecated)
-
-#### FanControl
-
-For linux fan profile management.
-
-- Init the submodule (or update it):
-```
-Init module:    git submodule update --init --recursive
-Update module:  git submodule update --remote --merge
-```
-
-- Install python deps:
-```
-pip install ./fancontrol/liquidctl psutil
-sudo pip install psutil
-```

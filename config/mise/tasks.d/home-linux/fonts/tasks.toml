@@ -1,0 +1,61 @@
+# Rebuild tasks for the tracked IosevkaCustom Nerd Font TTFs. Every task runs
+# from this directory, so private-build-plans.toml and ttfs/ resolve without
+# any manual setup: `mise run fonts:rebuild` is the whole workflow.
+
+["fonts:image"]
+description = "Build the Iosevka fontcc Docker image if missing"
+dir = "~/.config/mise/tasks.d/home-linux/fonts"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+if docker image inspect fontcc >/dev/null 2>&1; then
+  echo "fontcc image exists, using that"
+  exit 0
+fi
+checkout=$(mktemp -d)
+trap 'rm -rf "$checkout"' EXIT
+git clone --depth=1 https://github.com/be5invis/Iosevka.git "$checkout"
+docker build -t fontcc "$checkout/docker/"
+'''
+
+["fonts:build"]
+description = "Build IosevkaCustom TTFs from private-build-plans.toml into dist/"
+depends = ["fonts:image"]
+dir = "~/.config/mise/tasks.d/home-linux/fonts"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ -d dist ]]; then
+  echo "dist/ present, skipping build (run fonts:clean first to force)"
+  exit 0
+fi
+docker run --rm -v "$PWD:/work" fontcc ttf::IosevkaCustom
+'''
+
+["fonts:patch"]
+description = "Patch built TTFs with Nerd Font symbols into tracked ttfs/"
+depends = ["fonts:build"]
+dir = "~/.config/mise/tasks.d/home-linux/fonts"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+docker run --rm \
+  -v "$PWD/dist/IosevkaCustom/TTF:/in:Z" \
+  -v "$PWD/ttfs:/out:Z" \
+  nerdfonts/patcher --careful --complete --mono
+'''
+
+["fonts:clean"]
+description = "Remove the dist/ build directory (docker may own it as root)"
+dir = "~/.config/mise/tasks.d/home-linux/fonts"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+[[ -d dist ]] || exit 0
+sudo rm -rf dist
+'''
+
+["fonts:rebuild"]
+description = "Full font rebuild: image, build, Nerd Font patch, cleanup"
+depends = ["fonts:patch"]
+depends_post = ["fonts:clean"]

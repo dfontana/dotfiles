@@ -1,0 +1,85 @@
+[server-units]
+description = "Install home-server static units (romm, yt-dlp); never restarts running services"
+shell = "bash -c"
+run = '''
+{% raw %}
+set -e
+source_root="${XDG_CONFIG_HOME:-$HOME/.config}/mise/tasks.d/home-server"
+secrets_file="$HOME/servers/secrets.env"
+if [[ ! -f "$secrets_file" ]]; then
+  echo "error: ~/servers/secrets.env not found." >&2
+  echo "Copy ~/.config/mise/tasks.d/home-server/secrets.example.env there, fill it in, chmod 600 it." >&2
+  exit 1
+fi
+if [[ "$(stat -c '%a' "$secrets_file")" != "600" ]]; then
+  echo "error: ~/servers/secrets.env must have mode 600." >&2
+  exit 1
+fi
+
+declare -A secrets=()
+while IFS= read -r line || [[ -n "$line" ]]; do
+  line=${line%$'\r'}
+  [[ -z "$line" || "$line" == \#* ]] && continue
+  if [[ "$line" != *=* ]]; then
+    echo "error: invalid line in ~/servers/secrets.env: $line" >&2
+    exit 1
+  fi
+  key=${line%%=*}
+  secrets["$key"]=${line#*=}
+done <"$secrets_file"
+
+normalize_secret() {
+  local value=$1
+  value="${value#"${value%%[![:space:]]*}"}"
+  value="${value%"${value##*[![:space:]]}"}"
+  if [[ ${#value} -ge 2 ]] &&
+    { [[ "$value" == \"*\" ]] || [[ "$value" == \'*\' ]]; }; then
+    value=${value:1:${#value}-2}
+    value="${value#"${value%%[![:space:]]*}"}"
+    value="${value%"${value##*[![:space:]]}"}"
+  fi
+  printf '%s' "$value"
+}
+
+required=(
+  DB_USER
+  DB_PASSWD
+  ROMM_AUTH_SECRET_KEY
+  MARIADB_ROOT_PASSWORD
+  MARIADB_USER
+  MARIADB_PASSWORD
+)
+declare -A validated=()
+for key in "${required[@]}"; do
+  value=$(normalize_secret "${secrets[$key]:-}")
+  if [[ -z "$value" || "$value" == "TBD" ]]; then
+    echo "error: $key must be set to a non-placeholder value in ~/servers/secrets.env." >&2
+    exit 1
+  fi
+  validated["$key"]=$value
+done
+if [[ "${validated[DB_USER]}" != "${validated[MARIADB_USER]}" ]] ||
+  [[ "${validated[DB_PASSWD]}" != "${validated[MARIADB_PASSWORD]}" ]]; then
+  echo "error: DB_USER/DB_PASSWD must match MARIADB_USER/MARIADB_PASSWORD." >&2
+  exit 1
+fi
+
+echo "==> Reloading daemon (also regenerates Quadlet units)..."
+systemctl --user daemon-reload
+
+echo "==> Enabling services (timers own activation of paired services)..."
+for f in "$source_root"/systemd/user/*.service "$source_root"/systemd/user/*.timer; do
+  [ -e "$f" ] || continue
+  unit=$(basename "$f")
+  if [[ "$unit" == *.service && -f "${f%.service}.timer" ]]; then
+    continue
+  fi
+  systemctl --user enable --now "$unit"
+done
+for f in "$source_root"/systemd/containers/*.container; do
+  [ -e "$f" ] || continue
+  systemctl --user start "$(basename "${f%.container}").service"
+done
+echo "Done. Restart services manually after unit changes."
+{% endraw %}
+'''

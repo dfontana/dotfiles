@@ -10,9 +10,6 @@ KITTY_LAYOUTS_DIR="${HOME}/dotfiles/config/kitty/layouts"
 # If no name given, auto-names with a timestamp (auto-YYYYMMDD-HHMMSS).
 # Each window's zmx session name is read from its "zmx_session" user variable,
 # set at pane-open time by zp.
-# TODO: Can we store the actual splits location so restore can restore them? Right now
-#       they end up restoring as a vertical or horizonal stack rather than original split
-#       locations
 zls() {
   local label="${1:-auto-$(date +%Y%m%d-%H%M%S)}"
   mkdir -p "$KITTY_LAYOUTS_DIR"

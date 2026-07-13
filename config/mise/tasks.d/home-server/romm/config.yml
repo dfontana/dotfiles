@@ -1,0 +1,115 @@
+emulatorjs:
+  cache_limit: null
+  controls: {}
+  debug: false
+  disable_auto_unload: false
+  disable_batch_bootup: false
+  netplay:
+    enabled: false
+    ice_servers: []
+  settings: {}
+exclude:
+  platforms:
+  - $RECYCLE.BIN
+  - .DocumentRevisions-V100
+  - .Spotlight-V100
+  - .Trash-*
+  - .fseventsd
+  - .stfolder
+  - '@eaDir'
+  - System Volume Information
+  - __MACOSX
+  roms:
+    multi_file:
+      names:
+      - $RECYCLE.BIN
+      - .DocumentRevisions-V100
+      - .Spotlight-V100
+      - .Trash-*
+      - .fseventsd
+      - .stfolder
+      - '@eaDir'
+      - System Volume Information
+      - __MACOSX
+      parts:
+        extensions:
+        - bak
+        - cache
+        - crdownload
+        - db
+        - ini
+        - lock
+        - log
+        - tmp
+        names:
+        - .DS_Store
+        - .Trashes
+        - .localized
+        - .stfolder
+        - '@SynoResource'
+        - gamelist.xml
+        - metadata.pegasus.xml
+    single_file:
+      extensions:
+      - bak
+      - cache
+      - crdownload
+      - db
+      - ini
+      - lock
+      - log
+      - tmp
+      names:
+      - .DS_Store
+      - .Trashes
+      - .localized
+      - .stfolder
+      - '@SynoResource'
+      - gamelist.xml
+      - metadata.pegasus.xml
+filesystem:
+  firmware_folder: bios
+  roms_folder: roms
+scan:
+  export_gamelist: false
+  media:
+  - box2d
+  - screenshot
+  - manual
+  priority:
+    artwork:
+    - igdb
+    - moby
+    - ss
+    - ra
+    - launchbox
+    - gamelist
+    - hasheous
+    - tgdb
+    - flashpoint
+    - hltb
+    language:
+    - en
+    - fr
+    metadata:
+    - igdb
+    - moby
+    - ss
+    - ra
+    - launchbox
+    - gamelist
+    - hasheous
+    - tgdb
+    - flashpoint
+    - hltb
+    region:
+    - us
+    - wor
+    - ss
+    - eu
+    - jp
+system:
+  platforms:
+    gb: gb
+    ps: ps2
+  versions: {}

@@ -1,5 +1,12 @@
+[dotfiles]
+"~/.ssh/config" = { source = "templates/ssh/config", mode = "template" }
+"~/.ssh/config.local" = "../../home/ssh/config.local"
+
+[vars]
+pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
+
 [env]
-ZMX_HOST = "kossserver"
+ZMX_HOST = "kossserver.home"
 
 [tools]
 zola = "latest"

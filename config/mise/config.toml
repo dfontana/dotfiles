@@ -1,9 +1,64 @@
+[settings]
+dotfiles.default_mode = "symlink"
+
+[vars]
+font_family = "IosevkaCustom Nerd Font Mono Extended"
+font_family_bold = "IosevkaCustom Nerd Font Mono Extended Bold"
+font_family_italic = "IosevkaCustom Nerd Font Mono Extended Italic"
+font_family_bold_italic = "IosevkaCustom Nerd Font Mono Extended Bold Oblique"
+font_family_icon = "Iosevka Nerd Font"
+wallpaper = "$$HOME/Pictures/wallpapers/img1.png"
+theme_name = "rose-pine-dawn"
+theme_base = "#faf4ed"
+theme_surface = "#fffaf3"
+theme_overlay = "#f2e9e1"
+theme_muted = "#9893a5"
+theme_subtle = "#797593"
+theme_text = "#575279"
+theme_love = "#b4637a"
+theme_gold = "#ea9d34"
+theme_rose = "#d7827e"
+theme_pine = "#286983"
+theme_foam = "#56949f"
+theme_iris = "#907aa9"
+theme_hl_low = "#f4ede8"
+theme_hl_med = "#dfdad9"
+theme_hl_high = "#cecacd"
+
+[dotfiles]
+"~/.zshrc" = "../../home/zshrc"
+
+"~/.config/helix" = { source = "../../config/helix", mode = "symlink-each" }
+"~/.config/kitty" = { source = "../../config/kitty", mode = "symlink-each" }
+"~/.config/jj" = "../../config/jj"
+"~/.config/lyra" = "../../config/lyra"
+"~/.config/mise" = "../../config/mise"
+"~/.config/zellij" = "../../config/zellij"
+"~/.config/zsh" = "../../config/zsh"
+
+"~/.config/helix/config.toml" = { source = "templates/helix/config.toml", mode = "template" }
+"~/.config/kitty/theme.conf" = { source = "templates/kitty/theme.conf", mode = "template" }
+"~/.config/starship.toml" = { source = "templates/starship.toml", mode = "template" }
+
+"~/.agents/skills" = "../../agents/skills"
+"~/.claude/skills" = "../../agents/skills"
+"~/.claude/hooks" = "../../agents/claude/hooks"
+"~/.claude/CLAUDE.md" = "../../agents/AGENTS.md"
+"~/.pi/agent/AGENTS.md" = "../../agents/AGENTS.md"
+"~/.pi/agent/agents/*" = "../../agents/pi/agent/agents/*"
+"~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
+"~/.pi/agent/subagents.json" = "../../agents/pi/agent/subagents.json"
+"~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
+
+# .zshenv is read by every zsh. The suffix names this managed line; it is not
+# a child path on disk.
+[dotfiles."~/.zshenv/mise-shims"]
+line = '''case ":$PATH:" in *":$HOME/.local/share/mise/shims:"*) ;; *) export PATH="$HOME/.local/share/mise/shims:$PATH" ;; esac'''
+
 [tools]
 "github:dfontana/epc" = "latest"
 "github:dfontana/starjj" = "latest"
-"github:dfontana/tpl" = "latest"
 bat = "latest"
-btop = {version = "latest", os = ["linux"] }
 delta = "latest"
 eza = "latest"
 fd = "latest"
@@ -13,24 +68,19 @@ helix = "latest"
 jj = "latest"
 jq = "latest"
 node = "latest"
+"npm:@earendil-works/pi-coding-agent" = "latest"
 ripgrep = "latest"
 ruff = "latest"
-rust = {
-  version = "latest",
-  profile = "default",
-  components = "rust-analyzer"
-  # Note: can set targets for cross compilation too
-}
+rust = { version = "latest", profile = "default", components = "rust-analyzer" }
 shellcheck = "latest"
 shfmt = "latest"
 starship = "latest"
 taplo = "latest"
 yq = "latest"
 zellij = "latest"
-pi = "latest"
 ty = "latest"
 "github:neurosnap/zmx" = "latest"
 
 [shell_alias]
 erd = "eza --tree"
-csvdiff='git diff --color-words="[^[:space:],]+"'
+csvdiff = 'git diff --color-words="[^[:space:],]+"'
