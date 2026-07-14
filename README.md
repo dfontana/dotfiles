@@ -117,10 +117,12 @@ custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 | `cmd+shift+r` | Resize | Arrows resize |
 | `cmd+shift+w` | Zmx | `r` resume, `d` detach, `D` detach all, `s` save, `o` restore |
 
-The active mode is shown at the right edge of Kitty's tab bar. Press `escape`,
-`enter`, or the active mode's chord again to return to normal mode; pressing a
-different mode chord switches directly to it. Actions that open a prompt or
-overlay, create a tab or pane, or close something leave their mode automatically.
+While a mode is active, Kitty's tab bar is replaced by its keybinding hints,
+right-aligned against the mode badge. The normal tabs return as soon as the mode
+exits. Press `escape`, `enter`, or the active mode's chord again to return to
+normal mode; pressing a different mode chord switches directly to it. Actions
+that open a prompt or overlay, create a tab or pane, or close something leave
+their mode automatically.
 
 Saved layouts live in `config/kitty/layouts/` and can be committed.
 
