@@ -108,16 +108,19 @@ custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
 | Home Mac | `config/mise/mise.home.toml` → `[env] ZMX_HOST = "homeserver"` |
 | Work Mac | `werk.zsh` (gitignored) → `_zmx_host()` override |
 
-### Kitty keybindings (`cmd+shift+w`)
+### Kitty modal keybindings
 
-| Key | Action |
-|---|---|
-| `>h` / `>v` | New hsplit / vsplit / tab — auto-named zmx session |
-| `>r` | Resume: fzf picker (`zx`) to reattach an existing session |
-| `>d` | Detach the focused active zmx pane (the session persists) |
-| `>D` | Detach all (drops SSH ControlMaster; sessions persist) |
-| `>s` | Save current tab layout (background, auto-named timestamp) |
-| `>o` | Restore a saved layout in a new tab (fzf-picks the layout) |
+| Chord | Mode | Keys |
+|---|---|---|
+| `cmd+shift+t` | Tab | `r` rename, `t` new, `x` close, arrows navigate, `shift+left/right` reorder |
+| `cmd+shift+p` | Pane | `r` rename, `x` close, `h`/`v` smart split, `shift+h/v` local split, arrows move |
+| `cmd+shift+r` | Resize | Arrows resize |
+| `cmd+shift+w` | Zmx | `r` resume, `d` detach, `D` detach all, `s` save, `o` restore |
+
+The active mode is shown at the right edge of Kitty's tab bar. Press `escape`,
+`enter`, or the active mode's chord again to return to normal mode; pressing a
+different mode chord switches directly to it. Actions that open a prompt or
+overlay, create a tab or pane, or close something leave their mode automatically.
 
 Saved layouts live in `config/kitty/layouts/` and can be committed.
 

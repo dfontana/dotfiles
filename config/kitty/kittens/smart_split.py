@@ -6,8 +6,8 @@ remote session), opens a new zmx pane via `zp`. Otherwise opens a plain local
 split — identical to the old launch --cwd=current behaviour, with no overhead.
 
 Usage in kitty.conf:
-    map cmd+shift+p>h kitten kittens/smart_split.py hsplit
-    map cmd+shift+p>v kitten kittens/smart_split.py vsplit
+    map --mode pane h combine : pop_keyboard_mode : kitten kittens/smart_split.py hsplit
+    map --mode pane v combine : pop_keyboard_mode : kitten kittens/smart_split.py vsplit
 """
 
 from kittens.tui.handler import result_handler
