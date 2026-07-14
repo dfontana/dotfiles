@@ -1,5 +1,10 @@
 # Zmx pane management redesign
 
+**OPEN QUESTIONS**
+- Do you really want layout preservation?
+- Do you really want to have smart split always open a new random session? `zp` even?
+- Maybe you should just use a `zx` style approach and name/re-attach things meaningfully. It reduces a lot of this complications.
+
 ## Status
 
 Planned. This document describes a narrower, local-first model for zmx-managed Kitty panes. It intentionally does **not** implement remote working-directory cloning; that is a separate capability with no reliable zmx API today.
