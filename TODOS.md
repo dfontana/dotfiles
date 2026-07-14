@@ -12,10 +12,6 @@ Context: Kitty supports modal keybinds just like zellij, which the current keybi
  (maybe best to implement a kitten that wraps the existing tab_bar and floats the information on the right side of the bar).
 Ask: Modal bindings are setup and there's feedback in the tab bar on which mode is active, on the right side.
 
-# kitty smart_split cwd on the remote and/or local
-Context: smart_split does not maintain the cwd when launching a split. Ideally this will maintain the cwd when working locally or in a ZMX session over ssh. The shift-split override should remain without cwd.
-Ask: Opening a "smart_split" maintains the cwd in the new pane regardless of local or remote connection.
-
 # zmx.zsh wrapper cli?
 Context: There's a number of small helpers now (zp, zmx-pick, zx, zk, zka, etc) which makes it less than ideal for memorizing them all. Especially since zp, zx, and zmx-pick overlap. Ideally we create a small utility to wrap all this functionality into a CLI, so it's easier to discover and interact with the commands.
 Ask: A single entrypoint to all these commands, with tab completion support.
