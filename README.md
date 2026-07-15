@@ -71,58 +71,47 @@ git config --global merge.conflictStyle zdiff3
 
 ## zmx — persistent remote terminal sessions
 
-[zmx](https://zmx.sh) replaces tmux/zellij for remote session persistence. Sessions
-live on the remote host; closing a terminal window detaches (session keeps running),
-`exit`/Ctrl-D kills the session. Installed automatically via mise (`config.toml`).
+[zmx](https://zmx.sh) replaces tmux/zellij for remote session persistence. The
+only shell entry point is `zx`, defined in `config/zsh/zmx.zsh`. It resolves the
+SSH host locally, downloads the remote session list, and runs `fzf` locally.
+Selecting a session then connects with `ssh -t` and `zmx attach`.
+
+The picker supports:
+
+- `Enter`: attach to the selected session, or create and attach to a typed name when nothing is selected
+- `Shift+X`: kill the selected remote session, reload the list, and keep picking
+
+History previews are also fetched over SSH and rendered by the local picker.
+There are no remote picker helpers, pane metadata, smart zmx splits, detach
+commands, or layout save/restore helpers.
 
 ### SSH config
 
-On `home` and `home-linux`, bootstrap manages the complete
-`~/.ssh/config`. It includes untracked, machine-local `~/.ssh/config.private`
-first and then tracked `~/.ssh/config.local`; the `home` template also includes
-Colima's `~/.colima/ssh_config` when present. Put private or work-specific host
-blocks in the former;
-add shared personal host blocks to `home/ssh/config.local` so SSH auto-attaches
-to zmx and multiplexes panes over one connection:
+On `home` and `home-linux`, bootstrap manages the complete `~/.ssh/config`. It
+includes untracked, machine-local `~/.ssh/config.private` first and then tracked
+`~/.ssh/config.local`; the `home` template also includes Colima's
+`~/.colima/ssh_config` when present. Put private or work-specific host blocks in
+the former and shared personal host blocks in `home/ssh/config.local`.
+
+Connection multiplexing remains useful for fast picker previews and reconnects:
 
 ```
 Host kossserver.*
-    RequestTTY yes
     ControlMaster auto
     ControlPath ~/.ssh/ctl-%C.socket
-    ControlPersist 1s                  # master exits 1s after last channel closes
+    ControlPersist 1s
     ForwardAgent yes
 ```
 
-`ControlPersist 1s` keeps sessions detached (not killed) when all panes close.
-`ForwardAgent yes` lets the remote use your local SSH key for git etc.
+### Host resolution
 
-### Host resolution — where `ZMX_HOST` comes from
+`zx` uses an existing `_zmx_host()` function when a private zsh config defines
+one, allowing local multi-host selection. Otherwise it uses the `ZMX_HOST`
+environment variable declared by the machine's mise environment.
 
-`zp`/`zd`/`zx` (defined in `config/zsh/zmx.zsh`) call `_zmx_host()` to find
-the target SSH alias. Override `_zmx_host()` in a private zsh config to add
-custom resolution logic (e.g. multi-host fzf picker in `werk.zsh`).
+### Kitty keybindings
 
-| Machine | Source |
-|---|---|
-| Home Mac | `config/mise/mise.home.toml` → `[env] ZMX_HOST = "homeserver"` |
-| Work Mac | `werk.zsh` (gitignored) → `_zmx_host()` override |
-
-### Kitty modal keybindings
-
-| Chord | Mode | Keys |
-|---|---|---|
-| `cmd+shift+t` | Tab | `r` rename, `t` new, `x` close, arrows navigate, `shift+left/right` reorder |
-| `cmd+shift+p` | Pane | `r` rename, `x` close, `h`/`v` smart split, `shift+h/v` local split, arrows move |
-| `cmd+shift+r` | Resize | Arrows resize |
-| `cmd+shift+w` | Zmx | `r` resume, `d` detach, `D` detach all, `s` save, `o` restore |
-
-While a mode is active, Kitty's tab bar is replaced by its keybinding hints,
-right-aligned against the mode badge. The normal tabs return as soon as the mode
-exits. Press `escape`, `enter`, or the active mode's chord again to return to
-normal mode; pressing a different mode chord switches directly to it. Actions
-that open a prompt or overlay, create a tab or pane, or close something leave
-their mode automatically.
-
-Saved layouts live in `config/kitty/layouts/` and can be committed.
+`cmd+shift+w` launches `zx` in a new local split, even when the focused pane is
+connected to a remote session. The tab, pane, and resize modes remain unchanged
+apart from all splits now being ordinary local splits.
 
