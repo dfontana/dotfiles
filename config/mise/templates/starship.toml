@@ -65,7 +65,7 @@ when = true
 
 # Git outside Jujutsu workspaces; see starship-git.toml.
 [custom.git]
-command = 'STARSHIP_CONFIG="$HOME/.config/starship-git.toml" starship prompt'
+command = 'env -u STARSHIP_SHELL STARSHIP_CONFIG="$HOME/.config/starship-git.toml" starship prompt'
 format = "$output"
 ignore_timeout = true
 shell = ["zsh", "--no-rcs"]
