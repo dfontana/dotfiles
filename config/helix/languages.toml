@@ -66,6 +66,24 @@ language-servers = ["merman-lsp", "gph-preview"]
 name = "markdown"
 language-servers = ["merman-lsp"]
 
+[language-server.lua-language-server]
+command = "lua-language-server"
+
+[language-server.lua-language-server.config.Lua]
+runtime = { version = "Lua 5.4" }
+diagnostics = { globals = ["vim"] }
+workspace = { ignoreDir = [".jj", ".git"] }
+telemetry = { enable = false }
+
+[[language]]
+name = "lua"
+scope = "source.lua"
+file-types = ["lua"]
+comment-token = "--"
+language-servers = ["lua-language-server"]
+indent = { tab-width = 2, unit = "  " }
+auto-format = true
+
 [language.auto-pairs]
 '(' = ')'
 '{' = '}'
@@ -75,5 +93,3 @@ language-servers = ["merman-lsp"]
 [[grammar]]
 name = "roc"
 source = { git = "https://github.com/faldor20/tree-sitter-roc.git", rev = "ef46edd0c03ea30a22f7e92bc68628fb7231dc8a" }
-
-
