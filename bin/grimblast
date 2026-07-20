@@ -20,15 +20,13 @@
 
 # Check whether another instance is running
 
-
 grimblastInstanceCheck="${XDG_RUNTIME_DIR:-$XDG_CACHE_DIR:-$HOME/.cache}/grimblast.lock"
 if [ -e "$grimblastInstanceCheck" ]; then
-	exit 2
+  exit 2
 else
-	touch "$grimblastInstanceCheck"
+  touch "$grimblastInstanceCheck"
 fi
 trap "rm -f '$grimblastInstanceCheck'" EXIT
-
 
 getTargetDirectory() {
   test -f "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" &&
@@ -62,40 +60,40 @@ while [ $# -gt 0 ]; do
   key="$1"
 
   case $key in
-  -n | --notify)
-    NOTIFY=yes
-    shift # past argument
-    ;;
-  -c | --cursor)
-    CURSOR=yes
-    shift # past argument
-    ;;
-  -f | --freeze)
-    FREEZE=yes
-    shift # past argument
-    ;;
-  -w | --wait)
-    shift
-    WAIT=$1
-    if echo "$WAIT" | grep "[^0-9]" -q; then
-      echo "Invalid value for wait '$WAIT'" >&2
-      exit 3
-    fi
-    shift
-    ;;
-  -s | --scale)
-    shift # past argument
-    if [ $# -gt 0 ]; then
-      SCALE="$1" # assign the next argument to SCALE
-      shift      # past argument
-    else
-      echo "Error: Missing argument for --scale option."
-      exit 1
-    fi
-    ;;
-  *)      # unknown option
-    break # done with parsing --flags
-    ;;
+    -n | --notify)
+      NOTIFY=yes
+      shift # past argument
+      ;;
+    -c | --cursor)
+      CURSOR=yes
+      shift # past argument
+      ;;
+    -f | --freeze)
+      FREEZE=yes
+      shift # past argument
+      ;;
+    -w | --wait)
+      shift
+      WAIT=$1
+      if echo "$WAIT" | grep "[^0-9]" -q; then
+        echo "Invalid value for wait '$WAIT'" >&2
+        exit 3
+      fi
+      shift
+      ;;
+    -s | --scale)
+      shift # past argument
+      if [ $# -gt 0 ]; then
+        SCALE="$1" # assign the next argument to SCALE
+        shift      # past argument
+      else
+        echo "Error: Missing argument for --scale option."
+        exit 1
+      fi
+      ;;
+    *)      # unknown option
+      break # done with parsing --flags
+      ;;
   esac
 done
 
@@ -155,7 +153,7 @@ notifyError() {
 
 resetFade() {
   if [[ -n $FADELAYERS ]]; then
-    hyprctl keyword animation "$FADELAYERS" >/dev/null
+    hyprctl eval "$FADELAYERS" >/dev/null
   fi
 }
 
@@ -236,8 +234,17 @@ elif [ "$SUBJECT" = "area" ]; then
 
   # get fade & fadeOut animation and unset it
   # this removes the black border seen around screenshots
-  FADELAYERS="$(hyprctl -j animations | jq -jr '.[0][] | select(.name == "fadeLayers") | .name, ",", (if .enabled == true then "1" else "0" end), ",", (.speed|floor), ",", .bezier')"
-  hyprctl keyword animation 'fadeLayers,0,1,default' >/dev/null
+  FADELAYERS="$(
+    hyprctl -j animations | jq -jr '
+      (
+        [.[0][] | select(.name == "fadeLayers" and .overridden)] +
+        [.[0][] | select(.name == "fade" and .overridden)] +
+        [.[0][] | select(.name == "global" and .overridden)]
+      )[0]
+      | "hl.animation({ leaf = \"fadeLayers\", enabled = \(.enabled), speed = \(.speed), bezier = \(.bezier | tojson), style = \(.style | tojson) })"
+    '
+  )"
+  hyprctl eval 'hl.animation({ leaf = "fadeLayers", enabled = false })' >/dev/null
 
   WORKSPACES="$(hyprctl monitors -j | jq -r '[(foreach .[] as $monitor (0; if $monitor.specialWorkspace.name == "" then $monitor.activeWorkspace else $monitor.specialWorkspace end)).id]')"
   WINDOWS="$(hyprctl clients -j | jq -r --argjson workspaces "$WORKSPACES" 'map(select([.workspace.id] | inside($workspaces)))')"

@@ -12,7 +12,7 @@
 
 "~/.config/btop/btop.conf" = { source = "templates/btop/btop.conf", mode = "template" }
 "~/.config/dunst/dunstrc.d/theme.conf" = { source = "templates/dunst/dunstrc.d/theme.conf", mode = "template" }
-"~/.config/hypr/hyprland.conf" = { source = "templates/hypr/hyprland.conf", mode = "template" }
+"~/.config/hypr/hyprland.lua" = { source = "templates/hypr/hyprland.lua", mode = "template" }
 "~/.config/hypr/hyprlock.conf" = { source = "templates/hypr/hyprlock.conf", mode = "template" }
 "~/.config/hypr/hyprpaper.conf" = { source = "templates/hypr/hyprpaper.conf", mode = "template" }
 "~/.config/rofi/themes/custom.rasi" = { source = "templates/rofi/themes/custom.rasi", mode = "template" }
@@ -66,6 +66,6 @@ btop = "latest"
 "github:dfontana/arrus" = "latest"
 
 [shell_alias]
-open="xdg-open"
-pbcopy="wl-copy"
-pbpaste="wl-paste"
+open = "xdg-open"
+pbcopy = "wl-copy"
+pbpaste = "wl-paste"

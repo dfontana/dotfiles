@@ -48,7 +48,7 @@
     "custom/quit": {
         "format": " ",
         "tooltip": false,
-        "on-click": "hyprctl dispatch exit"
+        "on-click": "hyprctl dispatch 'hl.dsp.exit()'"
     },
     "custom/reboot": {
         "format": " ",
@@ -76,13 +76,10 @@
         "all-outputs": false,
         "active-only": false,
         "move-to-monitor": false,
-        "on-click": "activate",
         "format": "{id}",
-        "persistent_workspaces": {
-            "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
+        "persistent-workspaces": {
+            "DP-1": [1, 2],
+            "DP-2": [3, 4],
         }
     }, 
     "custom/vrr": {
