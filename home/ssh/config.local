@@ -6,3 +6,4 @@ Host *
 # Pull from 1password for the ssh key on these hosts
 Host kossserver.*
 	IdentityAgent ~/.1password/agent.sock
+	LocalForward 19432 kossserver:19432
