@@ -6,6 +6,7 @@ that harness's adapter directory, not here.
 
 ## Version Control: Jujutsu
 
-If a `.jj/` directory exists at the repository root, the project uses
-**Jujutsu (jj)** for version control. Load the `jujutsu` skill immediately
-and follow its workflow rules for all VCS operations.
+In a **jj** repo (`.jj/` at the root), run `jj diff -r @` before writing
+code, stop if non-empty, then `jj describe -m "<intent>"`. Load the
+`jujutsu` skill only for squashing, stacked PRs, conflicts, or unfamiliar
+syntax — not at session start. Using `git` is blocked by a hook per harness.

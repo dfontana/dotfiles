@@ -1,27 +1,19 @@
 ---
 name: jujutsu
 description: >
-  Use when the repository contains a .jj/ directory. Provides Jujutsu (jj)
-  version control workflow rules and command reference. Load this skill
-  immediately when a .jj/ directory is detected at the repository root.
+  Jujutsu (jj) command reference for squashing, stacked pull requests,
+  conflict resolution, and less common jj syntax. Load on demand when a jj
+  operation goes beyond the basics. Do NOT load this at session start — the
+  everyday rules (use jj not git, check @ is empty, describe intent first)
+  are already in the global agent instructions.
 ---
 
-# Jujutsu Version Control
+# Jujutsu Reference
 
-This repository uses **jj** (Jujutsu). Never use raw `git` commands for
-commits, history, or diffs — use `jj` exclusively.
-
-## Pre-Work Checklist (Primary Agent Only)
-
-Before writing any code, complete these steps in order:
-
-1. **Check `@` is empty**: run `jj diff -r @`
-   - If output is non-empty, the working copy has uncommitted changes.
-     Stop and surface this to the user before proceeding — do not write
-     code on top of an existing revision without explicit instruction.
-2. **Declare intent**: run `jj describe -m "<what this revision will contain>"`
-   before writing any code. The description is a stated plan, not an
-   afterthought.
+Reference material for jj operations beyond the everyday path. The basics —
+never use raw `git`, check `@` is empty with `jj diff -r @`, declare intent
+with `jj describe` before coding — live in the global agent instructions and
+are not repeated here.
 
 ## Subagent Restrictions
 
