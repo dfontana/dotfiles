@@ -1,0 +1,33 @@
+{
+  "model": "opus",
+  "effortLevel": "high",
+  "theme": "light",
+  "editorMode": "vim",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ env.HOME }}/.claude/hooks/jujutsu/detect-jj.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ env.HOME }}/.claude/hooks/jujutsu/no-git.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true
+  }
+}

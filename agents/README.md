@@ -43,11 +43,16 @@ unmanaged so existing work-specific values remain untouched.
 
 ## Settings ownership
 
-- **Claude `~/.claude/settings.json`**: registers the hooks in
-  `claude/hooks/` (jujutsu detect/no-git on SessionStart/PreToolUse,
-  kitty-tab on session lifecycle) via `$HOME/.claude/hooks/...` paths, which
-  remain stable across this migration. Mise does not manage Claude settings or
-  an optional machine-local statusline.
+- **Claude `~/.claude/settings.json`**: on `home`, `home-linux`, and
+  `home-server`, rendered by Mise from `claude/settings.json`, mirroring the
+  Pi arrangement below. It registers the jujutsu detect/no-git hooks on
+  SessionStart/PreToolUse via `{{ env.HOME }}/.claude/hooks/...` paths. The
+  kitty-tab hooks ship in `claude/hooks/` but are deliberately not registered.
+  On `work` the file is unmanaged. Because Mise renders this file, Claude's
+  own writes to it (`/config` changes, `feedbackSurveyState`) are discarded on
+  the next bootstrap — durable preference changes belong in
+  `claude/settings.json`, and machine-local ones in `settings.local.json`,
+  which stays unmanaged. An optional machine-local statusline is unmanaged.
 - **Pi `~/.pi/agent/settings.json`**: on `home`, `home-linux`, and
   `home-server`, rendered by Mise from `pi/agent/settings.json`. The selected
   environment supplies `pi_extensions_path` for the local extension checkout

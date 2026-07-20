@@ -1,6 +1,7 @@
 [dotfiles]
 "~/.ssh/config" = "../../home/ssh/config"
 "~/.ssh/config.local" = "../../home/ssh/config.local"
+"~/.claude/settings.json" = { source = "../../agents/claude/settings.json", mode = "template" }
 "~/.pi/agent/settings.json" = { source = "../../agents/pi/agent/settings.json", mode = "template" }
 "~/.pi/agent/web-access.json" = "../../agents/pi/agent/web-access.json"
 "~/.local/bin/*" = "../../bin/*"
