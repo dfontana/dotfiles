@@ -15,7 +15,12 @@ description = "Disbot Service File"
 after = ["network.target"]
 exec_start = "~/servers/disbot/disbot-prod prod --web-bind-address lan"
 working_directory = "~/servers/disbot"
-environment = { PATH = "/usr/local/bin:/usr/bin:%h/.local/bin" }
+# mise shims first: yt-dlp is a mise-managed tool, and the shim survives the
+# daily yt-dlp-update version bumps that rewrite the installs/ path. MISE_ENV is
+# required too — yt-dlp is declared in mise.home-server.toml, so without it the
+# shim resolves but errors with "No version is set for shim". Interactive shells
+# get MISE_ENV from ~/.mise_env, which systemd does not source.
+environment = { PATH = "%h/.local/share/mise/shims:/usr/local/bin:/usr/bin:%h/.local/bin", MISE_ENV = "home-server" }
 restart = "always"
 restart_sec = "1"
 
