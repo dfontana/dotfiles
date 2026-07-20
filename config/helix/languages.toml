@@ -43,6 +43,29 @@ formatter = { command = "roc", args =[ "format", "--stdin", "--stdout"]}
 [language-server.roc-ls]
 command = "roc_language_server"
 
+[language-server.merman-lsp]
+command = "merman-lsp"
+
+# Not a real language server: it bridges Helix's stdio to the `gph lsp` daemon
+# socket so the Kitty preview pane sees unsaved buffer text. It advertises full
+# text sync only, so merman-lsp stays the diagnostics provider. Requires `gph
+# lsp` already running in a Kitty pane at the workspace root; without it,
+# lsp-connect just reports the daemon is missing.
+[language-server.gph-preview]
+command = "gph"
+args = ["lsp-connect"]
+
+# Helix does not start language servers inside injections, so the fence support
+# comes from attaching merman-lsp to markdown itself; it reads mermaid fences
+# out of the markdown document.
+[[language]]
+name = "mermaid"
+language-servers = ["merman-lsp", "gph-preview"]
+
+[[language]]
+name = "markdown"
+language-servers = ["merman-lsp"]
+
 [language.auto-pairs]
 '(' = ')'
 '{' = '}'

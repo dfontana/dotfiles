@@ -57,8 +57,14 @@ line = '''case ":$PATH:" in *":$HOME/.local/share/mise/shims:"*) ;; *) export PA
 
 [tools]
 "github:dfontana/epc" = "latest"
+# Kitty-native mermaid preview; `gph lsp-connect` backs the gph-preview entry in
+# helix/languages.toml. Resolves once the first release is published.
+"github:dfontana/gph" = "latest"
 "github:dfontana/starjj" = "latest"
 bat = "latest"
+# merman-lsp ships only on crates.io (GitHub releases carry merman-cli only),
+# so it is built from source and is arch-independent.
+"cargo:merman-lsp" = "0.8.0-alpha.3"
 delta = "latest"
 eza = "latest"
 fd = "latest"
