@@ -90,3 +90,8 @@ ty = "latest"
 [shell_alias]
 erd = "eza --tree"
 csvdiff = 'git diff --color-words="[^[:space:],]+"'
+
+[env]
+# Pi can be very slow from network checks, and it's not needed
+# manually update pi rather than deal with the noise
+PI_OFFLINE = 1
