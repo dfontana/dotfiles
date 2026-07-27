@@ -57,8 +57,11 @@ unmanaged so existing work-specific values remain untouched.
   `home-server`, rendered by Mise from `pi/agent/settings.json`. The selected
   environment supplies `pi_extensions_path` for the local extension checkout
   (`~/code/pi-extensions` on home/home-linux and
-  `~/opencode/pi-extensions` on home-server). The remaining settings define
-  provider/model/thinking, theme, package declarations, and an `npmCommand`
+  `~/opencode/pi-extensions` on home-server), plus an optional comma-separated
+  `pi_plugins` list appended to the package declarations. For example,
+  home-linux adds `git:github.com/huggingface/pi-llama`. The remaining
+  settings define provider/model/thinking, theme, package declarations, and an
+  `npmCommand`
   that resolves Node through mise. On `work`, the existing regular file is
   intentionally unmanaged.
 - **Pi `auth.json`** is always machine-local and must never be tracked. Pi JSON

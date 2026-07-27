@@ -58,6 +58,7 @@ includes = ["~/.config/mise/tasks.d/home-linux/fonts/tasks.toml"]
 
 [vars]
 pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
+pi_plugins = "git:github.com/huggingface/pi-llama"
 
 [env]
 ZMX_HOST = "kossserver.home"
