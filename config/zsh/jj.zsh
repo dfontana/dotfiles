@@ -49,6 +49,48 @@ jjtouch() {
   printf '%s' "$result"
 }
 
+# Run prek against the current jj stack using an isolated Git environment.
+# The temporary GIT_DIR — with its own HEAD pinned to trunk — is what makes
+# `git diff --cached`-based hooks compare against trunk instead of enumerating
+# every file in HEAD. The temporary index additionally keeps hooks that run
+# `git add` from touching the main checkout's index.
+jj-prek() (
+  set -euo pipefail
+
+  # Snapshot filesystem changes into @ before building the temporary Git index.
+  # Without this, prek temporarily hides unsnapshotted edits and restores them
+  # after the hooks run, making checks operate on stale content.
+  jj status >/dev/null
+
+  local git_dir tmp_git_dir trunk head index
+  git_dir="$(jj git root --ignore-working-copy)"
+  trunk="$(jj show --color=never --no-patch --ignore-working-copy -r 'trunk()' --template 'commit_id')"
+  head="$(jj show --color=never --no-patch --ignore-working-copy -r @ --template 'commit_id')"
+
+  index="$(mktemp -u)"
+  tmp_git_dir="$(mktemp -d)"
+  trap 'rm -f "$index"; rm -rf "$tmp_git_dir"' EXIT
+
+  # Isolated git-dir: shares objects with the real repo, but has its own HEAD
+  git init -q --bare "$tmp_git_dir"
+  echo "$git_dir/objects" > "$tmp_git_dir/objects/info/alternates"
+  git --git-dir="$tmp_git_dir" update-ref --no-deref HEAD "$trunk"
+
+  export GIT_DIR="$tmp_git_dir"
+  export GIT_WORK_TREE="$PWD"
+  export GIT_INDEX_FILE="$index"
+  git read-tree "$head"
+
+  local prek_status=0
+  prek run --from-ref "$trunk" --to-ref "$head" "$@" || prek_status=$?
+
+  # Record any fixes made by hooks in the jj working-copy commit without
+  # exposing jj to the temporary Git environment.
+  unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE
+  jj status >/dev/null
+  return "$prek_status"
+)
+
 # Interactive jj log viewer powered by fzf.
 # Default view: ancestors of @. Toggle modes with keybindings.
 # ctrl-a: all revisions  ctrl-d: stack (trunk..@)  ctrl-b: bookmark heads
