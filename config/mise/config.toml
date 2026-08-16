@@ -86,6 +86,7 @@ yq = "latest"
 zellij = "latest"
 ty = "latest"
 "github:neurosnap/zmx" = "latest"
+hunk = "latest"
 
 [shell_alias]
 erd = "eza --tree"
