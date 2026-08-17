@@ -29,6 +29,7 @@ theme_hl_high = "#cecacd"
 "~/.zshrc" = "../../home/zshrc"
 
 "~/.config/helix" = { source = "../../config/helix", mode = "symlink-each" }
+"~/.config/hunk" = { source = "../../config/hunk", mode = "symlink-each", exclude = ["state.json"]}
 "~/.config/kitty" = { source = "../../config/kitty", mode = "symlink-each" }
 # Keep JJ's mutable per-repository metadata beside managed configuration.
 "~/.config/jj" = { source = "../../config/jj", mode = "symlink-each", exclude = ["repos", "workspaces"] }
@@ -47,7 +48,6 @@ theme_hl_high = "#cecacd"
 "~/.claude/hooks" = "../../agents/claude/hooks"
 "~/.claude/CLAUDE.md" = { source = "../../agents/pi/agent/AGENTS.md.tmpl", mode = "template" }
 "~/.pi/agent/AGENTS.md" = { source = "../../agents/pi/agent/AGENTS.md.tmpl", mode = "template" }
-"~/.pi/agent/agents" = { source = "../../agents/pi/agent/agents", mode = "symlink-each" }
 
 # .zshenv is read by every zsh. The suffix names this managed line; it is not
 # a child path on disk.
