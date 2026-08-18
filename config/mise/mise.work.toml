@@ -14,7 +14,7 @@ helm = "latest"
 kubectl = "latest"
 kubectx = "latest"
 java = ["openjdk-17", "openjdk-21"]
-sbt = "latest"
+"asdf:mise-plugins/mise-sbt" = "latest"
 terraformer = "latest"
 
 [shell_alias]
