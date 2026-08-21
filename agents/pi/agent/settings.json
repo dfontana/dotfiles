@@ -1,14 +1,12 @@
 {
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "gpt-5.6-luna",
+  "defaultThinkingLevel": "max",
   "packages": [
     "{{ vars.pi_extensions_path }}"{% if vars.pi_plugins is defined and vars.pi_plugins %}{% for plugin in vars.pi_plugins | split(pat=",") %},
     "{{ plugin }}"{% endfor %}{% endif %},
-    "npm:@plannotator/pi-extension",
     "npm:@tintinweb/pi-tasks",
-    "npm:@juicesharp/rpiv-ask-user-question",
-    "npm:@tintinweb/pi-subagents"
+    "npm:@juicesharp/rpiv-ask-user-question"
   ],
   "theme": "rose-pine-dawn",
   "npmCommand": ["mise", "exec", "node", "--", "npm"]
