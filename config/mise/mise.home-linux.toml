@@ -8,7 +8,6 @@
 "~/.local/share/applications/*" = "../../desktops/*"
 "~/.config/btop" = { source = "../../config/btop", mode = "symlink-each" }
 "~/.config/dunst" = { source = "../../config/dunst", mode = "symlink-each" }
-"~/.config/rofi" = { source = "../../config/rofi", mode = "symlink-each" }
 "~/.config/waybar" = { source = "../../config/waybar", mode = "symlink-each" }
 "~/.config/quickshell/home" = { source = "../../config/quickshell/home", mode = "symlink-each", exclude = ["theme/Theme.qml"] }
 
@@ -17,7 +16,6 @@
 "~/.config/hypr/hyprland.lua" = { source = "templates/hypr/hyprland.lua", mode = "template" }
 "~/.config/hypr/hyprlock.conf" = { source = "templates/hypr/hyprlock.conf", mode = "template" }
 "~/.config/hypr/hyprpaper.conf" = { source = "templates/hypr/hyprpaper.conf", mode = "template" }
-"~/.config/rofi/themes/custom.rasi" = { source = "templates/rofi/themes/custom.rasi", mode = "template" }
 "~/.config/waybar/theme.css" = { source = "templates/waybar/theme.css", mode = "template" }
 "~/.config/quickshell/home/theme/Theme.qml" = { source = "templates/quickshell/home/theme/Theme.qml", mode = "template" }
 "~/.local/share/fonts/IosevkaCustom Nerd Font Mono/*.ttf" = "tasks.d/home-linux/fonts/ttfs/*.ttf"
