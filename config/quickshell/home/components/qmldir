@@ -1,0 +1,5 @@
+module qs.components
+
+BarPill 1.0 BarPill.qml
+PillButton 1.0 PillButton.qml
+IconButton 1.0 IconButton.qml

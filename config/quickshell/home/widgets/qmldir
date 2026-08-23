@@ -1,0 +1,8 @@
+module qs.widgets
+
+PowerMenu 1.0 PowerMenu.qml
+StatusArea 1.0 StatusArea.qml
+SystemTray 1.0 SystemTray.qml
+TaskList 1.0 TaskList.qml
+WorkspacePreview 1.0 WorkspacePreview.qml
+WorkspaceSwitcher 1.0 WorkspaceSwitcher.qml
