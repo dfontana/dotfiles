@@ -43,8 +43,6 @@ end
 local home = os.getenv("HOME")
 local terminal = home .. "/.local/kitty.app/bin/kitty"
 local file_manager = "dolphin"
-local apps = "rofi -show drun -config ~/.config/rofi/drun.rasi"
-local windows = "rofi -show window -config ~/.config/rofi/drun.rasi"
 
 -------------------
 ---- AUTOSTART ----
@@ -170,8 +168,7 @@ hl.bind(main_mod .. " + C", hl.dsp.window.close())
 hl.bind(main_mod .. " + M", hl.dsp.exit())
 hl.bind(main_mod .. " + E", hl.dsp.exec_cmd(file_manager))
 hl.bind(main_mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(main_mod .. " + R", hl.dsp.exec_cmd(apps))
-hl.bind(main_mod .. " + W", hl.dsp.exec_cmd(windows))
+hl.bind(main_mod .. " + R", hl.dsp.global("quickshell:launcher"))
 hl.bind(main_mod .. " + P", hl.dsp.window.pseudo())
 
 hl.bind(main_mod .. " + left", hl.dsp.focus({ direction = "left" }))
