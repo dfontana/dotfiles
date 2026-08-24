@@ -11,6 +11,7 @@ config/lyra/logs/
 config/lyra/cache/
 home/claude/**
 agents/AGENTS.work.md
+agents/skills/hunk-review/
 bun.lock
 node_modules
 config/zellij/layouts/werk-*

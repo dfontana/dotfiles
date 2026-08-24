@@ -85,7 +85,18 @@ yq = "latest"
 zellij = "latest"
 ty = "latest"
 "github:neurosnap/zmx" = "latest"
-hunk = "latest"
+[tools.hunk]
+version = "latest"
+postinstall = '''
+  set -eu
+  skill_path="$(hunk skill path)"
+  skill_dest="$HOME/.agents/skills/hunk-review/SKILL.md"
+
+  mkdir -p "$(dirname "$skill_dest")"
+  if ! cmp -s "$skill_path" "$skill_dest"; then
+    cp "$skill_path" "$skill_dest"
+  fi
+'''
 
 [shell_alias]
 erd = "eza --tree"
