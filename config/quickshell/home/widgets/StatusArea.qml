@@ -12,6 +12,8 @@ Row {
 
   required property string outputName
   required property bool updatesEnabled
+  required property var notificationService
+  property var screen: null
   property bool vrrActive: false
   property string updateCount: ""
 
@@ -173,6 +175,22 @@ Row {
       font.pixelSize: 14
       font.weight: Font.DemiBold
       text: root.bluetoothText()
+    }
+  }
+
+  PillButton {
+    implicitWidth: BarMetrics.iconButtonWidth
+    onClicked: root.notificationService.toggleFor(root.screen)
+
+    Text {
+      anchors.centerIn: parent
+      color: !root.notificationService || !root.notificationService.hasNotifications
+        ? Theme.muted
+        : root.notificationService.stackVisible ? Theme.active : Theme.accent
+      font.family: Theme.iconFont
+      font.pixelSize: 15
+      font.weight: Font.DemiBold
+      text: "󰂚"
     }
   }
 

@@ -688,6 +688,9 @@ is the current API/behavior reference for `GlobalShortcut`,
 previews. Those feature-specific documents can be added later without changing
 the island architecture described here.
 
+### Footnote from notifications
+When the shared drawer/dynamic-island host is implemented, move notifications into it instead of maintaining a second `PanelWindow` with its own masking, routing, and slide behavior.
+
 ## Source references
 
 ### Local source

@@ -63,7 +63,6 @@
     "group/group-info": {
         "orientation": "horizontal",
         "modules": [
-            // "custom/notification",
             "custom/vrr",
             "custom/updates",
         ],
@@ -121,13 +120,5 @@
         "icon-size": 24,
         "spacing": 5,
         "show-passive-items": true,
-    },
-    "custom/notification": {
-        // TODO: There's a way to do this, I just don't got it atm
-        // https://github.com/Alexays/Waybar/wiki/Module:-Custom:-Simple
-        "format": "",
-        "on-click": "~/.config/bin/notify-history",
-        "on-click-right": "dunstctl close-all",
-        "tooltip-format": "Notifications"
     },
 }
