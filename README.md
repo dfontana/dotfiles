@@ -51,7 +51,7 @@ If you want to customize the fonts again in the future, use this [website](https
 
 Note: This will also patch the fonts with [nerd-fonts symbols](https://github.com/ryanoasis/nerd-fonts/wiki/ScriptOptions) for you.
 Note: This also means the font family will now be "IosevkaCustom Nerd Font Mono"
-Note: There's a separate "Iosevka Nerd Font" / "icons" folder for the purpose of Waybar icons
+Note: There's a separate "Iosevka Nerd Font" / "icons" folder for Quickshell icons
 
 ## Other tools
 ```

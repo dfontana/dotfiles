@@ -280,11 +280,10 @@ That preserves the current compact layout reservation. Set the top layer
 explicitly, use a `Region` mask, and make keyboard focus conditional on the
 active mode. Do not create a second `PanelWindow` for each feature.
 
-The current Hyprland startup still launches **Waybar**
-(`config/mise/templates/hypr/hyprland.lua:53-55`), while the quickshell home tree
-is linked separately. Before calling the island a Waybar replacement, change
-startup and remove the duplicate top-layer bar; running both will create
-competing status bars, input regions, and exclusive zones.
+The current Hyprland startup launches Quickshell
+(`config/mise/templates/hypr/hyprland.lua`), which owns the top-layer bar. Extend
+that existing bar rather than creating a duplicate top-layer surface; running
+both would create competing status bars, input regions, and exclusive zones.
 
 ### Suggested component boundary
 
@@ -637,8 +636,8 @@ component.
 
 ## Suggested implementation order
 
-1. **Resolve ownership:** decide when Quickshell replaces Waybar, update startup,
-   and ensure only one top-layer bar/exclusive zone is running.
+1. **Resolve ownership:** keep Quickshell as the sole top-layer bar and ensure
+   only one top-layer bar/exclusive zone is running.
 2. **Build the shell:** refactor `Bar.qml` into a stable per-screen host with a
    masked compact island, a `progress` animation, and an empty mode `Loader`.
 3. **Power vertical slice:** implement the expanded power mode and migrate the
@@ -654,8 +653,8 @@ component.
    consider live previews/keyboard overview.
 8. **Tray menu:** implement the custom DBus menu renderer, nested submenu stack,
    and tray-item lifecycle handling.
-9. **Cleanup:** remove duplicate compact widgets and obsolete Waybar/Rofi paths
-   only after each replacement has been verified.
+9. **Cleanup:** remove duplicate compact widgets and obsolete Rofi paths only
+   after each replacement has been verified.
 
 ### First vertical-slice acceptance criteria
 
