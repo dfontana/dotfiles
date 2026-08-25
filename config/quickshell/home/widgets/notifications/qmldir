@@ -1,0 +1,6 @@
+module qs.widgets.notifications
+
+NotificationCard 1.0 NotificationCard.qml
+NotificationRecord 1.0 NotificationRecord.qml
+NotificationService 1.0 NotificationService.qml
+NotificationStack 1.0 NotificationStack.qml

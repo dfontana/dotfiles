@@ -8,6 +8,7 @@ PanelWindow {
   id: root
 
   property var modelData
+  required property var notificationService
 
   screen: modelData
   color: "transparent"
@@ -63,6 +64,8 @@ PanelWindow {
       anchors.verticalCenter: parent.verticalCenter
       outputName: root.screen ? root.screen.name : ""
       updatesEnabled: root.primary
+      notificationService: root.notificationService
+      screen: root.screen
     }
   }
 }
