@@ -1,725 +1,577 @@
-# Dynamic-island research notes
+# Dynamic island design
 
-**Status:** design research; no QML implementation changes are included in this note.
+- **Status:** product and implementation design
+- **Target:** `config/quickshell/home` on Quickshell 0.3.1
+- **Scope:** replace the distributed top bar with one centered, icon-only island and one attached expansion surface
 
-This note investigates how the local [`Synoptik`](file:///home/koss/code/Synoptik)
-shell makes one bar grow into different panels, then maps that pattern onto the
-current `config/quickshell/home` shell. The goal is to keep one persistent
-surface and one visual language rather than opening a separate popup window for
-every feature.
+## Product statement
 
-The local Quickshell installation is **0.3.1**. Quickshell is pre-1.0, so API
-names and behavior should be checked against the installed version when a
-feature is implemented.
+The bar is one compact rounded rectangle centered at the top of each monitor. It
+floats a few pixels below the monitor edge and contains only icons—no clock text,
+workspace numbers, device names, percentages, or update counts.
 
-## Executive recommendation
+Hovering an icon grows one contextual card downward from that icon's position.
+The card and the compact island read as one connected surface, not as a detached
+tooltip or unrelated popup. The card may contain text, controls, lists, or
+previews; the compact island remains icon-only.
 
-Use **one `PanelWindow` per screen**, with a stable transparent layer surface and
-a single inner island that owns both the compact bar and expanded content:
+Only one card can be expanded on a monitor at a time.
+
+## Fixed design decisions
+
+- There is exactly one compact background, not separate pills for groups or
+  individual controls.
+- The compact island is horizontally centered as a whole. It does not stretch
+  across the monitor and does not have left-, center-, and right-aligned zones.
+- Every compact item is an icon in a consistent 28 px layout slot. Standard
+  triggers fill that slot; tray triggers preserve the 24 px input/anchor
+  geometry required by `context-menus.md`.
+- Small dots, rings, color changes, and progress arcs may communicate state.
+  Text and numeric badges are not shown in the compact state.
+- Hover is the primary way to reveal information. There is no separate tooltip
+  competing with the attached card.
+- The expanded card grows below the hovered icon and remains physically joined
+  to the island by a short connector.
+- The connector stays aligned with the triggering icon even when the card must
+  be shifted to remain on-screen.
+- The expanded card may be wider than the compact island.
+- Moving directly from one icon to another reuses the same card surface and
+  moves the connector; it does not close and reopen a second window.
+- Hover cards do not take keyboard focus. Every pinned card requests on-demand
+  focus so Escape and outside-focus dismissal work consistently; modes that
+  type or navigate also move active focus into their own `FocusScope`.
+- Opening a card never changes the layer-shell exclusive zone or moves tiled
+  windows.
+- Each screen owns its own island state, but global shortcuts open only on the
+  focused monitor.
+
+## Visual design
+
+### Compact state
+
+```text
+monitor top
+
+                         7 px air gap
+
+              ╭──────────────────────────────────────╮
+              │    󰍹  ◫  ◉  │  󱧧        󰂚    │
+              ╰──────────────────────────────────────╯
+
+                 one surface, centered as a whole
+```
+
+The glyphs above are illustrative. Application and tray items use their actual
+icons. The `│` marks an optional subtle separator inside the one surface; it is
+not a gap or a second pill.
+
+All dimensions are logical QML pixels:
+
+| Property | Value |
+| --- | ---: |
+| Top offset | 7 px |
+| Compact height | 36 px |
+| Outer radius | 12 px |
+| Horizontal inner padding | 6 px |
+| Vertical inner padding | 4 px |
+| Standard icon hit area / all-item slot | 28 × 28 px |
+| Standard icon visual size | 15–18 px |
+| Tray input and popup-anchor item | 24 × 24 px, centered in its slot |
+| Tray application icon | 20 px |
+| Gap between item slots | 2 px |
+| Group separator | 1 × 18 px |
+| Separator side margin | 5 px |
+| Border | 1 px `Theme.highlightMed` |
+| Background | `Theme.barSurface` |
+
+A 12 px radius keeps the island rectangular rather than making it a full
+capsule. The compact width follows its visible content and animates equally on
+both sides so its center never drifts away from the monitor center.
+
+An icon's default color is `Theme.text`. Semantic states use the existing Rose
+Pine colors:
+
+- active or selected: `Theme.active`;
+- available/actionable: `Theme.accent`;
+- inactive, disconnected, or unavailable: `Theme.muted`;
+- standard hover background: `Theme.hover` at an 8 px radius;
+- tray hover/open background: `Theme.hover` on the preserved 24 × 24 px item
+  at a 12 px radius, as required by `context-menus.md`;
+- urgent/destructive attention: `Theme.love`, used sparingly.
+
+The hover fill is only an interaction highlight. It must not make the icon look
+like a separate permanent pill.
+
+### Attached expansion
+
+```text
+              ╭──────────────────────────────────────╮
+              │    󰍹  ◫  ◉  │  󱧧   []   󰂚    │
+              ╰────────────────────────┬─────┬───────╯
+                                       │     │
+                             ╭─────────┴─────┴─────────╮
+                             │  Output            64%  │
+                             │  ━━━━━━━━━━━●━━━━━━━━━  │
+                             │  Microphone        82%  │
+                             │  ━━━━━━━━━━━━━●━━━━━━━  │
+                             ╰─────────────────────────╯
+```
+
+The attached shape has three visual parts rendered in the same color:
+
+1. the persistent compact island;
+2. a 22 px wide, 8 px tall connector centered under the trigger;
+3. the contextual card, overlapping the connector by 1 px.
+
+The overlap removes any visible gap. The outer silhouette receives the border;
+there must not be a border line across the connector/card seam. A custom path is
+acceptable, but an initial implementation may use overlapping shapes if the
+result has no visible seam at normal scale.
+
+Expanded card geometry:
+
+| Property | Value |
+| --- | ---: |
+| Distance from island | 0 px; connected by the neck |
+| Card radius | 12 px |
+| Card padding | 10 px |
+| Minimum width | 180 px |
+| Normal maximum width | 420 px |
+| Screen-edge margin | 12 px |
+| Maximum height | `min(480, screen.height * 0.5)` |
+| Border/background | same as compact island |
+
+A mode may request a smaller or larger natural width within those bounds. Long
+content scrolls inside the card rather than increasing the card beyond its
+maximum height.
+
+### Anchor-relative placement
+
+The card first tries to center itself under the hovered icon:
+
+```text
+idealCardX = triggerCenterX - cardWidth / 2
+cardX = clamp(idealCardX, 12, screenWidth - cardWidth - 12)
+connectorX = triggerCenterX - cardX - connectorWidth / 2
+```
+
+Clamp the connector inside the card's straight top edge so it never intersects
+a rounded corner. This produces the intended behavior near either edge: the
+card shifts inward, but the connector still points to the icon that opened it.
+
+The anchor is always the actual icon delegate, not a group container or an
+index. Dynamic task and tray repeaters can reorder or remove entries, so the
+controller keeps an object reference and closes safely if that object is
+destroyed.
+
+### Compact overflow
+
+The island's maximum width is `screen.width - 24`. Fixed utility icons remain
+visible. When dynamic task or tray items would exceed the available width:
+
+- extra tasks collapse into one stacked-windows icon;
+- extra tray items collapse into one overflow icon;
+- hovering either overflow icon opens an attached icon grid for that group;
+- the overflow card follows the same one-card and anchor rules.
+
+Do not shrink hit areas or icon sizes to force more items into the row.
+
+## Compact item map
+
+Recommended left-to-right order:
+
+```text
+Power | Workspaces | Launcher | Running apps | Tray | system status | Updates |
+Audio | Bluetooth | Notifications | Clock
+```
+
+The separators are visual organization inside one rectangle. A group with no
+visible items contributes neither empty space nor a separator.
+
+| Trigger | Compact representation | Hover card | Primary click |
+| --- | --- | --- | --- |
+| Power | power icon | lock, suspend, log out, reboot, and power off actions | pin/unpin the power card |
+| Workspaces | workspace/grid icon with active-state mark | monitor-local workspace row and selected workspace preview | open/pin workspace overview |
+| Launcher | search/application-grid icon | application search and bounded result list | pin the focused launcher |
+| Running app | application icon | title, workspace, state, and available window actions | focus the window |
+| Task overflow | stacked-windows icon | grid/list of hidden running applications | pin/unpin task list |
+| Tray item | application-provided icon | application name/status when available | preserve StatusNotifier activation behavior |
+| Tray overflow | overflow/tray icon | grid of hidden tray icons | pin/unpin tray grid |
+| VRR | monitor/refresh icon | output name and active/inactive VRR state | no action initially |
+| Updates | download/update icon; accent dot when updates exist | count, freshness, and bounded package list | open update details in terminal |
+| Audio | level-dependent speaker icon | output and microphone sliders, mute state | open `pavucontrol` |
+| Bluetooth | Bluetooth icon; accent dot when connected | adapter state and connected devices with battery | pin/unpin device list later |
+| Notifications | bell icon; dot when unread | recent notification stack | pin/unpin notification center |
+| Clock | clock icon | full time, date, and a small calendar | pin/unpin calendar later |
+
+Workspace numbers, update counts, battery percentages, device names, the date,
+and the current time belong in their hover cards. The compact state may change
+an icon or show a small non-text badge to make important state glanceable.
+
+Application tasks and tray entries are each independent icon triggers. Their
+cards therefore grow from the exact application icon, not from the task/tray
+group as a whole. For a tray entry, use the same centered 24 × 24 px item as both
+the island-card anchor and the `context-menus.md` popup anchor; the surrounding
+28 px slot only participates in row layout.
+
+## Interaction model
+
+### Hover lifecycle
+
+1. Enter an icon hit area.
+2. After a 120 ms intent delay, make it the active trigger and load its mode.
+3. Grow the connector from that trigger and reveal the card.
+4. Keep the card open while the pointer is over the trigger, connector, or card.
+5. When the pointer leaves the whole connected region, start a 180 ms grace
+   timer and then close.
+6. Re-entering any part of the region cancels the close timer.
+
+The connector is part of the input region and acts as a hover bridge. There is
+no dead gap the pointer must cross.
+
+A quick pass over the island should not flash every panel. The intent delay is
+skipped when a card is already open: moving to another icon updates the active
+mode after 60 ms, slides the connector to the new anchor, and morphs the card to
+its new dimensions.
+
+### Click and pinning
+
+Hover never traps the pointer or keyboard. Click behavior depends on the item:
+
+- direct-action icons may perform their existing primary action;
+- an interactive card can be pinned by clicking its trigger;
+- clicking a pinned trigger again closes it;
+- clicking another trigger replaces the pinned mode;
+- hovering another trigger for 60 ms also replaces the active mode and transfers
+  pinned ownership to that trigger; the replacement remains pinned after the
+  pointer leaves;
+- pointer leave does not close a pinned card;
+- Escape, outside click, or a completed action closes a pinned card;
+- every pinned mode requests on-demand keyboard focus for Escape/focus-loss
+  dismissal; a mode that accepts keyboard input then focuses its own control.
+
+Touch has no hover, so tapping a trigger opens the same card in pinned mode.
+
+The visible treatment for a pinned trigger is the same active icon background
+plus a 2 px `Theme.active` mark along the bottom of its hit area. Do not change
+the compact island's overall shape merely to indicate pinning.
+
+### Switching between icons
+
+There is one expansion surface and one mode loader. When the pointer moves from
+one trigger to another while open, apply the 60 ms switch delay in both
+transient and pinned states. A transient card stays transient; a pinned card
+transfers `activeMode`, `activeTrigger`, and its context to the hovered trigger
+while keeping `pinned: true` and `openReason: "pinned"`. Then:
+
+- retain the card background;
+- move the connector horizontally;
+- animate card `x`, width, and height to the next mode's target;
+- fade and slide the outgoing content by 8 px, swap the single loader source,
+  then fade and slide the incoming content into place;
+- ignore stale loader completion from the previously requested mode.
+
+The card background stays visible through the sequential content swap and never
+resets its geometry. The card must not collapse to zero, detach, or require a
+second temporary content loader.
+
+### Animation
+
+Frequent hover interaction should feel quick and controlled, so this design
+uses cubic easing without elastic overshoot.
+
+| Transition | Duration | Easing |
+| --- | ---: | --- |
+| Icon hover fill | 100 ms | `OutCubic` |
+| Connector open/move | 120 ms | `OutCubic` |
+| Card open | 160 ms | `OutCubic` |
+| Card geometry change | 180 ms | `OutCubic` |
+| Content replacement | 120 ms | `OutCubic` |
+| Close | 120 ms | `InCubic` |
+| Compact width change | 180 ms | `OutCubic` |
+
+Open from the connector's top-center: animate height/vertical scale from 0.96,
+translate from -4 px, and fade from 0. Do not scale from the screen center. On
+close, disable card input immediately and reverse the motion before removing it
+from the input mask.
+
+Respect a future reduced-motion setting by reducing movement to a short opacity
+transition and snapping geometry to its target.
+
+## Architecture
+
+### Window ownership
+
+Use **one `PanelWindow` per screen**. It owns the compact island and attached
+card in one transparent top-layer surface:
 
 ```text
 ShellRoot
-├── shared services (audio, power, updates)
+├── shared services
 └── Variants { model: Quickshell.screens }
     └── Bar / DynamicIsland (one PanelWindow per screen)
-        ├── compact island: power, tasks, tray, workspaces, status
-        ├── expanded background/shape
-        └── Loader: exactly one active mode
-            ├── power
-            ├── workspace preview
-            ├── tray menu
-            ├── launcher
-            ├── audio preview
-            └── update list
+        ├── compact background
+        │   └── icon trigger row
+        ├── connector
+        └── expanded card
+            └── Loader: one active mode
 ```
 
-The important part is not Synoptik's exact shape math. It is the ownership
-model:
+The host may cover a large transparent canvas so it can contain varying card
+sizes, but its input `Region` includes only:
 
-1. The layer surface stays alive.
-2. The compact bar and expanded content are siblings inside that surface.
-3. A controller owns one active mode and its anchor.
-4. Mode content reports `implicitWidth`/`implicitHeight`.
-5. The wrapper animates one geometry/progress state and clips the content.
-6. The surface's input `Region` contains only the visible island and expanded
-   card.
-7. Expanded content overlays the desktop while `exclusiveZone` remains the
-   compact bar's zone, so tiled windows do not move during every interaction.
+- the visible compact island;
+- the visible part of the connector;
+- the visible part of the expanded card.
 
-Do not port `UnifiedSurface.qml` wholesale. It is currently about 2,300 lines
-of highly customized geometry, frame styles, OSD exceptions, auto-hide, and
-shape paths. Reuse its concepts in a smaller home-specific controller.
+Transparent pixels outside that union must remain click-through. `opacity: 0`
+alone is not sufficient.
 
-## What Synoptik actually does
-
-### Active implementation versus legacy implementation
-
-The active path is:
-
-- [`shell.qml`](file:///home/koss/code/Synoptik/shell.qml):473-535 — creates one
-  `UnifiedSurface` for each `Quickshell.screens` entry and loads the selected
-  drawer component.
-- [`components/UnifiedSurface.qml`](file:///home/koss/code/Synoptik/components/UnifiedSurface.qml)
-  — owns the layer surface, compact bar, expanded content, state, geometry,
-  focus, masking, animation, and shape rendering.
-
-[`components/bars/PanelWindows.qml`](file:///home/koss/code/Synoptik/components/bars/PanelWindows.qml)
-is an older duplicate implementation. It is useful for understanding the
-simpler predecessor, but it is not the source of truth for current behavior.
-
-Synoptik's README describes the intended design accurately: one persistent bar
-that “expands, shifts, and adapts its physical footprint” instead of scattering
-separate bars, docks, and menus.
-
-### 1. The persistent surface
-
-`UnifiedSurface.qml:15-20` is a `PanelWindow`, not a `PopupWindow`. It is sized to
-the screen (`implicitHeight`/`implicitWidth` are based on screen dimensions plus
-shadow padding), made transparent, and positioned for the configured bar
-orientation (`:307-318`). The expanded content is therefore another item in the
-same layer-shell surface.
-
-The relevant internal split is:
-
-- `barContent` (`:2103-2179`) — the persistent compact bar and its module cards.
-- `contentContainer` (`:2181` onward) — the active expanded view, clipped and
-  positioned below/alongside the bar.
-- Shape items in the large middle section — draw the visual union of the bar and
-  panel, including flush corners and frame-style variants.
-
-This is the core pattern to reproduce in `home/`: **do not put a
-`PanelWindow` inside each mode component**. Mode components should be ordinary
-`Item`/`FocusScope` content rendered by the existing per-screen surface.
-
-### 2. State is split into intent and presentation
-
-Synoptik has two layers of state:
-
-- `Config.qml:189-204` contains a flag for each feature (`showPower`,
-  `showAudio`, `showAppLauncher`, `showWorkspacePreview`, and so on). These are
-  the feature intents and are also used by buttons/IPC handlers.
-- `UnifiedSurface.qml:515` has `activeView`, the one view actually rendered on
-  this screen. `updateActiveView()` (`:575-613`) resolves the flags using a
-  priority order and gates interactive content to the focused monitor.
-
-`closeOthers(except)` (`:625-649`) manually clears all competing flags. Every
-flag change is observed in `Connections` (`:651-735`) so the active view is
-re-anchored and the surface is opened or closed.
-
-The useful invariant is “one active view.” The home shell can make this much
-simpler with a single controller property instead of a growing collection of
-booleans:
-
-```qml
-property string activeMode: "compact"
-property string openReason: "none" // hover, click, shortcut, submenu
-property var anchorItem: null
-property bool pinned: false
-```
-
-A future `ModeController`/`DynamicIsland` should expose functions such as
-`showTransient(mode, anchor)`, `open(mode, anchor)`, `toggle(mode, anchor)`, and
-`close()`. The mode components should emit requests rather than mutate several
-unrelated flags. Persistent settings may remain in a configuration singleton;
-volatile open/hover state should stay local to each screen instance.
-
-### 3. Content measurement drives island size
-
-The active drawer is loaded in `shell.qml:485-518`. On load, the item is saved as
-`activeDrawerItem` and receives focus if it supports `forceActiveFocus()`.
-`UnifiedSurface.rawChildWidth`/`rawChildHeight` (`:178-214`) first use the
-loaded item's implicit dimensions and then use conservative fallbacks for
-views whose content has not measured yet.
-
-The wrapper then derives `targetWidth`/`targetHeight` (`:261-278`) and animated
-`currentWidth`/`currentHeight` (`:280-305`). This avoids hard-coding the surface
-to the largest possible panel and lets a launcher, power card, or workspace
-preview have different footprints.
-
-Home mode components should therefore:
-
-- have an explicit `implicitWidth` and `implicitHeight`;
-- use a maximum width/height so an unexpectedly long list cannot cover the whole
-  monitor;
-- use `Loader` for expensive content such as screenshots or a large launcher;
-- keep the shell wrapper responsible for clipping and animation;
-- avoid changing the outer layer surface's exclusive zone during normal opens.
-
-### 4. Anchoring and bounds
-
-`refreshPopoutPos()` (`:517-568`) maps a mode name to a registered trigger
-button. `setPopoutPos()` (`:615-623`) maps the trigger's center into
-`mainContainer` coordinates. `staticLeft`/`staticRight` (`:474-513`) clamp the
-expanded span to the usable screen/island bounds.
-
-The island style adds a second footprint calculation:
-
-- `islandContentWidth`/`islandContentHeight` and target dimensions
-  (`:400-433`) account for left modules, active-window content, right modules,
-  and minimum spacing.
-- `animatedIslandWidth`/`animatedIslandHeight` make the compact island itself
-  resize independently.
-- `islandX`/`islandY` (`:437-438`) center the footprint.
-- The active window card is clamped between the left and right cards
-  (`:2133-2156`) instead of being allowed to overlap them.
-
-For the first home implementation, use a simpler top-bar geometry: center the
-normal island, anchor expanded content to the trigger's x-coordinate, and clamp
-it to the monitor edges. Add side/bottom-bar orientation only after the top-bar
-case is stable.
-
-### 5. Input, focus, and dismissal
-
-The surface uses several mechanisms together:
-
-- A `Region` mask (`:368-372`) includes only `barContent`, visible expanded
-  content, and an auto-hide edge trigger. Transparent pixels outside that region
-  do not become a giant click-blocking surface.
-- The expanded content is clipped and consumes input (`:2181` onward).
-- A `MouseArea` over `mainContainer` (`:764-771`) closes on outside click.
-- `WlrLayershell.keyboardFocus` is `OnDemand` while open and `None` while closed
-  (`:374-379`).
-- `HyprlandFocusGrab` (`:390-397`) closes the mode when focus is cleared outside
-  the shell surface.
-- `Escape` is handled with a `Shortcut` (`:381-388`).
-
-A home implementation should retain this separation:
-
-- compact bar: non-focusable;
-- launcher/tray menu/click-open panel: `OnDemand` keyboard focus and a
-  `FocusScope` that explicitly calls `forceActiveFocus()`;
-- hover-only preview: no keyboard grab unless keyboard navigation is intentionally
-  supported;
-- all persistent modes: outside-click and Escape dismissal;
-- mask: compact and expanded visible geometry only.
-
-`opacity: 0` is not click-through. Disable input and remove a closed mode from
-the mask after its exit transition.
-
-### 6. Hover peek is a separate transient state
-
-Synoptik does not simply set `isOpen` whenever a pointer enters a button.
-`isPeeking`, `peekTargetItem`, and `peekProgress` (`:22-90`) are separate from
-full panel state. `startPeek(item)` refuses to peek when a panel is already open,
-records the target, maps its position, and animates a small protruding shape.
-The peek span is based on the target's size plus padding (`:71-78`).
-
-This distinction is useful for home:
-
-- **peek:** small visual affordance or a compact hover card, temporary, no mode
-  ownership;
-- **hover preview:** a real but transient mode, with a delayed close timer;
-- **open:** click/shortcut-owned mode that remains while the pointer leaves the
-  original button.
-
-Do not rely on `HoverHandler.hovered` alone for a large panel. Expanding the
-surface can move the pointer out of the original item, and a gap between the
-button and card causes flicker. Keep a stable hover bridge in the wrapper and
-use a short close timer while moving between the trigger and expanded content.
-
-### 7. Animation and visual continuity
-
-Synoptik's basic open/close transition is a `progress` property:
-
-- open: 480 ms `OutBack`, overshoot `0.55` (`:773-787`);
-- close: 280 ms `InBack`, overshoot `1.2` (`:789-798`);
-- width/height target changes: 350 ms `OutBack` (`:261-278`);
-- content opacity: about 180 ms (`:2315-2320`).
-
-It also applies nonlinear height squish (`Math.pow(closeFactor, 1.8)`), width
-correction, rounded “wings,” and a 16 ms spring-like matrix deformation based on
-content velocity (`:2224-2313`). The deformation is decorative, not required
-for the architecture. Start with one `progress` and ordinary `Behavior`
-animations; add squish only after input and bounds are correct.
-
-### 8. What Synoptik does not solve
-
-- It does not perform compositor-level collision detection against arbitrary
-  application windows. Its “avoidance” is clamping to the screen/frame/island
-  geometry and reshaping corners when a panel is flush.
-- It has a large amount of manual `Config.show*` clearing. Home should retain the
-  one-mode invariant without copying all of that boilerplate.
-- It uses view-level processes for some features. Home should keep persistent
-  polling and command execution in shared services where possible.
-- Workspace previews are expensive: they compose `ScreencopyView` captures of
-  toplevels rather than reading one built-in workspace screenshot.
-
-## Mapping the pattern onto `home/`
-
-### Current home structure
-
-The current home shell is already a good starting point:
-
-- [`home/shell.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/shell.qml):22-30
-  creates one `Bar` per `Quickshell.screens` entry.
-- [`home/Bar.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/Bar.qml):8-36
-  is currently the per-screen `PanelWindow`; it is only `BarMetrics.height` tall
-  and has a compact `exclusiveZone`.
-- `PowerActions`, `AudioActions`, and `UpdateService` are already shared from
-  `shell.qml` rather than recreated by every monitor.
-- `BarPill`, `PillButton`, `IconButton`, and `BarMetrics` provide reusable
-  visuals and timing.
-
-The requested modes are the initial scope. Existing clock, Bluetooth, VRR,
-task-list, and status indicators can remain compact-only while the island is
-built. Synoptik features not requested here—calendar, notifications, wallpaper,
-network, battery, control center, settings, mirror, recorder, and system
-monitor—should be deferred, but if they are added later they should use the same
-mode `Loader` rather than introducing another surface.
-
-The main architectural change is to turn `Bar.qml` into a sufficiently large,
-transparent host for the island. Its current `implicitHeight: BarMetrics.height`
-(`Bar.qml:18-19`) cannot contain a panel below the bar. The host can occupy the
-screen or a bounded expanded canvas while keeping:
-
-```qml
-exclusiveZone: BarMetrics.height + BarMetrics.margin
-```
-
-That preserves the current compact layout reservation. Set the top layer
-explicitly, use a `Region` mask, and make keyboard focus conditional on the
-active mode. Do not create a second `PanelWindow` for each feature.
-
-The current Hyprland startup launches Quickshell
-(`config/mise/templates/hypr/hyprland.lua`), which owns the top-layer bar. Extend
-that existing bar rather than creating a duplicate top-layer surface; running
-both would create competing status bars, input regions, and exclusive zones.
-
-### Suggested component boundary
-
-A future layout could be organized as:
+Keep the exclusive zone stable at the compact footprint:
 
 ```text
-home/
-├── shell.qml                    # shared services and screen variants
-├── Bar.qml                      # per-screen PanelWindow host
-├── components/
-│   ├── DynamicIsland.qml        # state, geometry, mask, focus, transitions
-│   ├── IslandBackground.qml     # compact/expanded unified shape
-│   └── ModeLoader.qml            # optional mode registry
-├── modes/
-│   ├── PowerMode.qml
-│   ├── WorkspacePreviewMode.qml
-│   ├── TrayMenuMode.qml
-│   ├── LauncherMode.qml
-│   ├── AudioPreviewMode.qml
-│   └── UpdatesMode.qml
-└── services/
-    ├── AudioService.qml         # state + writes, in addition to pavucontrol
-    ├── PowerActions.qml
-    └── UpdateService.qml        # structured update model
+exclusiveZone = topOffset + compactHeight
 ```
 
-This is a target shape, not a request to create all these files immediately.
-The first vertical slice can keep the current compact widgets inside `Bar.qml`
-and add only `DynamicIsland` plus `PowerMode`.
+For the fixed dimensions above this is 43 px. Expanded content overlays the
+desktop and never changes this value.
 
-### Proposed controller state
+No hover mode, power menu, workspace preview, launcher, audio preview, update
+list, notification surface, notification center, or calendar creates another
+`PanelWindow`. The current `Launcher.qml` and `NotificationStack.qml` surfaces
+must be converted to ordinary mode content and their old panel instances removed
+before the one-window acceptance criterion applies.
 
-Keep state per `Bar`/monitor, with shared data services in `ShellRoot`:
+### Controller state
+
+State is local to each per-screen island:
 
 ```qml
-property string activeMode: "compact"
-property string openReason: "none" // hover, click, shortcut, submenu
-property var anchorItem: null
-property var hoverTarget: null
-property bool modePinned: false
+property string activeMode: ""
+property var activeTrigger: null
+property string openReason: "" // hover, pinned, shortcut
+property bool pinned: false
+property bool triggerHovered: false
+property bool cardHovered: false
 property real progress: 0
 property real targetWidth: 0
 property real targetHeight: 0
 ```
 
-Recommended transitions:
-
-1. `compact -> hover mode`: set an anchor and start a short open animation;
-   mark the mode transient.
-2. `hover mode -> compact`: start a delayed close when neither the trigger nor
-   the expanded content is hovered.
-3. `compact -> click/shortcut mode`: mark the mode pinned, request keyboard
-   focus if needed, and enable `HyprlandFocusGrab`.
-4. `mode A -> mode B`: close/reuse the same wrapper and replace the `Loader`
-   source; never open a second top-level surface.
-5. Any outside click, Escape, or mode action: clear the mode and animate the
-   same island back to compact.
-
-Mode content should communicate through signals such as `closeRequested`,
-`openMode(mode)`, and `actionTriggered()`. It should not know the pixel geometry
-of the `PanelWindow`.
-
-## Feature-by-feature design
-
-### 1. Revisited power menu — first implementation target
-
-**Current home:** [`PowerMenu.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/PowerMenu.qml):6-83
-uses a local `HoverHandler`; its `actionDrawer` only changes width while the
-bar remains 30 px high. It exposes lock, logout, reboot, and shutdown through
-[`PowerActions.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/services/PowerActions.qml).
-
-**Synoptik reference:** [`Power.qml`](file:///home/koss/code/Synoptik/components/Power.qml)
-contains a larger “POWER OPTIONS” card with Lock, Suspend, Log Out, Reboot, and
-Power Off, followed by a power-profile selector. It is a normal loaded view with
-implicit dimensions, not a separate popup window.
-
-**Home mapping:**
-
-- Keep the home icon as the compact trigger.
-- On hover, expand the same island into a modest action row or preview card;
-  do not execute anything from hover.
-- On click, pin/open `power` mode so the pointer can leave the icon while the
-  card remains usable.
-- Use a data-driven action model in `PowerMode.qml` and keep commands in
-  `PowerActions.qml`.
-- Target parity with Synoptik is Lock, Suspend, Log Out, Reboot, and Power Off,
-  plus a power-profile selector in the pinned/full power mode. Add suspend and
-  `powerprofilesctl` only as explicit service methods; do not put command
-  strings in the visual delegate. If the first slice omits profiles, record
-  that as a deliberate follow-up rather than losing the requirement.
-- Consider confirmation for reboot/poweroff. Synoptik executes these directly,
-  but an accidental expanded-menu click is a poor failure mode.
-- Close the island before lock/logout/poweroff. Lock should hand off to
-  `hyprlock`; the shell should not wait for the command.
-
-This is the best first slice because it exercises hover, a persistent mode,
-implicit measurement, a small number of actions, outside-click dismissal, and
-no expensive data capture.
-
-### 2. Workspace switcher and future hover previews
-
-**Current home:** [`WorkspaceSwitcher.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/WorkspaceSwitcher.qml):7-63
-is a centered `BarPill`, filters `Hyprland.workspaces.values` to the current
-monitor, sorts by ID, animates active width, and calls `workspace.activate()`.
-
-**Recommended island behavior:**
-
-- Preserve the current monitor-local model and active styling in compact mode.
-- Track the hovered workspace object/ID, not just a global “workspace preview
-  open” boolean.
-- Hovering a workspace enters transient `workspacePreview` mode anchored to that
-  workspace segment. The preview should remain open while the pointer is over
-  either the segment or the island card.
-- Clicking the workspace activates it. Decide separately whether the preview
-  closes immediately or remains open for selecting a window.
-- A keyboard-driven overview can use the same mode with `GlobalShortcut` and
-  `HyprlandFocusGrab`; a hover-only preview should not steal focus.
-
-The existing [`hyprland.md`](file:///home/koss/code/dotfiles/config/quickshell/hyprland.md)
-records the important capture design: there is no direct
-`workspace.screenshot`. A preview is composed from `workspace.toplevels` and
-`toplevel.wayland` handles with `ScreencopyView`, using each window's geometry.
-For the first version:
-
-1. Render workspace number, occupancy, icons, and titles even without capture.
-2. Capture a still frame only for the hovered workspace.
-3. Enable live captures only while the preview card is hovered, if needed.
-4. Refresh on relevant `Hyprland.rawEvent` events rather than polling every
-   frame.
-5. Click a thumbnail to focus its toplevel; click the workspace card to call
-   `workspace.activate()`.
-
-Do not start with live thumbnails for every window on every workspace. This mode
-is an excellent fit for the island, but it should be the second or third slice
-after geometry is proven.
-
-### 3. System tray and shell-native context menus
-
-**Current home:** [`SystemTray.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/SystemTray.qml):19-47
-renders `SystemTray.items`. Left/ordinary activation calls `modelData.activate()`;
-right-click calls `modelData.display(root.hostWindow, ...)`, which delegates to a
-native/platform menu.
-
-Quickshell 0.3.1 exposes the DBus menu behind a tray item as `SystemTrayItem.menu`.
-The relevant local types are:
-
-- `QsMenuOpener.menu` and `.children` — exposes menu entries to QML;
-- `QsMenuEntry` — `text`, `icon`, `enabled`, `isSeparator`, `hasChildren`,
-  checkbox/radio state, and `triggered()`;
-- `QsMenuAnchor` — asks the platform to render a menu and is therefore **not**
-  the desired shell-native renderer here;
-- `DBusMenuItem.menuHandle` — useful for opening a child menu when implementing
-  nested submenu levels.
-
-The intended replacement is a `TrayMenuMode` rendered by the island:
-
-1. Right-click a tray item and pass its `SystemTrayItem` plus anchor to the
-   island controller.
-2. Use `QsMenuOpener` with `trayItem.menu`.
-3. Render separators, disabled entries, icons, checkboxes, radio entries, and
-   submenu arrows with home theme components.
-4. Call `entry.triggered()` for leaf actions.
-5. For `hasChildren`, push a child menu handle onto a small submenu stack or
-   replace the same island content with the child level; do not create a native
-   popup for every submenu.
-6. Handle asynchronous DBus menu updates and close the mode if the tray item is
-   unregistered.
-
-The exact child-handle wiring should be verified with one real tray application
-on Quickshell 0.3.1. `QsMenuEntry` inherits the menu-handle interface in the
-installed QML type information, but this is worth a small runtime probe before
-building a general recursive renderer.
-
-Preserve the rest of the StatusNotifier affordances while replacing only the
-renderer: `onlyMenu` items should open the shell menu instead of attempting
-activation; middle/secondary activation should call `secondaryActivate()` when
-provided; and wheel events can be forwarded through `scroll(delta, horizontal)`.
-The current `SystemTray.qml` only accepts left/right buttons, so these are
-explicit follow-up interactions rather than assumed existing behavior.
-
-The context-menu controller should own the selected item; `SystemTray.qml`
-should only emit a request instead of calculating native menu coordinates.
-
-### 4. Launcher
-
-**Synoptik reference:** [`AppLauncher.qml`](file:///home/koss/code/Synoptik/components/AppLauncher.qml)
-uses `DesktopEntries.applications`, ignores `noDisplay` entries, filters by name,
-generic name, description, categories, and keywords, sorts pinned entries ahead
-of others, resolves icons with `Quickshell.iconPath`, and launches with
-`app.execute()`. Its search `TextInput` is focused when opened; Up/Down changes
-the `ListView` selection, Enter launches, and Escape closes (`:93-210` and the
-search/list section later in the file). It is loaded into `UnifiedSurface`, so
-its search card/list is already the shape requested here.
-
-**Home mapping:**
-
-- Add a `LauncherMode` with a search field at the top and a bounded `ListView`
-  below it.
-- Use `DesktopEntries.applications.values` first; avoid Synoptik's Python icon
-  indexer until `Quickshell.iconPath` proves insufficient.
-- Start with case-insensitive name/generic-name/comment matching. Add categories,
-  keywords, and pins as follow-up behavior.
-- Use a `FocusScope` and explicitly focus the `TextInput` after the mode is
-  loaded. Handle Up/Down, Enter, and Escape in the mode.
-- Enter should call `DesktopEntry.execute()` and close the island.
-- Open from a global Hyprland shortcut or a compact button. The current
-  Hyprland template binds `SUPER+R` to external Rofi
-  (`config/mise/templates/hypr/hyprland.lua:46-47,166-174`); migrate that binding
-  only when the Quickshell launcher is ready.
-- Do not run Rofi and the shell launcher on the same key during migration.
-
-The launcher is a strong demonstration of why one island is preferable: the
-search bar, results, keyboard focus, and result list all grow from the compact
-trigger while keeping one dismissal/focus owner.
-
-### 5. Volume and microphone input
-
-**Current home:** `StatusArea.qml:79-92` opens `pavucontrol` on click and reads
-only `Pipewire.defaultAudioSink` for the compact icon. `AudioActions.qml` is
-currently just the external `pavucontrol` launcher.
-
-**Synoptik reference:** [`Audio.qml`](file:///home/koss/code/Synoptik/components/Audio.qml)
-keeps output and input state (`systemVolume`, `isMuted`, `inputVolume`,
-`isInputMuted`), renders two direct-drag sliders, toggles mute, enumerates sink
-and source devices, and listens to `pactl subscribe` (`:16-31` and
-`:627-715`).
-
-Quickshell 0.3.1's Pipewire API already exposes `defaultAudioSink` and
-`defaultAudioSource`, each with an `audio` interface containing writable
-`volume` and `muted` properties. This may cover the basic preview without
-parsing every `wpctl` output. Synoptik's `wpctl`/`pactl` approach remains a useful
-fallback for device lists and event behavior.
-
-**Proposed behavior:**
-
-- Hovering the volume/status control enters transient `audioPreview` mode.
-- The island shows two compact rows: playback level/mute and microphone
-  input/mute. Keep the rows short enough to be useful without becoming a full
-  settings panel.
-- A click on the compact control still calls
-  `audioActions.openControl()` (`pavucontrol`) rather than turning the hover
-  preview into a second full audio application.
-- Dragging a preview slider writes to the default sink/source; mute buttons
-  toggle those same objects. Debounce writes if using `wpctl` processes.
-- Move live audio state into one shared `AudioService` in `shell.qml`, rather
-  than starting one `pactl subscribe` process for every screen or every view.
-- Add device selection only after the two-level preview feels right. It can
-  become a pinned `audio` mode later.
-
-This should be a hover preview with no focus grab. A click that launches
-`pavucontrol` should close the transient island or leave it in compact mode.
-
-### 6. System updates
-
-**Current home:** [`UpdateService.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/services/UpdateService.qml):8-40
-runs `dnf check-update -q | wc -l` at startup and hourly, exposes only a string
-count, and opens `kitty --hold --detach dnf check-update` on click. `StatusArea`
-renders that count at `:59-74`.
-
-**Proposed behavior:**
-
-- Hovering the update indicator enters transient `updatesPreview` mode.
-- The island shows a bounded, scrollable list of package name, available
-  version, and repository (when available), plus loading/error/stale-data
-  states.
-- Keep the current terminal action as the click behavior initially. A separate
-  “open details” row can make that action explicit.
-- Extend the shared `UpdateService` to expose structured updates, not just a
-  count. Parse `dnf check-update` output in one place and retain the last good
-  result while a refresh is running.
-- Treat `dnf check-update` exit code 100 as “updates available,” not a generic
-  failure. Avoid the current shell pipeline hiding the command's exit status.
-- Refresh on the existing hourly timer and optionally refresh once when the
-  hover card opens if the last result is stale. Do not run `dnf` repeatedly as
-  the pointer moves across the bar.
-- Keep applying updates out of the shell for now; use the terminal or a future
-  explicit privileged workflow.
-
-This is another cheap hover mode once the general island controller exists, but
-it needs a service/model change before the UI can show a useful list.
-
-## Shared Quickshell constraints and pitfalls
-
-### Layer surface and exclusive zone
-
-Use the existing `Variants { model: Quickshell.screens }` architecture. The
-surface should be a top layer with a stable full-screen or expanded canvas, but
-its exclusive zone should normally remain `BarMetrics.height + BarMetrics.margin`.
-Animating the exclusive zone would make tiled windows reflow every time a card
-opens. If a future mode intentionally wants a reflowing dashboard, make that a
-separate explicit behavior.
-
-### Masking and transparent input
-
-A full-screen transparent `PanelWindow` without a mask can intercept clicks over
-the desktop. Union the compact island, expanded content, and any intentional
-hover bridge in a `Region`. Remove the expanded item from the region after the
-close transition, not merely after setting opacity to zero.
-
-### Focus ownership
-
-Use `GlobalShortcut` for global opening; a local `Shortcut` only works while the
-shell already has focus. Because `Bar` is instantiated once per screen, register
-each global shortcut exactly once at `ShellRoot` and route its request to the
-`Bar` whose screen matches `Hyprland.focusedMonitor`; do not register duplicate
-`appid:name` pairs in every `Variants` delegate. Use a `FocusScope` for the
-launcher and keyboard menus, call `forceActiveFocus()` after `Loader.onLoaded`,
-and use `HyprlandFocusGrab` for outside-click/touch dismissal. Do not use
-exclusive keyboard focus for ordinary hover previews.
-
-The focused-monitor rule used by Synoptik (`screen.name` compared with
-`Hyprland.focusedMonitor.name`) is a good default for global launcher and
-shortcut modes. Hover-triggered modes should remain on the monitor whose item
-was hovered.
-
-### `Loader` and implicit sizes
-
-A mode's implicit size may be zero while its `Loader` is still constructing it.
-Provide conservative fallback dimensions and update the target dimensions after
-`Loader.onLoaded`/implicit-size changes. Keep the loaded mode anchored to the
-wrapper, not to the original button, so the pointer can enter the expanded
-content without losing it.
-
-### Hover versus click semantics
-
-Every trigger should distinguish:
-
-- pointer hover, which may be transient;
-- click, which may pin a mode or launch an external application;
-- keyboard shortcut, which should normally pin/focus a mode.
-
-Do not close a click-open launcher or tray menu merely because the pointer left
-the original trigger. Conversely, do not leave a hover update card open forever
-if the pointer leaves both the trigger and card.
-
-### Preview cost
-
-Workspace/window previews should use still captures by default and live captures
-only while needed. The current `hyprland.md` documents the required
-`toplevel-export` capability and the fact that a whole-workspace preview is a
-composition of window captures.
-
-### Runtime/version checks
-
-The installed API can be inspected locally under
-`/usr/lib64/qt6/qml/Quickshell` and is currently Quickshell 0.3.1. In particular,
-verify the runtime behavior of nested DBus menus, `Region` unions, `PopupAnchor`
-coordinates, and Pipewire writes before relying on them in a generalized
-component.
-
-## Suggested implementation order
-
-1. **Resolve ownership:** keep Quickshell as the sole top-layer bar and ensure
-   only one top-layer bar/exclusive zone is running.
-2. **Build the shell:** refactor `Bar.qml` into a stable per-screen host with a
-   masked compact island, a `progress` animation, and an empty mode `Loader`.
-3. **Power vertical slice:** implement the expanded power mode and migrate the
-   current `PowerMenu` hover behavior into the controller. Verify outside click,
-   Escape, monitor focus, and destructive-action handling.
-4. **Launcher:** add the focused search/list mode and replace the `SUPER+R` Rofi
-   binding once it is reliable.
-5. **Audio preview:** add shared input/output state and hover sliders while
-   retaining click-to-`pavucontrol`.
-6. **Updates preview:** extend `UpdateService` to a structured model and render a
-   hover list.
-7. **Workspace preview:** add one-workspace hover cards and still captures, then
-   consider live previews/keyboard overview.
-8. **Tray menu:** implement the custom DBus menu renderer, nested submenu stack,
-   and tray-item lifecycle handling.
-9. **Cleanup:** remove duplicate compact widgets and obsolete Rofi paths only
-   after each replacement has been verified.
-
-### First vertical-slice acceptance criteria
-
-- No mode creates a second `PanelWindow`.
-- With no mode active, the current compact bar looks and behaves as before.
-- Hovering power expands the same island; moving from the trigger into the card
-  does not flicker.
-- Clicking an action invokes the shared service and returns the island to a
-  safe state.
-- Escape and outside click close the mode.
-- Transparent areas remain click-through.
-- Only the focused/triggering monitor receives a global mode.
-- Expanded content does not change the tiled layout's exclusive zone.
-- The surface can be reloaded safely while services continue to be shared.
-
-## Roadmap-document status
-
-The prompt refers to `workspace-switcher.md`, `context-menus.md`, and
-`launcher.md`, but those files are not present in the current checkout. Their
-stated requirements were treated as inputs to this note:
-
-- workspace switcher: eventual hover previews while swapping;
-- context menus: replace native tray right-click menus with shell-native QML
-  menus;
-- launcher: a Synoptik-style search bar and result list.
-
-The existing [`hyprland.md`](file:///home/koss/code/dotfiles/config/quickshell/hyprland.md)
-is the current API/behavior reference for `GlobalShortcut`,
-`HyprlandFocusGrab`, `ScreencopyView`, monitor-aware launchers, and workspace
-previews. Those feature-specific documents can be added later without changing
-the island architecture described here.
-
-### Footnote from notifications
-When the shared drawer/dynamic-island host is implemented, move notifications into it instead of maintaining a second `PanelWindow` with its own masking, routing, and slide behavior.
-
-## Source references
-
-### Local source
-
-- [`Synoptik/README.md`](file:///home/koss/code/Synoptik/README.md)
-- [`Synoptik/components/UnifiedSurface.qml`](file:///home/koss/code/Synoptik/components/UnifiedSurface.qml)
-- [`Synoptik/shell.qml`](file:///home/koss/code/Synoptik/shell.qml)
-- [`Synoptik/components/AppLauncher.qml`](file:///home/koss/code/Synoptik/components/AppLauncher.qml)
-- [`Synoptik/components/Audio.qml`](file:///home/koss/code/Synoptik/components/Audio.qml)
-- [`Synoptik/components/Power.qml`](file:///home/koss/code/Synoptik/components/Power.qml)
-- [`Synoptik/components/WorkspacePreview.qml`](file:///home/koss/code/Synoptik/components/WorkspacePreview.qml)
-- [`dotfiles/config/quickshell/home/Bar.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/Bar.qml)
-- [`dotfiles/config/quickshell/home/shell.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/shell.qml)
-- [`dotfiles/config/quickshell/home/widgets/PowerMenu.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/PowerMenu.qml)
-- [`dotfiles/config/quickshell/home/widgets/WorkspaceSwitcher.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/WorkspaceSwitcher.qml)
-- [`dotfiles/config/quickshell/home/widgets/SystemTray.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/SystemTray.qml)
-- [`dotfiles/config/quickshell/home/widgets/StatusArea.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/widgets/StatusArea.qml)
-- [`dotfiles/config/quickshell/home/services/UpdateService.qml`](file:///home/koss/code/dotfiles/config/quickshell/home/services/UpdateService.qml)
-- [`dotfiles/config/quickshell/hyprland.md`](file:///home/koss/code/dotfiles/config/quickshell/hyprland.md)
-
-### Quickshell 0.3.1 references
-
-- [PanelWindow](https://quickshell.org/docs/v0.3.1/types/Quickshell/PanelWindow/)
-- [PopupWindow](https://quickshell.org/docs/v0.3.1/types/Quickshell/PopupWindow/)
-- [PopupAnchor](https://quickshell.org/docs/v0.3.1/types/Quickshell/PopupAnchor/)
-- [HyprlandFocusGrab](https://quickshell.org/docs/v0.3.1/types/Quickshell.Hyprland/HyprlandFocusGrab/)
-- [GlobalShortcut](https://quickshell.org/docs/v0.3.1/types/Quickshell.Hyprland/GlobalShortcut/)
-- [ScreencopyView](https://quickshell.org/docs/v0.3.1/types/Quickshell.Wayland/ScreencopyView/)
-- [QsMenuEntry](https://quickshell.org/docs/v0.3.1/types/Quickshell/QsMenuEntry/)
-- [QsMenuOpener](https://quickshell.org/docs/v0.3.1/types/Quickshell/QsMenuOpener/)
-- [QsMenuAnchor](https://quickshell.org/docs/v0.3.1/types/Quickshell/QsMenuAnchor/)
-- [SystemTrayItem](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.SystemTray/SystemTrayItem/)
-- [DBusMenu module](https://quickshell.org/docs/v0.3.1/types/Quickshell.DBusMenu/)
+The controller exposes a small request API:
+
+```qml
+showHover(mode, trigger, context)
+togglePinned(mode, trigger, context)
+openPinned(mode, trigger, context)
+close(reason)
+```
+
+`showHover(...)` updates a transient card normally. If the controller is already
+pinned, it replaces the active mode/trigger/context but deliberately preserves
+the pinned state; it never silently demotes the replacement to transient.
+
+Mode components expose `implicitWidth` and `implicitHeight`, accept their
+feature context, and emit requests such as `closeRequested` or
+`openModeRequested`. They do not calculate global window geometry or own hover
+close timers.
+
+### Focus and dismissal
+
+- Bind `WlrLayershell.keyboardFocus` to `WlrKeyboardFocus.None` for hover-only
+  cards.
+- Bind it to `WlrKeyboardFocus.OnDemand` for every pinned card, even when its
+  only keyboard command is Escape. A pinned mode with text input or navigation
+  additionally focuses its content `FocusScope` after load.
+- Escape is handled by the island-level dismissal scope and closes any pinned
+  card.
+- Outside click or `HyprlandFocusGrab` focus loss closes a pinned card.
+- A hover card closes through pointer-region state and does not install a
+  full-screen click catcher.
+- Global shortcuts are registered once in `ShellRoot` and routed to the island
+  on `Hyprland.focusedMonitor`.
+
+### Relationship to tray context menus
+
+`todo/context-menus.md` is a separate implementation-ready milestone. Until it
+is deliberately integrated, a tray item's hover information uses the dynamic
+island while its right-click action uses the single shell-native anchored
+`PopupWindow` specified there. Do not silently merge the two ownership models
+while implementing the first island slice.
+
+The two surfaces are mutually exclusive. On any tray-menu toggle request, close
+the island card before opening the popup and latch hover suppression for that
+tray trigger. Keep suppression active while the popup is visible and after it
+closes until the pointer exits the trigger; a fresh pointer entry starts the
+normal 120 ms hover-intent delay. This prevents a focused tray popup and an
+island card from overlapping or immediately reopening one another.
+
+A later design may render tray action menus in a pinned island card, but that
+requires updating both specifications together.
+
+## Initial mode content
+
+### Power — first vertical slice
+
+Power is the first mode because it proves connected hover, pinning, action
+input, dismissal, and geometry without requiring asynchronous models.
+
+- Hover shows icon-led actions for Lock, Suspend, Log Out, Reboot, and Power
+  Off.
+- Labels are allowed in the expanded card; compact mode remains icon-only.
+- Click pins the card.
+- Destructive actions require confirmation or a deliberate second step.
+- Commands live in a shared service, not in visual delegates.
+- Close the card before handing off to lock, logout, reboot, or shutdown.
+
+### Audio — first information-rich hover card
+
+- Show default output and microphone rows.
+- Each row has an icon, name, level, slider, and mute action.
+- Hover does not grab focus.
+- Slider and mute interaction keep the card open because the pointer remains
+  inside its region.
+- Clicking the compact audio trigger opens `pavucontrol` and closes the hover
+  card unless the trigger is being used to pin a future device selector.
+
+### Workspace preview
+
+- The compact island has one workspace/grid icon rather than numeric segments.
+- The card shows monitor-local workspaces and their numbers inside the expanded
+  content.
+- Preview only the selected/hovered workspace initially.
+- Still captures are the default; live captures run only while needed.
+- Clicking a workspace activates it; clicking a window focuses it.
+
+### Updates
+
+- The compact update icon shows only an accent dot when updates are available.
+- The card shows count, last refresh time, loading/error state, and a bounded
+  package list.
+- Shared update data must treat `dnf check-update` exit code 100 as success with
+  available updates.
+- Hovering must not start a new process every time; refresh only when cached data
+  is stale.
+
+### Launcher
+
+- Keep the existing process-global `GlobalShortcut`, app model, search scoring,
+  result navigation, and launch behavior.
+- Replace `Launcher.qml`'s per-screen `Variants`/`PanelWindow` views with one
+  ordinary launcher mode loaded by the target island.
+- The shortcut routes an `openPinned("launcher", ...)` request to the island on
+  `Hyprland.focusedMonitor` and anchors it to the compact launcher icon.
+- Focus the search field after load. Escape, focus loss, and launching an app
+  close the island and reset the query after the close transition.
+- Remove the old launcher panels only after shortcut routing and focus behavior
+  work through the island.
+
+### Clock and notifications
+
+- The clock card owns all date/time text and the calendar.
+- Preserve `NotificationService` as the shared source of truth for records,
+  focused-screen routing, queued records, timeout pausing, fullscreen
+  suppression, and manual fullscreen override.
+- Replace `NotificationStack.qml`'s `PanelWindow` with ordinary notification
+  mode content loaded in the service's `routedScreen` island and anchored to
+  that screen's bell icon.
+- A new notification automatically opens a transient notification card only
+  when fullscreen suppression allows it and that island has no pinned user
+  mode. If a pinned mode owns the island, keep the record queued for visual
+  presentation and show the compact bell's unread dot rather than displacing
+  the user's mode.
+- Pointer hover over the notification card continues to pause record timers.
+  When suppression clears or the pinned mode closes, reveal queued records on
+  the service-selected island. Clicking the bell pins the full notification
+  center for actions.
+- Remove the old notification panel only after automatic presentation, routing,
+  queuing, timeout behavior, and fullscreen suppression have been verified in
+  the island host.
+
+## Implementation sequence
+
+1. Replace the three-zone `Bar.qml` layout with one centered compact background
+   while preserving current actions behind icon triggers.
+2. Expand the per-screen host, add the exact compact input mask, and verify that
+   transparent areas remain click-through.
+3. Add the connector, card shell, one-mode controller, hover intent timer, close
+   grace timer, and geometry clamping with placeholder content.
+4. Implement the power vertical slice and verify hover-to-card pointer travel,
+   pinning, Escape, outside click, and destructive-action safety.
+5. Convert status text to icon states and attached cards: clock, VRR, updates,
+   audio, and Bluetooth.
+6. Convert the launcher into ordinary mode content, route its existing global
+   shortcut to the focused island, then remove its per-screen panel surfaces.
+7. Convert the notification stack into ordinary mode content while preserving
+   service routing, queuing, timers, fullscreen suppression, and automatic
+   presentation; then remove its independent panel surface.
+8. Consolidate workspaces into one icon and move workspace information/preview
+   into its card.
+9. Connect running-app and tray delegates as independent anchors; add dynamic
+   overflow and tray-popup hover suppression.
+10. Reconcile tray action menus with `context-menus.md` only as an explicit later
+    design change.
+
+## Acceptance criteria
+
+### Visual
+
+- Each monitor shows one rounded rectangle centered 7 px below its top edge.
+- The compact island contains icons only; no date, time, workspace number,
+  package count, device name, battery percentage, or other text is visible.
+- Permanent controls do not look like separate pills.
+- Hovering any information-bearing icon opens one card below it.
+- The card visibly touches the island through a connector aligned to the icon.
+- Near screen edges, the card remains on-screen while the connector continues
+  to point to its trigger.
+- The card and compact island use one coherent background, border, radius, and
+  Rose Pine visual language.
+
+### Interaction
+
+- Passing quickly over icons does not flash multiple cards.
+- Moving from a trigger through the connector into the card never closes it.
+- Moving across icons reuses one expansion surface and smoothly changes its
+  anchor and content; when the old card is pinned, the new hovered card inherits
+  that pinned ownership and remains open after pointer leave.
+- Leaving the connected region closes a transient card after the grace delay.
+- Interactive controls in a hover card remain usable without pinning.
+- Pinned modes survive pointer leave and close on Escape, outside click, toggle,
+  or completed action.
+- Opening a tray context menu closes and suppresses the tray hover card so the
+  two surfaces never overlap.
+- A destroyed/reordered task or tray trigger cannot leave an orphaned card.
+
+### Architecture and robustness
+
+- There is one `PanelWindow` per screen—the island host—and at most one loaded
+  island mode per screen; the former launcher and notification panels are gone.
+- The launcher shortcut opens the pinned launcher on the focused island with
+  search focus and the existing result behavior.
+- Notification routing, queuing, timer pausing, fullscreen suppression, and
+  automatic presentation still work through the routed island.
+- The exclusive zone remains 43 px whether the card is open or closed.
+- Transparent surface areas do not intercept desktop input.
+- Closed/closing content cannot receive clicks even while an opacity animation
+  is running.
+- Hover-only cards do not take keyboard focus.
+- Global modes open only on the focused monitor; pointer hover opens only on the
+  monitor containing that trigger.
+- Dynamic content reports implicit dimensions and scrolls within fixed maximum
+  bounds.
+- Quickshell reloads without QML errors and without launching a second `qs`
+  process.
+
+## Repository and API references
+
+- Current per-screen bar: `config/quickshell/home/Bar.qml`
+- Current dimensions: `config/quickshell/home/config/BarMetrics.qml`
+- Current status content: `config/quickshell/home/widgets/StatusArea.qml`
+- Current workspace behavior: `config/quickshell/home/widgets/WorkspaceSwitcher.qml`
+- Current power behavior: `config/quickshell/home/widgets/PowerMenu.qml`
+- Tray-menu milestone: `config/quickshell/todo/context-menus.md`
+- Hyprland and workspace-preview notes: `config/quickshell/hyprland.md`
+- Quickshell 0.3.1 [`PanelWindow`](https://quickshell.org/docs/v0.3.1/types/Quickshell/PanelWindow/)
+- Quickshell 0.3.1 [`HyprlandFocusGrab`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Hyprland/HyprlandFocusGrab/)
+- Quickshell 0.3.1 [`GlobalShortcut`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Hyprland/GlobalShortcut/)
+- Quickshell 0.3.1 [`Region`](https://quickshell.org/docs/v0.3.1/types/Quickshell/Region/)
