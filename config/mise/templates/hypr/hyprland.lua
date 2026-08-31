@@ -49,7 +49,7 @@ local file_manager = "dolphin"
 -------------------
 
 hl.on("hyprland.start", function()
-  hl.exec_cmd("qs -p quickshell/home")
+  hl.exec_cmd("qs -c home")
   hl.exec_cmd("hyprpaper")
   hl.exec_cmd("systemctl --user start plasma-polkit-agent")
   hl.exec_cmd("firefox", { workspace = "3 silent" })
