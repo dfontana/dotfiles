@@ -16,6 +16,7 @@ Rectangle {
   readonly property var details: root.record ? root.record.data : ({})
   readonly property bool expanded: root.record ? root.record.expanded : false
   readonly property bool bodyExists: Boolean(root.details.body)
+  readonly property int collapsedBodyLineCount: 4
   readonly property string bodyText: String(root.details.body || "")
     .replace(/<img\b[^>]*\/?>|<\/img>/gi, "")
   readonly property string imageSource: String(root.details.image || "")
@@ -96,13 +97,13 @@ Rectangle {
     id: bodyMeasure
     x: -10000
     width: summaryColumn.width
-    height: 16
     visible: root.bodyExists
     opacity: 0
     font.pixelSize: 12
     text: root.bodyText
-    textFormat: Text.RichText
-    maximumLineCount: 1
+    textFormat: Text.StyledText
+    wrapMode: Text.Wrap
+    maximumLineCount: root.collapsedBodyLineCount
     elide: Text.ElideRight
   }
 
@@ -131,7 +132,8 @@ Rectangle {
     Item {
       id: topRow
       width: parent.width
-      height: 32
+      height: Math.max(32, summaryText.height
+        + (collapsedBody.visible ? summaryColumn.spacing + collapsedBody.height : 0))
 
       Rectangle {
         width: 32
@@ -179,6 +181,8 @@ Rectangle {
         spacing: 2
 
         Text {
+          id: summaryText
+
           width: parent.width
           color: root.urgencyAccent
           font.pixelSize: 14
@@ -190,13 +194,16 @@ Rectangle {
         }
 
         Text {
+          id: collapsedBody
+
           width: parent.width
           visible: !root.expanded && root.bodyExists
           color: Theme.text
           font.pixelSize: 12
           text: root.bodyText
-          textFormat: Text.RichText
-          maximumLineCount: 1
+          textFormat: Text.StyledText
+          wrapMode: Text.Wrap
+          maximumLineCount: root.collapsedBodyLineCount
           elide: Text.ElideRight
           onLinkActivated: link => Qt.openUrlExternally(link)
         }

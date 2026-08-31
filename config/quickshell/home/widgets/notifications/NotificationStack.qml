@@ -13,13 +13,15 @@ PanelWindow {
   readonly property real topMargin: BarMetrics.margin + BarMetrics.height + BarMetrics.gap
   readonly property real drawerPadding: 8
   readonly property real drawerHeaderHeight: 32
+  readonly property real cardContentHeight: cardList.contentItem
+    ? cardList.contentItem.childrenRect.height : 0
   readonly property real maxHeight: root.screen
     ? Math.max(0, root.screen.height - root.topMargin - BarMetrics.margin)
     : 0
   readonly property real drawerHeight: Math.min(root.maxHeight,
     root.drawerPadding * 2 + root.drawerHeaderHeight
-    + cardList.contentHeight)
-  readonly property bool overflowing: cardList.contentHeight > cardList.height + 1
+    + root.cardContentHeight)
+  readonly property bool overflowing: root.cardContentHeight > cardList.height + 1
   readonly property bool pointerHovered: Boolean(root.service
     && root.service.surfaceVisible
     && root.service.stackVisible
@@ -145,9 +147,10 @@ PanelWindow {
       x: root.drawerPadding
       y: root.drawerPadding + header.height
       width: parent.width - root.drawerPadding * 2
-      height: Math.min(contentHeight,
+      height: Math.min(root.cardContentHeight,
         Math.max(0, root.maxHeight - root.drawerPadding * 2
           - root.drawerHeaderHeight))
+      contentHeight: root.cardContentHeight
       clip: true
       spacing: BarMetrics.gap
       interactive: root.overflowing
