@@ -18,7 +18,8 @@ PanelWindow {
   color: "transparent"
   exclusiveZone: BarMetrics.compactFootprint
   implicitHeight: Math.max(BarMetrics.compactFootprint,
-    launcherDrawer.y + launcherDrawer.implicitHeight)
+    launcherDrawer.y + launcherDrawer.implicitHeight,
+    workspaceDrawer.y + workspaceDrawer.implicitHeight)
   mask: islandInputRegion
   focusable: root.launcherTarget
   surfaceFormat: {
@@ -61,6 +62,31 @@ PanelWindow {
       item: island
       shape: RegionShape.Rect
       radius: BarMetrics.compactRadius
+    }
+
+    Region {
+      x: workspaceDrawer.x + workspaceDrawer.connectorX
+      y: workspaceDrawer.y
+      width: workspaceDrawer.connectorWidth
+      height: Math.min(workspaceDrawer.connectorHeight,
+        workspaceDrawer.inputHeight)
+    }
+
+    Region {
+      x: workspaceDrawer.x
+      y: workspaceDrawer.y + workspaceDrawer.cardTop
+      width: workspaceDrawer.width
+      height: workspaceDrawer.fullHeight - workspaceDrawer.cardTop
+      radius: workspaceDrawer.cardRadius
+
+      Region {
+        x: workspaceDrawer.x
+        y: workspaceDrawer.y + workspaceDrawer.cardTop
+        width: workspaceDrawer.width
+        height: Math.max(0, workspaceDrawer.inputHeight
+          - workspaceDrawer.cardTop)
+        intersection: Intersection.Intersect
+      }
     }
 
     Region {
@@ -116,8 +142,11 @@ PanelWindow {
       PowerMenu {}
 
       WorkspaceSwitcher {
+        id: workspaceSwitcher
+
         monitor: root.monitor
         screen: root.screen
+        drawerBlocked: root.launcherTarget
       }
 
       CompactIconButton {
@@ -157,14 +186,32 @@ PanelWindow {
     }
   }
 
+  WorkspaceDrawer {
+    id: workspaceDrawer
+
+    z: 1
+    switcher: workspaceSwitcher
+    monitor: root.monitor
+    screen: root.screen
+    anchorCenterX: island.x + workspaceSwitcher.mapToItem(island,
+      workspaceSwitcher.width / 2, 0).x
+    y: island.y + island.height
+  }
+
   LauncherDrawer {
     id: launcherDrawer
 
+    z: 2
     service: root.launcherService
     screen: root.screen
     screenActive: root.focusedScreen
     anchorCenterX: island.x + launcherButton.mapToItem(island,
       launcherButton.width / 2, 0).x
     y: island.y + island.height
+  }
+
+  onLauncherTargetChanged: {
+    if (root.launcherTarget)
+      workspaceSwitcher.closeDrawer();
   }
 }
