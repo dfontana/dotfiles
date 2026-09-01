@@ -1,5 +1,6 @@
 module qs.widgets
 
+LauncherDrawer 1.0 LauncherDrawer.qml
 PowerMenu 1.0 PowerMenu.qml
 StatusArea 1.0 StatusArea.qml
 SystemTray 1.0 SystemTray.qml

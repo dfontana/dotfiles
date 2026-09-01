@@ -1,6 +1,6 @@
 # Monitor-local workspace switcher drawer
 
-- **Status:** pending; blocked until the launcher milestone is committed
+- **Status:** ready; launcher milestone complete
 - **Commit boundary:** one commit, after implementation and focused verification
 - **Likely files:** `home/widgets/WorkspaceSwitcher.qml`, `home/widgets/WorkspacePreview.qml` (refactor or removal of its detached popup role), `home/Bar.qml`, and the smallest supporting component/metric changes
 
@@ -46,4 +46,5 @@ Record the monitor/workspace geometry, live reload log, hover animation result, 
 
 ## Progress log
 
+- 2026-09-01: Launcher prerequisite completed; workspace milestone is ready to start.
 - 2026-08-31: Task mapped from the current active-workspace detached preview; no code changes started; blocked on launcher completion and user approval.
