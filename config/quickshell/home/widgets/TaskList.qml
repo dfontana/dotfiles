@@ -2,15 +2,17 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Widgets
-import qs.components
+import qs.config
+import qs.theme
 
-BarPill {
+Item {
   id: root
 
   required property var monitor
 
   visible: taskRow.implicitWidth > 0
-  implicitWidth: taskRow.implicitWidth > 0 ? taskRow.implicitWidth + 20 : 0
+  implicitWidth: taskRow.implicitWidth
+  implicitHeight: BarMetrics.compactSlotSize
 
   function applicationIcon(appId) {
     const entry = DesktopEntries.heuristicLookup(appId);
@@ -19,31 +21,50 @@ BarPill {
 
   Row {
     id: taskRow
+
     anchors.centerIn: parent
-    spacing: 6
+    spacing: BarMetrics.compactItemGap
 
     Repeater {
       model: Hyprland.toplevels
 
       Item {
+        id: taskItem
+
         required property var modelData
         visible: modelData.monitor === root.monitor
-        implicitWidth: 24
-        implicitHeight: 24
+        implicitWidth: BarMetrics.compactSlotSize
+        implicitHeight: BarMetrics.compactSlotSize
+
+        Rectangle {
+          anchors.fill: parent
+          radius: BarMetrics.compactHoverRadius
+          color: taskMouse.containsMouse ? Theme.hover : "transparent"
+
+          Behavior on color {
+            ColorAnimation {
+              duration: BarMetrics.compactHoverDuration
+            }
+          }
+        }
 
         IconImage {
           anchors.centerIn: parent
           implicitSize: 20
-          source: modelData.wayland ? root.applicationIcon(modelData.wayland.appId) : ""
+          source: taskItem.modelData.wayland
+            ? root.applicationIcon(taskItem.modelData.wayland.appId)
+            : ""
         }
 
         MouseArea {
+          id: taskMouse
+
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           onClicked: {
-            if (modelData.wayland)
-              modelData.wayland.activate();
+            if (taskItem.modelData.wayland)
+              taskItem.modelData.wayland.activate();
           }
         }
       }

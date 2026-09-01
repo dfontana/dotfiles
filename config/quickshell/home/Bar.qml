@@ -1,19 +1,23 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import qs.components
 import qs.config
+import qs.theme
 import qs.widgets
 
 PanelWindow {
   id: root
 
   property var modelData
+  required property var launcherService
   required property var notificationService
 
   screen: modelData
   color: "transparent"
-  exclusiveZone: BarMetrics.height + BarMetrics.margin
-  implicitHeight: BarMetrics.height
+  exclusiveZone: BarMetrics.compactFootprint
+  implicitHeight: BarMetrics.compactFootprint
+  mask: islandInputRegion
   surfaceFormat: {
     "opaque": false
   }
@@ -24,48 +28,80 @@ PanelWindow {
     right: true
   }
 
-  margins {
-    top: BarMetrics.margin
-    left: BarMetrics.margin
-    right: BarMetrics.margin
-  }
-
   readonly property var monitor: Hyprland.monitorFor(screen)
   readonly property bool primary: screen && screen.name === BarMetrics.primaryOutput
 
-  Item {
-    anchors.fill: parent
+  Region {
+    id: islandInputRegion
+
+    item: island
+    shape: RegionShape.Rect
+    radius: BarMetrics.compactRadius
+  }
+
+  Rectangle {
+    id: island
+
+    x: Math.round((root.width - width) / 2)
+    y: BarMetrics.compactTopOffset
+    width: compactRow.implicitWidth + BarMetrics.compactHorizontalPadding * 2
+    height: BarMetrics.compactHeight
+    radius: BarMetrics.compactRadius
+    color: Theme.barSurface
+    border.width: 1
+    border.color: Theme.highlightMed
+
+    Behavior on width {
+      NumberAnimation {
+        duration: 180
+        easing.type: Easing.OutCubic
+      }
+    }
 
     Row {
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      spacing: BarMetrics.gap
+      id: compactRow
+
+      anchors.centerIn: parent
+      spacing: BarMetrics.compactItemGap
 
       PowerMenu {}
 
+      WorkspaceSwitcher {
+        monitor: root.monitor
+        screen: root.screen
+      }
+
+      CompactIconButton {
+        icon: ""
+        iconSize: 16
+        iconColor: Theme.text
+        onClicked: root.launcherService.toggleLauncher()
+      }
+
+      IslandSeparator {
+        visible: taskList.visible || systemTray.visible
+      }
+
       TaskList {
+        id: taskList
         monitor: root.monitor
       }
 
       SystemTray {
+        id: systemTray
         hostWindow: root
       }
-    }
 
-    WorkspaceSwitcher {
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.verticalCenter: parent.verticalCenter
-      monitor: root.monitor
-      screen: root.screen
-    }
+      IslandSeparator {
+        visible: taskList.visible || systemTray.visible
+      }
 
-    StatusArea {
-      anchors.right: parent.right
-      anchors.verticalCenter: parent.verticalCenter
-      outputName: root.screen ? root.screen.name : ""
-      updatesEnabled: root.primary
-      notificationService: root.notificationService
-      screen: root.screen
+      StatusArea {
+        outputName: root.screen ? root.screen.name : ""
+        updatesEnabled: root.primary
+        notificationService: root.notificationService
+        screen: root.screen
+      }
     }
   }
 }

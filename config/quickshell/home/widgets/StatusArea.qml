@@ -16,8 +16,16 @@ Row {
   property var screen: null
   property bool vrrActive: false
   property string updateCount: ""
+  readonly property var connectedBluetoothDevice: {
+    const devices = Bluetooth.devices.values;
+    for (let index = 0; index < devices.length; index++) {
+      if (devices[index].connected)
+        return devices[index];
+    }
+    return null;
+  }
 
-  spacing: BarMetrics.gap
+  spacing: BarMetrics.compactItemGap
 
   function pollVrr() {
     if (root.outputName.length === 0 || vrrProcess.running)
@@ -42,18 +50,6 @@ Row {
     if (sink.audio.volume <= 0.66)
       return "";
     return "";
-  }
-
-  function bluetoothText() {
-    const devices = Bluetooth.devices.values;
-    for (let index = 0; index < devices.length; index++) {
-      const device = devices[index];
-      if (!device.connected)
-        continue;
-      const battery = device.batteryAvailable ? ` ${Math.round(device.battery * 100)}%` : "";
-      return `󰂱 ${device.name}${battery}`;
-    }
-    return "";
   }
 
   Component.onCompleted: {
@@ -111,106 +107,59 @@ Row {
     command: ["pavucontrol"]
   }
 
-  BarPill {
-    id: infoPill
-    implicitWidth: infoRow.implicitWidth + BarMetrics.pillPadding * 2
-
-    Row {
-      id: infoRow
-      anchors.centerIn: parent
-      spacing: 5
-
-      Text {
-        color: root.vrrActive ? Theme.accent : Theme.muted
-        font.family: Theme.iconFont
-        font.pixelSize: 18
-        text: root.vrrActive ? "󱧧" : "󰁪"
-      }
-
-      Text {
-        id: updates
-        visible: root.updatesEnabled
-        anchors.verticalCenter: parent.verticalCenter
-        color: updatesMouse.containsMouse ? Theme.accent : Theme.text
-        font.family: Theme.iconFont
-        font.pixelSize: 14
-        font.weight: Font.DemiBold
-        text: `  ${root.updateCount}`
-
-        MouseArea {
-          id: updatesMouse
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          onClicked: updatesTerminal.startDetached()
-        }
-      }
-    }
+  CompactIconButton {
+    icon: root.vrrActive ? "󱧧" : "󰁪"
+    iconSize: 18
+    iconColor: root.vrrActive ? Theme.accent : Theme.muted
+    interactive: false
   }
 
-  PillButton {
-    id: volumePill
-    implicitWidth: volumeText.implicitWidth + BarMetrics.pillPadding * 2
+  CompactIconButton {
+    visible: root.updatesEnabled
+    icon: ""
+    iconSize: 15
+    iconColor: Number(root.updateCount) > 0 ? Theme.accent : Theme.text
+    indicatorVisible: Number(root.updateCount) > 0
+    onClicked: updatesTerminal.startDetached()
+  }
+
+  CompactIconButton {
+    icon: root.audioIcon()
+    iconSize: 16
+    iconColor: Pipewire.defaultAudioSink
+      && Pipewire.defaultAudioSink.audio
+      && Pipewire.defaultAudioSink.audio.muted
+      ? Theme.muted
+      : Theme.text
     onClicked: volumeControl.startDetached()
+  }
 
-    Text {
-      id: volumeText
-      anchors.centerIn: parent
-      color: Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio && Pipewire.defaultAudioSink.audio.muted ? Theme.muted : Theme.accent
-      font.family: Theme.iconFont
-      font.pixelSize: 14
-      font.weight: Font.DemiBold
-      text: `${root.audioIcon()} 󰍭`
+  CompactIconButton {
+    icon: root.connectedBluetoothDevice ? "󰂱" : ""
+    iconSize: 16
+    iconColor: root.connectedBluetoothDevice ? Theme.accent : Theme.muted
+    indicatorVisible: root.connectedBluetoothDevice !== null
+    interactive: false
+  }
+
+  CompactIconButton {
+    icon: "󰂚"
+    iconSize: 16
+    iconColor: !root.notificationService || !root.notificationService.hasNotifications
+      ? Theme.muted
+      : root.notificationService.stackVisible ? Theme.active : Theme.text
+    indicatorVisible: root.notificationService && root.notificationService.hasNotifications
+    indicatorColor: Theme.active
+    onClicked: {
+      if (root.notificationService)
+        root.notificationService.toggleFor(root.screen);
     }
   }
 
-  BarPill {
-    implicitWidth: bluetoothLabel.implicitWidth + BarMetrics.pillPadding * 2
-
-    Text {
-      id: bluetoothLabel
-      anchors.centerIn: parent
-      color: Theme.accent
-      font.family: Theme.iconFont
-      font.pixelSize: 14
-      font.weight: Font.DemiBold
-      text: root.bluetoothText()
-    }
-  }
-
-  PillButton {
-    implicitWidth: BarMetrics.iconButtonWidth
-    onClicked: root.notificationService.toggleFor(root.screen)
-
-    Text {
-      anchors.centerIn: parent
-      color: !root.notificationService || !root.notificationService.hasNotifications
-        ? Theme.muted
-        : root.notificationService.stackVisible ? Theme.active : Theme.accent
-      font.family: Theme.iconFont
-      font.pixelSize: 15
-      font.weight: Font.DemiBold
-      text: "󰂚"
-    }
-  }
-
-  PillButton {
-    id: clockPill
-    implicitWidth: clockLabel.implicitWidth + BarMetrics.pillPadding * 2
-
-    Text {
-      id: clockLabel
-      anchors.centerIn: parent
-      color: Theme.accent
-      font.family: Theme.iconFont
-      font.pixelSize: 14
-      font.weight: Font.DemiBold
-      text: `${Qt.formatDateTime(clock.date, "ddd, dd MMM  HH:mm")} `
-    }
-  }
-
-  SystemClock {
-    id: clock
-    precision: SystemClock.Minutes
+  CompactIconButton {
+    icon: ""
+    iconSize: 15
+    iconColor: Theme.text
+    interactive: false
   }
 }
