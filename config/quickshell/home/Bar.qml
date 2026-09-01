@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 import qs.components
 import qs.config
 import qs.theme
@@ -16,10 +17,23 @@ PanelWindow {
   screen: modelData
   color: "transparent"
   exclusiveZone: BarMetrics.compactFootprint
-  implicitHeight: BarMetrics.compactFootprint
+  implicitHeight: Math.max(BarMetrics.compactFootprint,
+    launcherDrawer.y + launcherDrawer.implicitHeight)
   mask: islandInputRegion
+  focusable: root.launcherTarget
   surfaceFormat: {
     "opaque": false
+  }
+
+  WlrLayershell.layer: WlrLayer.Top
+  WlrLayershell.keyboardFocus: root.launcherTarget
+    ? WlrKeyboardFocus.OnDemand
+    : WlrKeyboardFocus.None
+
+  HyprlandFocusGrab {
+    active: root.launcherTarget
+    windows: [root]
+    onCleared: root.launcherService.closeLauncher()
   }
 
   anchors {
@@ -30,13 +44,48 @@ PanelWindow {
 
   readonly property var monitor: Hyprland.monitorFor(screen)
   readonly property bool primary: screen && screen.name === BarMetrics.primaryOutput
+  readonly property bool focusedScreen: {
+    const monitor = root.screen ? Hyprland.monitorFor(root.screen) : null;
+    return monitor && monitor.name === Hyprland.focusedMonitor?.name;
+  }
+  readonly property bool launcherTarget: Boolean(root.launcherService
+    && root.launcherService.launcherOpen
+    && root.focusedScreen
+    && root.screen
+    && root.launcherService.targetOutput === root.screen.name)
 
   Region {
     id: islandInputRegion
 
-    item: island
-    shape: RegionShape.Rect
-    radius: BarMetrics.compactRadius
+    Region {
+      item: island
+      shape: RegionShape.Rect
+      radius: BarMetrics.compactRadius
+    }
+
+    Region {
+      x: launcherDrawer.x + launcherDrawer.connectorX
+      y: launcherDrawer.y
+      width: launcherDrawer.connectorWidth
+      height: Math.min(launcherDrawer.connectorHeight,
+        launcherDrawer.inputHeight)
+    }
+
+    Region {
+      x: launcherDrawer.x
+      y: launcherDrawer.y + launcherDrawer.cardTop
+      width: launcherDrawer.width
+      height: launcherDrawer.fullHeight - launcherDrawer.cardTop
+      radius: launcherDrawer.cardRadius
+
+      Region {
+        x: launcherDrawer.x
+        y: launcherDrawer.y + launcherDrawer.cardTop
+        width: launcherDrawer.width
+        height: Math.max(0, launcherDrawer.inputHeight - launcherDrawer.cardTop)
+        intersection: Intersection.Intersect
+      }
+    }
   }
 
   Rectangle {
@@ -72,10 +121,13 @@ PanelWindow {
       }
 
       CompactIconButton {
+        id: launcherButton
+
         icon: ""
         iconSize: 16
         iconColor: Theme.text
-        onClicked: root.launcherService.toggleLauncher()
+        onClicked: root.launcherService.toggleLauncher(
+          root.screen ? root.screen.name : "")
       }
 
       IslandSeparator {
@@ -103,5 +155,16 @@ PanelWindow {
         screen: root.screen
       }
     }
+  }
+
+  LauncherDrawer {
+    id: launcherDrawer
+
+    service: root.launcherService
+    screen: root.screen
+    screenActive: root.focusedScreen
+    anchorCenterX: island.x + launcherButton.mapToItem(island,
+      launcherButton.width / 2, 0).x
+    y: island.y + island.height
   }
 }
