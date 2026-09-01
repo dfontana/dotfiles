@@ -156,10 +156,110 @@ Row {
     }
   }
 
-  CompactIconButton {
-    icon: ""
-    iconSize: 15
-    iconColor: Theme.text
-    interactive: false
+  Item {
+    id: clock
+
+    readonly property bool hovered: clockHover.hovered
+    property string timeText: ""
+    property string dateText: ""
+
+    implicitWidth: clockRow.implicitWidth
+    implicitHeight: BarMetrics.compactSlotSize
+
+    function pad(value, width) {
+      return ("0000" + value).slice(-width);
+    }
+
+    function refresh() {
+      const now = new Date();
+      clock.timeText = clock.pad(now.getHours(), 2) + ":"
+        + clock.pad(now.getMinutes(), 2);
+      clock.dateText = clock.pad(now.getFullYear(), 4) + "-"
+        + clock.pad(now.getMonth() + 1, 2) + "-"
+        + clock.pad(now.getDate(), 2);
+      minuteTimer.interval = 60000
+        - now.getSeconds() * 1000
+        - now.getMilliseconds();
+      minuteTimer.restart();
+    }
+
+    Component.onCompleted: clock.refresh()
+
+    Timer {
+      id: minuteTimer
+
+      repeat: false
+      onTriggered: clock.refresh()
+    }
+
+    HoverHandler {
+      id: clockHover
+    }
+
+    Rectangle {
+      anchors.fill: parent
+      radius: BarMetrics.compactHoverRadius
+      color: clock.hovered ? Theme.hover : "transparent"
+
+      Behavior on color {
+        ColorAnimation {
+          duration: BarMetrics.compactHoverDuration
+        }
+      }
+    }
+
+    Row {
+      id: clockRow
+
+      anchors.centerIn: parent
+      height: BarMetrics.compactSlotSize
+      spacing: 0
+
+      Text {
+        id: timeLabel
+
+        anchors.verticalCenter: parent.verticalCenter
+        color: Theme.text
+        font.family: Theme.iconFont
+        font.pixelSize: 13
+        text: clock.timeText
+      }
+
+      Item {
+        id: dateReveal
+
+        clip: true
+        width: clock.hovered
+          ? BarMetrics.compactItemGap + dateLabel.implicitWidth
+          : 0
+        height: parent.height
+
+        Behavior on width {
+          NumberAnimation {
+            duration: 180
+            easing.type: Easing.OutCubic
+          }
+        }
+
+        Text {
+          id: dateLabel
+
+          x: BarMetrics.compactItemGap
+          anchors.verticalCenter: parent.verticalCenter
+          color: Theme.text
+          font.family: Theme.iconFont
+          font.pixelSize: 13
+          opacity: clock.hovered ? 1 : 0
+          text: clock.dateText
+
+          Behavior on opacity {
+            NumberAnimation {
+              duration: 180
+              easing.type: Easing.OutCubic
+            }
+          }
+        }
+      }
+    }
   }
 }

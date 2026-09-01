@@ -1,15 +1,14 @@
 # Dynamic-island feature tweaks
 
-- **Status:** planned; waiting for user go-ahead
+- **Status:** in progress; clock/date complete, launcher milestone next
 - **Scope:** three sequential Quickshell changes in `config/quickshell/home`
 - **Rule:** implement and verify one feature, then make exactly one feature commit before starting the next
 - **Delegation:** use a Luna Max subagent for each implementation milestone (and keep each milestone's review/fixes inside its own commit)
 
-## Order
+## Remaining order
 
-1. [`01-clock-date-hover.md`](01-clock-date-hover.md) — replace the clock icon with `HH:MM`; reveal `YYYY-mm-dd` to its right on island hover.
-2. [`02-launcher-island-drawer.md`](02-launcher-island-drawer.md) — move the launcher from the bottom-of-monitor panel into a downward expansion attached to the dynamic island.
-3. [`03-workspace-switcher-island-drawer.md`](03-workspace-switcher-island-drawer.md) — reveal every workspace on the hovered monitor in a one-row, up-to-four-column drawer attached below the island.
+1. [`02-launcher-island-drawer.md`](02-launcher-island-drawer.md) — move the launcher from the bottom-of-monitor panel into a downward expansion attached to the dynamic island.
+2. [`03-workspace-switcher-island-drawer.md`](03-workspace-switcher-island-drawer.md) — reveal every workspace on the hovered monitor in a one-row, up-to-four-column drawer attached below the island.
 
 ## Shared constraints
 
@@ -31,4 +30,6 @@ For each file below:
 
 ## Progress log
 
+- 2026-09-01: Clock/date hover implemented, focused live verification and quick review passed, and its completed milestone file was removed for the feature commit.
+- 2026-09-01: User approved implementation; clock/date milestone started with a Luna Max subagent.
 - 2026-08-31: Initial roadmap written; no implementation started; awaiting approval.
