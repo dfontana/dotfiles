@@ -1,6 +1,6 @@
 # Launcher attached to the dynamic island
 
-- **Status:** pending; blocked until the clock milestone is committed
+- **Status:** ready; clock milestone complete
 - **Commit boundary:** one commit, after implementation and focused verification
 - **Likely files:** `home/Launcher.qml`, `home/Bar.qml`, `home/components/` and/or `home/widgets/` for the attached drawer content, plus `home/shell.qml` only if ownership wiring must change
 
@@ -44,4 +44,5 @@ Record the live-session PID/reload log, shortcut behavior, keyboard/focus result
 
 ## Progress log
 
+- 2026-09-01: Clock/date prerequisite completed; launcher milestone is ready to start.
 - 2026-08-31: Task mapped from the current bottom-anchored launcher panel; no code changes started; blocked on clock completion and user approval.
