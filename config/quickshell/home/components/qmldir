@@ -1,5 +1,7 @@
 module qs.components
 
 BarPill 1.0 BarPill.qml
-PillButton 1.0 PillButton.qml
+CompactIconButton 1.0 CompactIconButton.qml
 IconButton 1.0 IconButton.qml
+IslandSeparator 1.0 IslandSeparator.qml
+PillButton 1.0 PillButton.qml

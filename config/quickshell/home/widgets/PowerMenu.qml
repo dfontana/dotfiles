@@ -9,8 +9,8 @@ Item {
 
   readonly property bool open: menuHover.hovered
 
-  implicitWidth: home.implicitWidth + actionDrawer.width
-  implicitHeight: BarMetrics.height
+  implicitWidth: powerButton.implicitWidth + actionDrawer.width
+  implicitHeight: BarMetrics.compactSlotSize
 
   HoverHandler {
     id: menuHover
@@ -41,62 +41,56 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     spacing: 0
 
-    BarPill {
-      id: home
-      implicitWidth: 40
-      hovered: homeHover.hovered
+    CompactIconButton {
+      id: powerButton
 
-      Text {
-        anchors.centerIn: parent
-        color: Theme.accent
-        font.family: Theme.iconFont
-        font.pixelSize: 18
-        text: ""
-      }
-
-      HoverHandler {
-        id: homeHover
-      }
+      icon: ""
+      iconSize: 18
+      iconColor: Theme.accent
     }
 
     Item {
       id: actionDrawer
+
       clip: true
-      width: root.open ? actionsPill.implicitWidth : 0
-      height: BarMetrics.height
+      width: root.open
+        ? BarMetrics.compactItemGap + actionsRow.implicitWidth
+        : 0
+      height: BarMetrics.compactSlotSize
 
       Behavior on width {
         NumberAnimation {
-          duration: BarMetrics.animationDuration
+          duration: 180
+          easing.type: Easing.OutCubic
         }
       }
 
-      BarPill {
-        id: actionsPill
+      Row {
+        id: actionsRow
+
         anchors.left: parent.left
-        implicitWidth: actionsRow.implicitWidth
+        anchors.leftMargin: BarMetrics.compactItemGap
+        spacing: BarMetrics.compactItemGap
 
-        Row {
-          id: actionsRow
-          anchors.centerIn: parent
-          spacing: 0
-
-          IconButton {
-            icon: ""
-            onClicked: lockProcess.startDetached()
-          }
-          IconButton {
-            icon: ""
-            onClicked: logoutProcess.startDetached()
-          }
-          IconButton {
-            icon: ""
-            onClicked: rebootProcess.startDetached()
-          }
-          IconButton {
-            icon: ""
-            onClicked: shutdownProcess.startDetached()
-          }
+        CompactIconButton {
+          icon: ""
+          iconColor: Theme.text
+          onClicked: lockProcess.startDetached()
+        }
+        CompactIconButton {
+          icon: ""
+          iconColor: Theme.text
+          onClicked: logoutProcess.startDetached()
+        }
+        CompactIconButton {
+          icon: ""
+          iconColor: Theme.text
+          onClicked: rebootProcess.startDetached()
+        }
+        CompactIconButton {
+          icon: ""
+          iconColor: Theme.love
+          onClicked: shutdownProcess.startDetached()
         }
       }
     }

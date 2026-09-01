@@ -17,12 +17,15 @@ ShellRoot {
     service: notificationController
   }
 
-  Launcher {}
+  Launcher {
+    id: launcherController
+  }
 
   Variants {
     model: Quickshell.screens
 
     Bar {
+      launcherService: launcherController
       notificationService: notificationController
     }
   }
