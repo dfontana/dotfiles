@@ -30,13 +30,13 @@ Only one card can be expanded on a monitor at a time.
   Text and numeric badges are not shown in the compact state.
 - Hover is the primary way to reveal information. There is no separate tooltip
   competing with the attached card.
-- The expanded card grows below the hovered icon and remains physically joined
-  to the island by a short connector.
-- The connector stays aligned with the triggering icon even when the card must
-  be shifted to remain on-screen.
-- The expanded card may be wider than the compact island.
+- The expanded card grows directly from the island with no neck, gap, or stub.
+- The card aligns with the island edge nearest its triggering icon rather than
+  centering beneath the icon.
+- When the card would extend past the compact island, the island widens to meet
+  every overhanging card edge so the two read as one continuous plane.
 - Moving directly from one icon to another reuses the same card surface and
-  moves the connector; it does not close and reopen a second window.
+  morphs its attached edge; it does not close and reopen a second window.
 - Hover cards do not take keyboard focus. Every pinned card requests on-demand
   focus so Escape and outside-focus dismissal work consistently; modes that
   type or navigate also move active focus into their own `FocusScope`.
@@ -106,33 +106,24 @@ like a separate permanent pill.
 
 ```text
               ╭──────────────────────────────────────╮
-              │    󰍹  ◫  ◉  │  󱧧   []   󰂚    │
-              ╰────────────────────────┬─────┬───────╯
-                                       │     │
-                             ╭─────────┴─────┴─────────╮
-                             │  Output            64%  │
-                             │  ━━━━━━━━━━━●━━━━━━━━━  │
-                             │  Microphone        82%  │
-                             │  ━━━━━━━━━━━━━●━━━━━━━  │
-                             ╰─────────────────────────╯
+              │   [󰍹] ◫  ◉  │  󱧧        󰂚    │
+              │──────────────╯                       ╰╯
+              │  Workspace 1                         │
+              │  Window previews                     │
+              ╰───────────────────────╯
 ```
 
-The attached shape has three visual parts rendered in the same color:
-
-1. the persistent compact island;
-2. a 22 px wide, 8 px tall connector centered under the trigger;
-3. the contextual card, overlapping the connector by 1 px.
-
-The overlap removes any visible gap. The outer silhouette receives the border;
-there must not be a border line across the connector/card seam. A custom path is
-acceptable, but an initial implementation may use overlapping shapes if the
-result has no visible seam at normal scale.
+The persistent compact island and contextual card use the same background and
+share an edge directly. There is no connector, neck, gap, or detached top edge.
+The card has square top corners at the join and rounded bottom corners. The
+island keeps a rounded lower corner only where no card continues beneath it.
+The shared edge must not show an interior border line.
 
 Expanded card geometry:
 
 | Property | Value |
 | --- | ---: |
-| Distance from island | 0 px; connected by the neck |
+| Distance from island | 0 px; directly shares an edge |
 | Card radius | 12 px |
 | Card padding | 10 px |
 | Minimum width | 180 px |
@@ -147,17 +138,20 @@ maximum height.
 
 ### Anchor-relative placement
 
-The card first tries to center itself under the hovered icon:
+The trigger chooses the nearest compact-island edge. A trigger in the left half
+left-aligns its card; a trigger in the right half right-aligns it:
 
 ```text
-idealCardX = triggerCenterX - cardWidth / 2
-cardX = clamp(idealCardX, 12, screenWidth - cardWidth - 12)
-connectorX = triggerCenterX - cardX - connectorWidth / 2
+cardX = triggerCenterX <= compactCenterX
+  ? compactLeft
+  : compactRight - cardWidth
+expandedLeft = min(compactLeft, cardX)
+expandedRight = max(compactRight, cardX + cardWidth)
 ```
 
-Clamp the connector inside the card's straight top edge so it never intersects
-a rounded corner. This produces the intended behavior near either edge: the
-card shifts inward, but the connector still points to the icon that opened it.
+Clamp the card to the screen margin when necessary, then widen the island to the
+clamped card bounds. A narrow card therefore grows straight down from one edge;
+a wider card expands the island toward its overhanging edge or edges.
 
 The anchor is always the actual icon delegate, not a group container or an
 index. Dynamic task and tray repeaters can reorder or remove entries, so the
@@ -220,19 +214,19 @@ the island-card anchor and the `context-menus.md` popup anchor; the surrounding
 
 1. Enter an icon hit area.
 2. After a 120 ms intent delay, make it the active trigger and load its mode.
-3. Grow the connector from that trigger and reveal the card.
-4. Keep the card open while the pointer is over the trigger, connector, or card.
+3. Grow the card directly from the trigger's nearest island edge.
+4. Keep the card open while the pointer is over the trigger or card.
 5. When the pointer leaves the whole connected region, start a 180 ms grace
    timer and then close.
 6. Re-entering any part of the region cancels the close timer.
 
-The connector is part of the input region and acts as a hover bridge. There is
-no dead gap the pointer must cross.
+The island and card input regions overlap by one pixel, so there is no dead gap
+the pointer must cross.
 
 A quick pass over the island should not flash every panel. The intent delay is
 skipped when a card is already open: moving to another icon updates the active
-mode after 60 ms, slides the connector to the new anchor, and morphs the card to
-its new dimensions.
+mode after 60 ms, moves the shared edge to the new anchor, and morphs the card
+to its new dimensions.
 
 ### Click and pinning
 
@@ -265,7 +259,7 @@ transfers `activeMode`, `activeTrigger`, and its context to the hovered trigger
 while keeping `pinned: true` and `openReason: "pinned"`. Then:
 
 - retain the card background;
-- move the connector horizontally;
+- move the attached card edge horizontally;
 - animate card `x`, width, and height to the next mode's target;
 - fade and slide the outgoing content by 8 px, swap the single loader source,
   then fade and slide the incoming content into place;
@@ -283,17 +277,19 @@ uses cubic easing without elastic overshoot.
 | Transition | Duration | Easing |
 | --- | ---: | --- |
 | Icon hover fill | 100 ms | `OutCubic` |
-| Connector open/move | 120 ms | `OutCubic` |
-| Card open | 160 ms | `OutCubic` |
+| Attached-edge move | 120 ms | `OutCubic` |
+| Card open | 180 ms | `OutCubic` |
 | Card geometry change | 180 ms | `OutCubic` |
 | Content replacement | 120 ms | `OutCubic` |
 | Close | 120 ms | `InCubic` |
 | Compact width change | 180 ms | `OutCubic` |
 
-Open from the connector's top-center: animate height/vertical scale from 0.96,
-translate from -4 px, and fade from 0. Do not scale from the screen center. On
-close, disable card input immediately and reverse the motion before removing it
-from the input mask.
+Drive island width, card height, and joined-corner radii from the same open
+progress. The card's rounded bottom edge moves downward as its content is
+revealed, so the surface appears to grow from the island rather than popping in
+behind a rectangular clip. Reverse that single motion on close; do not collapse
+the card first and round the island in a second transition. Closed/closing input
+must remain clipped to the same animated bounds.
 
 Respect a future reduced-motion setting by reducing movement to a short opacity
 transition and snapping geometry to its target.
@@ -312,8 +308,7 @@ ShellRoot
     └── Bar / DynamicIsland (one PanelWindow per screen)
         ├── compact background
         │   └── icon trigger row
-        ├── connector
-        └── expanded card
+        └── directly attached expanded card
             └── Loader: one active mode
 ```
 
@@ -321,7 +316,6 @@ The host may cover a large transparent canvas so it can contain varying card
 sizes, but its input `Region` includes only:
 
 - the visible compact island;
-- the visible part of the connector;
 - the visible part of the expanded card.
 
 Transparent pixels outside that union must remain click-through. `opacity: 0`
@@ -494,8 +488,8 @@ input, dismissal, and geometry without requiring asynchronous models.
    while preserving current actions behind icon triggers.
 2. Expand the per-screen host, add the exact compact input mask, and verify that
    transparent areas remain click-through.
-3. Add the connector, card shell, one-mode controller, hover intent timer, close
-   grace timer, and geometry clamping with placeholder content.
+3. Add the attached card shell, island-widening geometry, one-mode controller,
+   hover intent timer, close grace timer, and clamping with placeholder content.
 4. Implement the power vertical slice and verify hover-to-card pointer travel,
    pinning, Escape, outside click, and destructive-action safety.
 5. Convert status text to icon states and attached cards: clock, VRR, updates,
@@ -521,16 +515,16 @@ input, dismissal, and geometry without requiring asynchronous models.
   package count, device name, battery percentage, or other text is visible.
 - Permanent controls do not look like separate pills.
 - Hovering any information-bearing icon opens one card below it.
-- The card visibly touches the island through a connector aligned to the icon.
-- Near screen edges, the card remains on-screen while the connector continues
-  to point to its trigger.
+- The card grows directly from the island edge nearest its trigger with no stub.
+- A card wider than the compact island widens the island to meet its outer edge.
+- Near screen edges, the card remains on-screen and the island meets its bounds.
 - The card and compact island use one coherent background, border, radius, and
   Rose Pine visual language.
 
 ### Interaction
 
 - Passing quickly over icons does not flash multiple cards.
-- Moving from a trigger through the connector into the card never closes it.
+- Moving directly from a trigger into the attached card never closes it.
 - Moving across icons reuses one expansion surface and smoothly changes its
   anchor and content; when the old card is pinned, the new hovered card inherits
   that pinned ownership and remains open after pointer leave.
