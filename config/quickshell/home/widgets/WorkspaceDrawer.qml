@@ -13,6 +13,10 @@ Item {
   required property var monitor
   required property var screen
   property real anchorCenterX: 0
+  property real islandLeft: 0
+  property real islandRight: 0
+  property real surfaceLeft: root.islandLeft
+  property real surfaceRight: root.islandRight
 
   readonly property var workspaces: root.switcher ? root.switcher.workspaces : []
   readonly property bool targetOpen: Boolean(root.switcher
@@ -25,44 +29,76 @@ Item {
   readonly property real tileHeight: 76
   readonly property real tileGap: 6
   readonly property real cardPadding: 8
-  readonly property real cardTop: 7
   readonly property real cardRadius: 12
-  readonly property real connectorWidth: 22
-  readonly property real connectorHeight: 8
+  readonly property real edgeMargin: 12
   readonly property real controlWidth: 24
   readonly property real controlGap: 4
-  readonly property bool overflowing: root.workspaces.length
-    > root.maxVisibleTiles
-  readonly property int visibleTileCount: Math.min(root.maxVisibleTiles,
+  readonly property real availableWidth: root.parent
+    ? root.parent.width : root.tileWidth + root.cardPadding * 2
+  readonly property real availableCardWidth: Math.max(
+    root.tileWidth + root.cardPadding * 2,
+    root.availableWidth - root.edgeMargin * 2)
+  readonly property real overflowControlsWidth: root.controlWidth * 2
+    + root.controlGap * 2
+  readonly property int candidateTileCount: Math.min(root.maxVisibleTiles,
     root.workspaces.length)
-  readonly property real tileAreaWidth: root.visibleTileCount > 0
+  readonly property real candidateTileAreaWidth: root.candidateTileCount > 0
+    ? root.candidateTileCount * root.tileWidth
+      + (root.candidateTileCount - 1) * root.tileGap
+    : 0
+  readonly property bool overflowing: root.workspaces.length
+    > root.maxVisibleTiles || root.cardPadding * 2
+      + root.candidateTileAreaWidth > root.availableCardWidth
+  readonly property real availableTileWidth: Math.max(1,
+    root.availableCardWidth - root.cardPadding * 2
+      - root.overflowControlsWidth)
+  readonly property int tileCapacity: root.overflowing
+    ? Math.max(1, Math.min(root.maxVisibleTiles, Math.floor(
+      (root.availableTileWidth + root.tileGap)
+        / (root.tileWidth + root.tileGap))))
+    : root.candidateTileCount
+  readonly property int visibleTileCount: Math.min(root.tileCapacity,
+    root.workspaces.length)
+  readonly property real naturalTileAreaWidth: root.visibleTileCount > 0
     ? root.visibleTileCount * root.tileWidth
       + (root.visibleTileCount - 1) * root.tileGap
     : 0
+  readonly property real tileAreaWidth: root.overflowing
+    ? Math.min(root.naturalTileAreaWidth, root.availableTileWidth)
+    : root.naturalTileAreaWidth
   readonly property real controlsWidth: root.overflowing
-    ? root.controlWidth * 2 + root.controlGap * 2
-    : 0
+    ? root.overflowControlsWidth : 0
   readonly property real cardWidth: root.cardPadding * 2
     + root.tileAreaWidth + root.controlsWidth
   readonly property real cardHeight: root.cardPadding * 2 + root.tileHeight
-  readonly property real fullHeight: root.cardTop + root.cardHeight
+  readonly property real fullHeight: root.cardHeight
   readonly property real visibleHeight: root.fullHeight * root.openProgress
   readonly property real inputHeight: root.visible ? root.visibleHeight : 0
   readonly property real triggerCenterX: root.anchorCenterX > 0
     ? root.anchorCenterX : root.parent ? root.parent.width / 2 : 0
-  readonly property real connectorX: Math.max(root.cardRadius,
-    Math.min(root.width - root.cardRadius - root.connectorWidth,
-      root.triggerCenterX - root.x - root.connectorWidth / 2))
+  readonly property bool alignLeft: root.triggerCenterX
+    <= (root.islandLeft + root.islandRight) / 2
+  readonly property real visibleLeft: Math.max(root.x, root.surfaceLeft)
+  readonly property real visibleRight: Math.min(root.x + root.width,
+    root.surfaceRight)
+  readonly property real visibleWidth: Math.max(0,
+    root.visibleRight - root.visibleLeft)
 
   implicitWidth: root.cardWidth
   implicitHeight: root.fullHeight
   width: root.cardWidth
   height: root.fullHeight
-  x: root.parent ? Math.max(0,
-    Math.min(root.parent.width - root.width,
-      root.triggerCenterX - root.width / 2)) : 0
+  x: Math.max(root.edgeMargin,
+    Math.min(root.availableWidth - root.width - root.edgeMargin,
+      root.alignLeft ? root.islandLeft : root.islandRight - root.width))
   visible: root.targetOpen || root.openProgress > 0.001
-  opacity: root.openProgress
+
+  Behavior on width {
+    NumberAnimation {
+      duration: 180
+      easing.type: Easing.OutCubic
+    }
+  }
 
   Behavior on openProgress {
     NumberAnimation {
@@ -125,7 +161,8 @@ Item {
   Item {
     id: revealClip
 
-    width: root.width
+    x: root.visibleLeft - root.x
+    width: root.visibleWidth
     height: root.visibleHeight
     clip: true
 
@@ -145,13 +182,23 @@ Item {
     Rectangle {
       id: card
 
-      y: root.cardTop
-      width: root.width
-      height: root.cardHeight
-      radius: root.cardRadius
-      color: Theme.overlay
+      anchors.fill: parent
+      topLeftRadius: 0
+      topRightRadius: 0
+      bottomLeftRadius: root.cardRadius
+      bottomRightRadius: root.cardRadius
+      color: Theme.barSurface
       border.width: 1
       border.color: Theme.highlightMed
+    }
+
+    Item {
+      id: contentLayer
+
+      x: -revealClip.x
+      width: root.width
+      height: root.cardHeight
+      enabled: root.targetOpen
 
       Rectangle {
         id: previousButton
@@ -422,16 +469,6 @@ Item {
       }
     }
 
-    Rectangle {
-      id: connector
-
-      x: root.connectorX
-      y: 0
-      width: root.connectorWidth
-      height: root.connectorHeight
-      color: Theme.overlay
-      z: 1
-    }
   }
 
   function applicationIcon(appId: string): string {

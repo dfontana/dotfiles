@@ -54,6 +54,48 @@ PanelWindow {
     && root.focusedScreen
     && root.screen
     && root.launcherService.targetOutput === root.screen.name)
+  readonly property real compactTargetWidth: compactRow.implicitWidth
+    + BarMetrics.compactHorizontalPadding * 2
+  property real compactWidth: root.compactTargetWidth
+  readonly property real compactLeft: (root.width - root.compactWidth) / 2
+  readonly property real compactRight: root.compactLeft + root.compactWidth
+  readonly property real workspaceProgress: workspaceDrawer.visible
+    ? workspaceDrawer.openProgress : 0
+  readonly property real launcherProgress: launcherDrawer.visible
+    ? launcherDrawer.openProgress : 0
+  readonly property real workspaceAnimatedLeft: root.compactLeft
+    + (Math.min(root.compactLeft, workspaceDrawer.x) - root.compactLeft)
+      * root.workspaceProgress
+  readonly property real workspaceAnimatedRight: root.compactRight
+    + (Math.max(root.compactRight,
+      workspaceDrawer.x + workspaceDrawer.width) - root.compactRight)
+      * root.workspaceProgress
+  readonly property real launcherAnimatedLeft: root.compactLeft
+    + (Math.min(root.compactLeft, launcherDrawer.x) - root.compactLeft)
+      * root.launcherProgress
+  readonly property real launcherAnimatedRight: root.compactRight
+    + (Math.max(root.compactRight,
+      launcherDrawer.x + launcherDrawer.width) - root.compactRight)
+      * root.launcherProgress
+  readonly property real expandedLeft: Math.min(root.compactLeft,
+    root.workspaceAnimatedLeft, root.launcherAnimatedLeft)
+  readonly property real expandedRight: Math.max(root.compactRight,
+    root.workspaceAnimatedRight, root.launcherAnimatedRight)
+  readonly property real leftCornerProgress: Math.max(
+    workspaceDrawer.x <= root.compactLeft + 1 ? root.workspaceProgress : 0,
+    launcherDrawer.x <= root.compactLeft + 1 ? root.launcherProgress : 0)
+  readonly property real rightCornerProgress: Math.max(
+    workspaceDrawer.x + workspaceDrawer.width >= root.compactRight - 1
+      ? root.workspaceProgress : 0,
+    launcherDrawer.x + launcherDrawer.width >= root.compactRight - 1
+      ? root.launcherProgress : 0)
+
+  Behavior on compactWidth {
+    NumberAnimation {
+      duration: 180
+      easing.type: Easing.OutCubic
+    }
+  }
 
   Region {
     id: islandInputRegion
@@ -65,78 +107,97 @@ PanelWindow {
     }
 
     Region {
-      x: workspaceDrawer.x + workspaceDrawer.connectorX
+      x: island.x
+      y: island.y + island.height - BarMetrics.compactRadius
+      width: BarMetrics.compactRadius * root.leftCornerProgress
+      height: BarMetrics.compactRadius * root.leftCornerProgress
+    }
+
+    Region {
+      x: island.x + island.width - BarMetrics.compactRadius
+      y: island.y + island.height - BarMetrics.compactRadius
+      width: BarMetrics.compactRadius * root.rightCornerProgress
+      height: BarMetrics.compactRadius * root.rightCornerProgress
+    }
+
+    Region {
+      x: workspaceDrawer.visibleLeft
       y: workspaceDrawer.y
-      width: workspaceDrawer.connectorWidth
-      height: Math.min(workspaceDrawer.connectorHeight,
+      width: workspaceDrawer.visibleWidth
+      height: workspaceDrawer.inputHeight
+      radius: workspaceDrawer.cardRadius
+    }
+
+    Region {
+      x: workspaceDrawer.visibleLeft
+      y: workspaceDrawer.y
+      width: Math.min(workspaceDrawer.cardRadius,
+        workspaceDrawer.visibleWidth)
+      height: Math.min(workspaceDrawer.cardRadius,
         workspaceDrawer.inputHeight)
     }
 
     Region {
-      x: workspaceDrawer.x
-      y: workspaceDrawer.y + workspaceDrawer.cardTop
-      width: workspaceDrawer.width
-      height: workspaceDrawer.fullHeight - workspaceDrawer.cardTop
-      radius: workspaceDrawer.cardRadius
-
-      Region {
-        x: workspaceDrawer.x
-        y: workspaceDrawer.y + workspaceDrawer.cardTop
-        width: workspaceDrawer.width
-        height: Math.max(0, workspaceDrawer.inputHeight
-          - workspaceDrawer.cardTop)
-        intersection: Intersection.Intersect
-      }
+      x: workspaceDrawer.visibleLeft + Math.max(0,
+        workspaceDrawer.visibleWidth - workspaceDrawer.cardRadius)
+      y: workspaceDrawer.y
+      width: Math.min(workspaceDrawer.cardRadius,
+        workspaceDrawer.visibleWidth)
+      height: Math.min(workspaceDrawer.cardRadius,
+        workspaceDrawer.inputHeight)
     }
 
     Region {
-      x: launcherDrawer.x + launcherDrawer.connectorX
+      x: launcherDrawer.visibleLeft
       y: launcherDrawer.y
-      width: launcherDrawer.connectorWidth
-      height: Math.min(launcherDrawer.connectorHeight,
+      width: launcherDrawer.visibleWidth
+      height: launcherDrawer.inputHeight
+      radius: launcherDrawer.cardRadius
+    }
+
+    Region {
+      x: launcherDrawer.visibleLeft
+      y: launcherDrawer.y
+      width: Math.min(launcherDrawer.cardRadius,
+        launcherDrawer.visibleWidth)
+      height: Math.min(launcherDrawer.cardRadius,
         launcherDrawer.inputHeight)
     }
 
     Region {
-      x: launcherDrawer.x
-      y: launcherDrawer.y + launcherDrawer.cardTop
-      width: launcherDrawer.width
-      height: launcherDrawer.fullHeight - launcherDrawer.cardTop
-      radius: launcherDrawer.cardRadius
-
-      Region {
-        x: launcherDrawer.x
-        y: launcherDrawer.y + launcherDrawer.cardTop
-        width: launcherDrawer.width
-        height: Math.max(0, launcherDrawer.inputHeight - launcherDrawer.cardTop)
-        intersection: Intersection.Intersect
-      }
+      x: launcherDrawer.visibleLeft + Math.max(0,
+        launcherDrawer.visibleWidth - launcherDrawer.cardRadius)
+      y: launcherDrawer.y
+      width: Math.min(launcherDrawer.cardRadius,
+        launcherDrawer.visibleWidth)
+      height: Math.min(launcherDrawer.cardRadius,
+        launcherDrawer.inputHeight)
     }
   }
 
   Rectangle {
     id: island
 
-    x: Math.round((root.width - width) / 2)
+    x: root.expandedLeft
     y: BarMetrics.compactTopOffset
-    width: compactRow.implicitWidth + BarMetrics.compactHorizontalPadding * 2
+    width: root.expandedRight - root.expandedLeft
     height: BarMetrics.compactHeight
-    radius: BarMetrics.compactRadius
+    topLeftRadius: BarMetrics.compactRadius
+    topRightRadius: BarMetrics.compactRadius
+    bottomLeftRadius: BarMetrics.compactRadius
+      * (1 - root.leftCornerProgress)
+    bottomRightRadius: BarMetrics.compactRadius
+      * (1 - root.rightCornerProgress)
     color: Theme.barSurface
     border.width: 1
     border.color: Theme.highlightMed
 
-    Behavior on width {
-      NumberAnimation {
-        duration: 180
-        easing.type: Easing.OutCubic
-      }
-    }
-
     Row {
       id: compactRow
 
-      anchors.centerIn: parent
+      x: root.compactLeft - island.x
+        + BarMetrics.compactHorizontalPadding
+      anchors.verticalCenter: parent.verticalCenter
       spacing: BarMetrics.compactItemGap
 
       PowerMenu {}
@@ -193,9 +254,13 @@ PanelWindow {
     switcher: workspaceSwitcher
     monitor: root.monitor
     screen: root.screen
-    anchorCenterX: island.x + workspaceSwitcher.mapToItem(island,
-      workspaceSwitcher.width / 2, 0).x
-    y: island.y + island.height
+    anchorCenterX: root.compactLeft + workspaceSwitcher.mapToItem(
+      compactRow, workspaceSwitcher.width / 2, 0).x
+    islandLeft: root.compactLeft
+    islandRight: root.compactRight
+    surfaceLeft: island.x
+    surfaceRight: island.x + island.width
+    y: island.y + island.height - 1
   }
 
   LauncherDrawer {
@@ -205,9 +270,41 @@ PanelWindow {
     service: root.launcherService
     screen: root.screen
     screenActive: root.focusedScreen
-    anchorCenterX: island.x + launcherButton.mapToItem(island,
-      launcherButton.width / 2, 0).x
-    y: island.y + island.height
+    anchorCenterX: root.compactLeft + launcherButton.mapToItem(
+      compactRow, launcherButton.width / 2, 0).x
+    islandLeft: root.compactLeft
+    islandRight: root.compactRight
+    surfaceLeft: island.x
+    surfaceRight: island.x + island.width
+    y: island.y + island.height - 1
+  }
+
+  Rectangle {
+    id: workspaceSeam
+
+    visible: workspaceDrawer.visible
+    x: Math.max(workspaceDrawer.visibleLeft, island.x) + 1
+    y: island.y + island.height - 2
+    width: Math.max(0,
+      Math.min(workspaceDrawer.visibleRight, island.x + island.width)
+        - workspaceSeam.x - 1)
+    height: Math.min(3, workspaceDrawer.visibleHeight + 2)
+    color: Theme.barSurface
+    z: 3
+  }
+
+  Rectangle {
+    id: launcherSeam
+
+    visible: launcherDrawer.visible
+    x: Math.max(launcherDrawer.visibleLeft, island.x) + 1
+    y: island.y + island.height - 2
+    width: Math.max(0,
+      Math.min(launcherDrawer.visibleRight, island.x + island.width)
+        - launcherSeam.x - 1)
+    height: Math.min(3, launcherDrawer.visibleHeight + 2)
+    color: Theme.barSurface
+    z: 4
   }
 
   onLauncherTargetChanged: {
