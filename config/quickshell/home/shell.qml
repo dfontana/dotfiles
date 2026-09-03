@@ -11,10 +11,7 @@ ShellRoot {
 
   NotificationService {
     id: notificationController
-  }
-
-  NotificationStack {
-    service: notificationController
+    presentationBlocked: launcherController.launcherOpen
   }
 
   Launcher {

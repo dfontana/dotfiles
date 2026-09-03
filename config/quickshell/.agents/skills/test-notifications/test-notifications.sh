@@ -118,41 +118,105 @@ monitor_has_fullscreen() {
       'any(.[]; .monitor == $monitor_id and (.fullscreen // 0) > 0)' >/dev/null
 }
 
-notification_layer() {
+notification_geometry() {
   local monitor="$1"
-  local layers
+  local geometry
+  local monitor_x monitor_y monitor_width monitor_height
+  local bounds
+  local screen_left screen_top
+  local image_x image_y
+  local screenshot="$OUTPUT_DIR/.notification-geometry.png"
+  local surface_run
+  local surface_left surface_right red green blue
+  local card_width card_x card_y probe_height detected_height
 
-  layers="$(hyprctl layers -j 2>/dev/null)" || return 0
-  jq -c --arg monitor "$monitor" '
-    [
-      .[$monitor].levels["3"][]?
-      | select(
-          .namespace == "quickshell"
-          and .w >= 300
-          and .w <= 500
-          and .h > 30
-          and .alpha > 0.01
-        )
-    ]
-    | if length == 0 then empty else .[-1] end' <<<"$layers"
+  geometry="$(monitor_geometry "$monitor")"
+  read -r monitor_x monitor_y monitor_width monitor_height <<<"$geometry"
+  [[ "$monitor_width" =~ ^[0-9]+$ && "$monitor_height" =~ ^[0-9]+$ ]] || return 0
+
+  bounds="$(hyprctl monitors -j | jq -r '
+    [(map(.x) | min), (map(.y) | min)] | @tsv')"
+  read -r screen_left screen_top <<<"$bounds"
+  image_x=$((monitor_x - screen_left))
+  image_y=$((monitor_y - screen_top))
+
+  grimblast save screen "$screenshot" >/dev/null 2>&1 || return 0
+  surface_run="$(magick "$screenshot" \
+    -crop "${monitor_width}x1+${image_x}+$((image_y + 10))" rgba:- |
+    python3 -c '
+import sys
+width = int(sys.argv[1])
+data = sys.stdin.buffer.read()
+pixels = [tuple(data[index:index + 4]) for index in range(0, len(data), 4)]
+if len(pixels) != width:
+    raise SystemExit(1)
+center = width // 2
+reference = pixels[center]
+left = center
+right = center
+while left > 0 and pixels[left - 1] == reference:
+    left -= 1
+while right + 1 < width and pixels[right + 1] == reference:
+    right += 1
+if right - left + 1 < 50:
+    raise SystemExit(1)
+print(left, right + 1, reference[0], reference[1], reference[2])
+' "$monitor_width" 2>/dev/null)" || return 0
+  read -r surface_left surface_right red green blue <<<"$surface_run"
+
+  # The y=10 probe crosses the island's rounded top corner three pixels below
+  # its edge, where the solid-color run ends six pixels before the true edge.
+  surface_right=$((surface_right + 6))
+  ((surface_right > monitor_width)) && surface_right=$monitor_width
+  card_width=$((monitor_width - 24))
+  ((card_width > 420)) && card_width=420
+  ((card_width < 180)) && card_width=180
+  card_x=$((surface_right - card_width))
+  card_y=42
+  probe_height=$((monitor_height - card_y - 12))
+  ((probe_height > 480)) && probe_height=480
+  ((probe_height > 0)) || return 0
+
+  detected_height="$(magick "$screenshot" \
+    -crop "1x${probe_height}+$((image_x + card_x + 3))+$((image_y + card_y))" rgba:- |
+    python3 -c '
+import sys
+red, green, blue = map(int, sys.argv[1:4])
+data = sys.stdin.buffer.read()
+pixels = [tuple(data[index:index + 4]) for index in range(0, len(data), 4)]
+reference = (red, green, blue)
+last_match = -1
+misses = 0
+started = False
+for index, pixel in enumerate(pixels):
+    matches = pixel[:3] == reference and pixel[3] > 0
+    if matches:
+        started = True
+        last_match = index
+        misses = 0
+    elif started:
+        misses += 1
+        if misses > 3:
+            break
+if last_match < 20:
+    raise SystemExit(1)
+print(min(len(pixels), last_match + 7))
+' "$red" "$green" "$blue" 2>/dev/null)" || return 0
+
+  jq -cn \
+    --argjson x "$((monitor_x + card_x))" \
+    --argjson y "$((monitor_y + card_y))" \
+    --argjson w "$card_width" \
+    --argjson h "$detected_height" \
+    '{x: $x, y: $y, w: $w, h: $h, alpha: 1}'
+}
+
+notification_layer() {
+  notification_geometry "$1"
 }
 
 notification_layer_any() {
-  local monitor="$1"
-  local layers
-
-  layers="$(hyprctl layers -j 2>/dev/null)" || return 0
-  jq -c --arg monitor "$monitor" '
-    [
-      .[$monitor].levels["3"][]?
-      | select(
-          .namespace == "quickshell"
-          and .w >= 300
-          and .w <= 500
-          and .h > 30
-        )
-    ]
-    | if length == 0 then empty else .[-1] end' <<<"$layers"
+  notification_geometry "$1"
 }
 
 wait_for_notification_layer() {
@@ -531,13 +595,15 @@ preflight() {
   require_command grimblast
   require_command timeout
 
-  if [[ "$CASE_NAME" == all || "$CASE_NAME" == image ]]; then
+  if [[ "$CASE_NAME" == all || "$CASE_NAME" == image ]] ||
+    case_needs_hyprland; then
     require_command magick
   fi
 
   if case_needs_hyprland; then
     require_command hyprctl
     require_command jq
+    require_command python3
   fi
 
   if case_needs_clicks; then
@@ -578,9 +644,12 @@ preflight() {
       fail "could not save the current pointer position"
     [[ -n "$INITIAL_MONITOR" ]] || fail "could not determine the focused monitor"
 
-    QS_PID="$(qs list --all --json |
-      jq -r --arg path "$CONFIG_DIR/home/shell.qml" \
-        '.[] | select(.config_path == $path) | .pid' | head -n 1)"
+    while IFS=$'\t' read -r config_path candidate_pid; do
+      if [[ "$(realpath "$config_path")" == "$(realpath "$CONFIG_DIR/home/shell.qml")" ]]; then
+        QS_PID="$candidate_pid"
+        break
+      fi
+    done < <(qs list --all --json | jq -r '.[] | [.config_path, .pid] | @tsv')
     [[ "$QS_PID" =~ ^[0-9]+$ ]] ||
       fail "could not identify the existing shell process for $CONFIG_DIR/home/shell.qml"
   fi
@@ -657,7 +726,7 @@ case_basic() {
     wait_for_all_notification_layers_absent ||
       fail 'basic notification surface remained visible after close'
   fi
-  printf '%s\n' 'EXPECTED: one visible top-right card contains the supplied summary and body.'
+  printf '%s\n' 'EXPECTED: one card attached below the notification bell contains the supplied summary and body.'
 }
 
 case_expiry() {

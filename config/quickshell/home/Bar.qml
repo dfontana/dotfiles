@@ -6,6 +6,7 @@ import qs.components
 import qs.config
 import qs.theme
 import qs.widgets
+import qs.widgets.notifications
 
 PanelWindow {
   id: root
@@ -19,7 +20,8 @@ PanelWindow {
   exclusiveZone: BarMetrics.compactFootprint
   implicitHeight: Math.max(BarMetrics.compactFootprint,
     launcherDrawer.y + launcherDrawer.implicitHeight,
-    workspaceDrawer.y + workspaceDrawer.implicitHeight)
+    workspaceDrawer.y + workspaceDrawer.implicitHeight,
+    notificationDrawer.y + notificationDrawer.implicitHeight)
   mask: islandInputRegion
   focusable: root.launcherTarget
   surfaceFormat: {
@@ -63,6 +65,8 @@ PanelWindow {
     ? workspaceDrawer.openProgress : 0
   readonly property real launcherProgress: launcherDrawer.visible
     ? launcherDrawer.openProgress : 0
+  readonly property real notificationProgress: notificationDrawer.visible
+    ? notificationDrawer.openProgress : 0
   readonly property real workspaceAnimatedLeft: root.compactLeft
     + (Math.min(root.compactLeft, workspaceDrawer.x) - root.compactLeft)
       * root.workspaceProgress
@@ -77,18 +81,31 @@ PanelWindow {
     + (Math.max(root.compactRight,
       launcherDrawer.x + launcherDrawer.width) - root.compactRight)
       * root.launcherProgress
+  readonly property real notificationAnimatedLeft: root.compactLeft
+    + (Math.min(root.compactLeft, notificationDrawer.x) - root.compactLeft)
+      * root.notificationProgress
+  readonly property real notificationAnimatedRight: root.compactRight
+    + (Math.max(root.compactRight,
+      notificationDrawer.x + notificationDrawer.width) - root.compactRight)
+      * root.notificationProgress
   readonly property real expandedLeft: Math.min(root.compactLeft,
-    root.workspaceAnimatedLeft, root.launcherAnimatedLeft)
+    root.workspaceAnimatedLeft, root.launcherAnimatedLeft,
+    root.notificationAnimatedLeft)
   readonly property real expandedRight: Math.max(root.compactRight,
-    root.workspaceAnimatedRight, root.launcherAnimatedRight)
+    root.workspaceAnimatedRight, root.launcherAnimatedRight,
+    root.notificationAnimatedRight)
   readonly property real leftCornerProgress: Math.max(
     workspaceDrawer.x <= root.compactLeft + 1 ? root.workspaceProgress : 0,
-    launcherDrawer.x <= root.compactLeft + 1 ? root.launcherProgress : 0)
+    launcherDrawer.x <= root.compactLeft + 1 ? root.launcherProgress : 0,
+    notificationDrawer.x <= root.compactLeft + 1
+      ? root.notificationProgress : 0)
   readonly property real rightCornerProgress: Math.max(
     workspaceDrawer.x + workspaceDrawer.width >= root.compactRight - 1
       ? root.workspaceProgress : 0,
     launcherDrawer.x + launcherDrawer.width >= root.compactRight - 1
-      ? root.launcherProgress : 0)
+      ? root.launcherProgress : 0,
+    notificationDrawer.x + notificationDrawer.width
+      >= root.compactRight - 1 ? root.notificationProgress : 0)
 
   Behavior on compactWidth {
     NumberAnimation {
@@ -173,6 +190,33 @@ PanelWindow {
       height: Math.min(launcherDrawer.cardRadius,
         launcherDrawer.inputHeight)
     }
+
+    Region {
+      x: notificationDrawer.visibleLeft
+      y: notificationDrawer.y
+      width: notificationDrawer.visibleWidth
+      height: notificationDrawer.inputHeight
+      radius: notificationDrawer.cardRadius
+    }
+
+    Region {
+      x: notificationDrawer.visibleLeft
+      y: notificationDrawer.y
+      width: Math.min(notificationDrawer.cardRadius,
+        notificationDrawer.visibleWidth)
+      height: Math.min(notificationDrawer.cardRadius,
+        notificationDrawer.inputHeight)
+    }
+
+    Region {
+      x: notificationDrawer.visibleLeft + Math.max(0,
+        notificationDrawer.visibleWidth - notificationDrawer.cardRadius)
+      y: notificationDrawer.y
+      width: Math.min(notificationDrawer.cardRadius,
+        notificationDrawer.visibleWidth)
+      height: Math.min(notificationDrawer.cardRadius,
+        notificationDrawer.inputHeight)
+    }
   }
 
   Rectangle {
@@ -208,6 +252,7 @@ PanelWindow {
         monitor: root.monitor
         screen: root.screen
         drawerBlocked: root.launcherTarget
+          || notificationDrawer.targetOpen
       }
 
       CompactIconButton {
@@ -216,8 +261,12 @@ PanelWindow {
         icon: ""
         iconSize: 16
         iconColor: Theme.text
-        onClicked: root.launcherService.toggleLauncher(
-          root.screen ? root.screen.name : "")
+        onClicked: {
+          if (root.notificationService)
+            root.notificationService.hideStack();
+          root.launcherService.toggleLauncher(
+            root.screen ? root.screen.name : "");
+        }
       }
 
       IslandSeparator {
@@ -239,10 +288,24 @@ PanelWindow {
       }
 
       StatusArea {
+        id: statusArea
+
         outputName: root.screen ? root.screen.name : ""
         updatesEnabled: root.primary
         notificationService: root.notificationService
         screen: root.screen
+        onNotificationToggleRequested: screen => {
+          if (!root.launcherService.launcherOpen) {
+            root.notificationService.toggleFor(screen);
+            return;
+          }
+
+          root.launcherService.closeLauncher();
+          Qt.callLater(() => {
+            if (!root.notificationService.stackVisible)
+              root.notificationService.toggleFor(screen);
+          });
+        }
       }
     }
   }
@@ -279,6 +342,21 @@ PanelWindow {
     y: island.y + island.height - 1
   }
 
+  NotificationStack {
+    id: notificationDrawer
+
+    z: 3
+    service: root.notificationService
+    screen: root.screen
+    anchorCenterX: root.compactLeft + statusArea.notificationTrigger.mapToItem(
+      compactRow, statusArea.notificationTrigger.width / 2, 0).x
+    islandLeft: root.compactLeft
+    islandRight: root.compactRight
+    surfaceLeft: island.x
+    surfaceRight: island.x + island.width
+    y: island.y + island.height - 1
+  }
+
   Rectangle {
     id: workspaceSeam
 
@@ -307,8 +385,39 @@ PanelWindow {
     z: 4
   }
 
+  Rectangle {
+    id: notificationSeam
+
+    visible: notificationDrawer.visible
+    x: Math.max(notificationDrawer.visibleLeft, island.x) + 1
+    y: island.y + island.height - 2
+    width: Math.max(0,
+      Math.min(notificationDrawer.visibleRight, island.x + island.width)
+        - notificationSeam.x - 1)
+    height: Math.min(3, notificationDrawer.visibleHeight + 2)
+    color: Theme.barSurface
+    z: 5
+  }
+
   onLauncherTargetChanged: {
     if (root.launcherTarget)
       workspaceSwitcher.closeDrawer();
+  }
+
+  Connections {
+    target: root.notificationService
+
+    function closeWorkspaceForNotification(): void {
+      if (notificationDrawer.targetOpen)
+        workspaceSwitcher.closeDrawer();
+    }
+
+    function onStackVisibleChanged(): void {
+      closeWorkspaceForNotification();
+    }
+
+    function onRoutedScreenChanged(): void {
+      closeWorkspaceForNotification();
+    }
   }
 }

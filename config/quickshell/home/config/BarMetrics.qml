@@ -3,7 +3,7 @@ pragma Singleton
 import Quickshell
 
 Singleton {
-  // Legacy surface metrics used by notifications until they move into the island.
+  // Shared legacy component metrics; island geometry uses compact* values.
   readonly property int height: 30
   readonly property int margin: 7
   readonly property int gap: 9
