@@ -19,6 +19,8 @@ Scope {
   property bool stackVisible: false
   property bool surfaceVisible: false
   property bool stackHovered: false
+  property bool presentationBlocked: false
+  property bool reopenAfterPresentationBlock: false
   property bool manualFullscreenOverride: false
   property bool fullscreenSuppressed: false
   readonly property bool hasNotifications: root.records.length > 0
@@ -157,6 +159,15 @@ Scope {
       return;
     }
 
+    if (root.presentationBlocked) {
+      if (replacement)
+        record.replace(false, true);
+      else
+        record.queue();
+      root.hideStack();
+      return;
+    }
+
     root.fullscreenSuppressed = root.effectiveSuppression();
     if (root.fullscreenSuppressed) {
       if (replacement)
@@ -221,8 +232,10 @@ Scope {
 
     root.closingCount--;
     record.destroy();
-    if (!root.hasVisualRecords)
+    if (!root.hasVisualRecords) {
+      root.reopenAfterPresentationBlock = false;
       root.hideStack();
+    }
   }
 
   function clearAll() {
@@ -250,6 +263,12 @@ Scope {
   }
 
   function refreshFullscreenState() {
+    if (root.presentationBlocked) {
+      if (root.stackVisible)
+        root.hideStack();
+      return;
+    }
+
     const hadRoute = Boolean(root.routedScreen);
     if (!hadRoute && root.hasNotifications && !root.routeToFocused())
       return;
@@ -275,12 +294,43 @@ Scope {
       if (!root.fullscreenSuppressed && root.hasNotifications) {
         root.showSurface();
         root.revealQueued();
+        root.records.forEach(record => record.resumeTimer());
+        root.reopenAfterPresentationBlock = false;
       }
     }
   }
 
   function scheduleFullscreenRefresh() {
     fullscreenRefreshTimer.restart();
+  }
+
+  onPresentationBlockedChanged: {
+    if (root.presentationBlocked) {
+      root.reopenAfterPresentationBlock = root.stackVisible;
+      root.hideStack();
+      if (root.reopenAfterPresentationBlock) {
+        root.records.forEach(record => {
+          if (!record.queued)
+            record.pauseTimer();
+        });
+      }
+      return;
+    }
+
+    const hasQueuedRecords = root.records.some(record => record.queued);
+    if (!root.hasNotifications
+        || (!root.reopenAfterPresentationBlock && !hasQueuedRecords))
+      return;
+    if (!root.isValidScreen(root.routedScreen) && !root.routeToFocused())
+      return;
+
+    root.fullscreenSuppressed = root.effectiveSuppression();
+    if (!root.fullscreenSuppressed) {
+      root.showSurface();
+      root.revealQueued();
+      root.records.forEach(record => record.resumeTimer());
+      root.reopenAfterPresentationBlock = false;
+    }
   }
 
   Component.onCompleted: {

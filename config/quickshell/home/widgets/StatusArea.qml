@@ -14,8 +14,11 @@ Row {
   required property bool updatesEnabled
   required property var notificationService
   property var screen: null
+  property alias notificationTrigger: notificationButton
   property bool vrrActive: false
   property string updateCount: ""
+
+  signal notificationToggleRequested(var screen)
   readonly property var connectedBluetoothDevice: {
     const devices = Bluetooth.devices.values;
     for (let index = 0; index < devices.length; index++) {
@@ -143,6 +146,8 @@ Row {
   }
 
   CompactIconButton {
+    id: notificationButton
+
     icon: "󰂚"
     iconSize: 16
     iconColor: !root.notificationService || !root.notificationService.hasNotifications
@@ -150,10 +155,7 @@ Row {
       : root.notificationService.stackVisible ? Theme.active : Theme.text
     indicatorVisible: root.notificationService && root.notificationService.hasNotifications
     indicatorColor: Theme.active
-    onClicked: {
-      if (root.notificationService)
-        root.notificationService.toggleFor(root.screen);
-    }
+    onClicked: root.notificationToggleRequested(root.screen)
   }
 
   Item {
