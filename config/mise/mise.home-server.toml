@@ -1,5 +1,5 @@
 [vars]
-pi_extensions_path = "{{ env.HOME }}/opencode/pi-extensions"
+pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
 
 [dotfiles]
 "~/.claude/settings.json" = { source = "../../agents/claude/settings.json", mode = "template" }
