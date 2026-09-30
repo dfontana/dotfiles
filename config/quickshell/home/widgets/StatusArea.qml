@@ -102,7 +102,8 @@ Row {
 
   Process {
     id: updatesTerminal
-    command: ["kitty", "--hold", "--detach", "dnf", "check-update"]
+    command: [Quickshell.env("HOME") + "/.local/kitty.app/bin/kitty",
+      "--hold", "--detach", "dnf", "check-update"]
   }
 
   Process {
