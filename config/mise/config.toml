@@ -85,6 +85,7 @@ yq = "latest"
 zellij = "latest"
 ty = "latest"
 "github:neurosnap/zmx" = "latest"
+glow = "latest"
 [tools.hunk]
 version = "latest"
 postinstall = '''
