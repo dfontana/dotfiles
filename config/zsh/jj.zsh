@@ -73,7 +73,7 @@ jj-prek() (
 
   # Isolated git-dir: shares objects with the real repo, but has its own HEAD
   git init -q --bare "$tmp_git_dir"
-  echo "$git_dir/objects" > "$tmp_git_dir/objects/info/alternates"
+  echo "$git_dir/objects" >"$tmp_git_dir/objects/info/alternates"
   git --git-dir="$tmp_git_dir" update-ref --no-deref HEAD "$trunk"
 
   export GIT_DIR="$tmp_git_dir"
@@ -115,14 +115,17 @@ jjl() {
 }
 
 # Interactive jj workspace manager powered by fzf.
-# enter: cd into workspace  ctrl-x: jj forget + rm -rf  ctrl-n: create new workspace
+# enter: cd into a workspace or create one from the query  ctrl-x: forget workspace
 _jjw_new() {
-  local name
-  printf "Workspace name: " >&2
-  read -r name
-  [[ -z "$name" ]] && return 1
+  local name="$1"
+  if [[ -z "$name" || "$name" == */* || "$name" == "." || "$name" == ".." ]]; then
+    echo "Workspace name must be a non-empty path component" >&2
+    return 1
+  fi
 
-  local ws_path="$HOME/workspaces/$name"
+  local repo_root
+  repo_root=$(jj root 2>/dev/null) || return 1
+  local ws_path="$repo_root/$name"
   local tmpl='change_id.short(8) ++ " " ++ separate(" ", local_bookmarks.map(|b| "[" ++ b.name() ++ "]").join(""), description.first_line()) ++ "\n"'
 
   local rev
@@ -137,12 +140,10 @@ _jjw_new() {
   )
   [[ -z "$rev" ]] && return 1
 
-  mkdir -p "$HOME/workspaces"
-  jj workspace add "$ws_path" -r "$rev" || return 1
+  jj workspace add "$ws_path" --name "$name" -r "$rev" || return 1
 
   # Per-repo init hook: <repo_root>/.jj-workspace-init called with workspace path as $1
-  local init
-  init="$(jj root 2>/dev/null)/.jj-workspace-init"
+  local init="$repo_root/.jj-workspace-init"
   [[ -x "$init" ]] && "$init" "$ws_path" >&2
 
   echo "$ws_path"
@@ -158,8 +159,14 @@ jj_new_workspace() {
     echo "Usage: jj_new_workspace <name> [revision]" >&2
     return 1
   fi
+  if [[ "$name" == */* || "$name" == "." || "$name" == ".." ]]; then
+    echo "jj_new_workspace: name must be a path component" >&2
+    return 1
+  fi
 
-  local ws_path="$HOME/workspaces/$name"
+  local repo_root
+  repo_root=$(jj root 2>/dev/null) || return 1
+  local ws_path="$repo_root/$name"
   local rev
   rev=$(jj log -r "$revision" --no-graph -T 'change_id.short(8)' 2>/dev/null | head -1)
   if [[ -z "$rev" ]]; then
@@ -167,11 +174,9 @@ jj_new_workspace() {
     return 1
   fi
 
-  mkdir -p "$HOME/workspaces"
-  jj workspace add "$ws_path" -r "$rev" || return 1
+  jj workspace add "$ws_path" --name "$name" -r "$rev" || return 1
 
-  local init
-  init="$(jj root 2>/dev/null)/.jj-workspace-init"
+  local init="$repo_root/.jj-workspace-init"
   [[ -x "$init" ]] && "$init" "$ws_path" >&2
 
   cd "$ws_path"
@@ -180,7 +185,7 @@ jj_new_workspace() {
 jjw() {
   local tmpl='self.name() ++ "  " ++ self.target().description().first_line() ++ "\n"'
 
-  local result
+  local result fzf_status query key selected
   result=$(
     jj workspace list -T "$tmpl" |
       fzf \
@@ -188,23 +193,33 @@ jjw() {
         --no-sort \
         --layout=reverse \
         --prompt="workspaces> " \
-        --header=$'enter: cd | ctrl-x: delete (forget + rm) | ctrl-n: new' \
+        --header=$'enter: cd / create if missing | ctrl-x: forget' \
         --preview "jj log -r 'trunk()::{1}@' -s --color=always" \
+        --print-query \
+        --expect=enter \
+        --accept-nth=1 \
         --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' \
-        --bind "ctrl-x:execute[p=\$(jj workspace root --name {1}) && jj workspace forget {1} && rm -rf \$p]+reload[jj workspace list -T '$tmpl']" \
-        --bind "ctrl-n:become(echo __new__)" \
-        --bind "enter:become(echo \$(jj workspace root --name {1}))"
+        --bind "ctrl-x:execute-silent(jj workspace forget {1})+reload[jj workspace list -T '$tmpl']"
   )
+  fzf_status=$?
+  ((fzf_status <= 1)) || return 0
 
-  case "$result" in
-    __new__)
-      local new_path
-      new_path=$(_jjw_new)
-      [[ -n "$new_path" ]] && cd "$new_path"
-      ;;
-    "") ;;
-    *) cd "$result" ;;
-  esac
+  {
+    IFS= read -r query
+    IFS= read -r key
+    IFS= read -r selected
+  } <<<"$result"
+  [[ "$key" == enter ]] || return 0
+
+  if [[ -n "$selected" ]]; then
+    local ws_root
+    ws_root=$(jj workspace root --name "$selected") || return 1
+    cd "$ws_root"
+  elif [[ -n "$query" ]]; then
+    local new_path
+    new_path=$(_jjw_new "$query")
+    [[ -n "$new_path" ]] && cd "$new_path"
+  fi
 }
 
 jj-restack() {
