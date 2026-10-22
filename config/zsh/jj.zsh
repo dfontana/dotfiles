@@ -115,7 +115,7 @@ jjl() {
 }
 
 # Interactive jj workspace manager powered by fzf.
-# enter: cd into a workspace or create one from the query  ctrl-x: forget workspace
+# enter: cd into a workspace or create one from the query  ctrl-x: remove workspace
 _jjw_new() {
   local name="$1"
   if [[ -z "$name" || "$name" == */* || "$name" == "." || "$name" == ".." ]]; then
@@ -193,13 +193,13 @@ jjw() {
         --no-sort \
         --layout=reverse \
         --prompt="workspaces> " \
-        --header=$'enter: cd / create if missing | ctrl-x: forget' \
+        --header=$'enter: cd / create if missing | ctrl-x: remove' \
         --preview "jj log -r 'trunk()::{1}@' -s --color=always" \
         --print-query \
         --expect=enter \
         --accept-nth=1 \
         --bind 'start,resize:transform:[[ $FZF_COLUMNS -lt 120 ]] && echo "change-preview-window(up,40%,wrap)" || echo "change-preview-window(right,60%,wrap)"' \
-        --bind "ctrl-x:execute-silent(jj workspace forget {1})+reload[jj workspace list -T '$tmpl']"
+        --bind "ctrl-x:execute-silent(jj workspace remove {1})+reload[jj workspace list -T '$tmpl']"
   )
   fzf_status=$?
   ((fzf_status <= 1)) || return 0
