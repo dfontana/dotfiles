@@ -16,6 +16,7 @@ kubectx = "latest"
 java = ["openjdk-17", "openjdk-21"]
 "asdf:mise-plugins/mise-sbt" = "latest"
 terraformer = "latest"
+uv = "latest"
 
 [shell_alias]
 kc="kubectl"
