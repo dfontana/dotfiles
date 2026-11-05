@@ -7,6 +7,27 @@ email = "dyfontana@gmail.com"
 [templates]
 git_push_bookmark = '"dylan.fontana/" ++ change_id.short()'
 
+[snapshot]
+# For when workspaces go stale, it'll just update them when you next run jj command there
+auto-update-stale = true
+
+[signing]
+behavior = "own"
+backend = "ssh"
+key = "~/.ssh/id_ed25519_signing.pub"
+
+[signing.backends.ssh]
+allowed-signers = "~/.ssh/allowed_signers"
+
+[git]
+auto-local-bookmark = false
+
+# Homebrew installs git under /opt/homebrew on macOS only
+[[--scope]]
+--when.platforms = ["macos"]
+[--scope.git]
+executable-path = "/opt/homebrew/bin/git"
+
 [aliases]
 # After making changes to a 'branch' advance the nearest bookmark forward for pushing
 tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
@@ -38,20 +59,3 @@ diff-formatter = ":git"
 --when.commands = ["log"]
 [--scope.ui]
 pager = "less -FRX"
-
-[git]
-auto-local-bookmark = false
-
-# Homebrew installs git under /opt/homebrew on macOS only
-[[--scope]]
---when.platforms = ["macos"]
-[--scope.git]
-executable-path = "/opt/homebrew/bin/git"
-
-[signing]
-behavior = "own"
-backend = "ssh"
-key = "~/.ssh/id_ed25519_signing.pub"
-
-[signing.backends.ssh]
-allowed-signers = "~/.ssh/allowed_signers"
