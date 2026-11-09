@@ -4,7 +4,7 @@ shell = "bash -c"
 run = '''
 echo "==> Configuring firewall..."
 fw_changed=false
-for port_comment in "3450/tcp:disbot admin UI" "3460/tcp:romm"; do
+for port_comment in "3450/tcp:disbot admin UI" "3460/tcp:romm" "8123/tcp:home assistant"; do
   port="${port_comment%%:*}"
   comment="${port_comment##*:}"
   if ! sudo firewall-cmd --permanent --query-port="$port" &>/dev/null; then
@@ -13,6 +13,19 @@ for port_comment in "3450/tcp:disbot admin UI" "3460/tcp:romm"; do
     fw_changed=true
   else
     echo "  $port ($comment) already open, skipping"
+  fi
+done
+# Home Assistant TP-Link/Tapo discovery: devices answer a UDP broadcast with a
+# unicast reply from these source ports, which conntrack can't match to the
+# broadcast, so firewalld drops them unless explicitly accepted.
+for sport in 20002 9999; do
+  rule="rule family=\"ipv4\" source address=\"192.168.50.0/24\" source-port port=\"$sport\" protocol=\"udp\" accept"
+  if ! sudo firewall-cmd --permanent --query-rich-rule="$rule" &>/dev/null; then
+    echo "  Adding TP-Link discovery reply rule (udp source port $sport)"
+    sudo firewall-cmd --permanent --add-rich-rule="$rule"
+    fw_changed=true
+  else
+    echo "  TP-Link discovery rule (udp source port $sport) already present, skipping"
   fi
 done
 if [ "$fw_changed" = true ]; then

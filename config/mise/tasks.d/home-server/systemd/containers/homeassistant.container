@@ -1,0 +1,29 @@
+# Home Assistant Quadlet container unit
+[Unit]
+Description=Home Assistant
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=ghcr.io/home-assistant/home-assistant:stable
+ContainerName=homeassistant
+# Host networking is required for LAN discovery (mDNS, SSDP, TP-Link UDP
+# broadcast). UI on 8123/tcp.
+Network=host
+# Lets HA reach USB radios (Zigbee/Z-Wave) and Bluetooth; drop if never needed.
+PodmanArgs=--privileged
+# Config/state lives in the private ~/servers repo (safe YAML tracked there,
+# secrets/.storage/db ignored). Not linked from dotfiles: HA's UI editors
+# replace files atomically, which would clobber symlinks.
+Volume=%h/servers/homeassistant/config:/config:Z
+Volume=/run/dbus:/run/dbus:ro
+Environment=TZ=America/New_York
+
+[Service]
+Restart=always
+RestartSec=10
+# First start may pull a ~1GB image.
+TimeoutStartSec=600
+
+[Install]
+WantedBy=default.target

@@ -1,4 +1,4 @@
-# home-server — services (Disbot, RomM, yt-dlp updater)
+# home-server — services (Disbot, RomM, Home Assistant, yt-dlp updater)
 
 Tracked service configuration for home-server, migrated from the private
 `~/servers` repo. `~/servers` remains the runtime/data home (disbot binary,
@@ -44,4 +44,10 @@ unit. After editing a static unit, bootstrap or run it directly, then restart
 the affected service (`systemctl --user restart <unit>`) yourself. Container env
 changes (`secrets.env`) also require a restart to take effect.
 
-Ports: 3450/tcp disbot admin UI, 3460/tcp romm.
+Ports: 3450/tcp disbot admin UI, 3460/tcp romm, 8123/tcp Home Assistant
+(host network). `server-init` also adds rich rules accepting TP-Link/Tapo
+discovery replies (udp source ports 20002/9999 from the LAN).
+
+Home Assistant's config/state stays in `~/servers/homeassistant/config`
+(safe YAML tracked in the private servers repo) rather than being linked from
+here: HA's UI editors rewrite files atomically, which would replace symlinks.
