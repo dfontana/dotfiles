@@ -46,6 +46,20 @@ the first bootstrap, create `~/servers/secrets.env` from
 run `chmod 600 ~/servers/secrets.env`. Run `mise run server-init` once after
 bootstrap to configure the firewall and user linger.
 
+## SDDM login screen (home-linux)
+
+`mise bootstrap` fetches pinned SilentSDDM v1.5.1, installs its Fedora Qt6
+prerequisites and root-owned theme/fonts, and applies the default preset using
+SDDM's generic Wayland/Weston greeter. **The home-linux bootstrap task uses
+sudo** and may prompt for DNF transaction approval. It never restarts SDDM or
+changes PAM/autologin. Do not run a bootstrap unattended unless sudo and DNF
+prompts are accounted for.
+
+Reapply an already bootstrapped setup with `mise run sddm:setup`; `sddm_theme` in
+`config/mise/mise.home-linux.toml` selects the login theme (`silent` by default;
+`elarun` is the bundled recovery fallback). Re-run bootstrap after changing it.
+See [the SDDM setup and recovery notes](config/mise/tasks.d/home-linux/sddm/README.md).
+
 ## Font Rebuild
 If you want to customize the fonts again in the future, use this [website](https://typeof.net/Iosevka/customizer) & import the `config/mise/tasks.d/home-linux/fonts/private-build-plans.toml`. This can be used to [run a custom build](https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md); which we'll use docker for. Run `mise run fonts:rebuild` to do all the work (see `mise tasks ls` for the individual `fonts:*` steps).
 

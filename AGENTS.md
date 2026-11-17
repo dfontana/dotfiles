@@ -19,8 +19,12 @@ Setup:
   comes from MISE_ENV (~/.mise_env); config/mise/mise.<env>.toml adds that
   machine's declarations and hooks.
 - On home-linux, bootstrap clones the Rose Pine icon repo (see
-  config/mise/tasks.d/home-linux/gtk-icons/) before linking, then refreshes
-  the font and GTK icon caches in separate post-dotfiles hooks.
+  config/mise/tasks.d/home-linux/gtk-icons/) and pinned SilentSDDM before
+  linking, then refreshes font and GTK icon caches in post-dotfiles hooks.
+  Its final `bootstrap` task runs `sddm:setup` with sudo to install the generic
+  Wayland greeter, SilentSDDM assets/fonts, and root-owned configuration.
+  This is explicitly opted in: never restart SDDM or edit PAM/autologin.
+  Ordinary `mise dot apply` only stages SDDM configuration without sudo.
 - On home-server, dotfiles link service configuration before bootstrap runs
   secret validation and selective enable/start automatically; privileged
   firewall/linger setup stays explicit.

@@ -18,3 +18,4 @@ config/zellij/layouts/werk-*
 .pi/
 config/mise/tasks.d/home-linux/gtk-icons/rose-pine/
 config/mise/tasks.d/home-linux/fonts/dist/
+config/mise/tasks.d/home-linux/sddm/SilentSDDM/

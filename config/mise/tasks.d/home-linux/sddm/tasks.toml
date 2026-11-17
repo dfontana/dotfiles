@@ -1,0 +1,111 @@
+# The bootstrap task runs only at the end of a full mise bootstrap, not during
+# ordinary mise dot apply. Privileged desktop setup is explicitly opted in here.
+[bootstrap]
+description = "Apply the home-linux privileged desktop setup without restarting SDDM"
+depends = ["sddm:setup"]
+
+["sddm:packages"]
+description = "Install SDDM/Weston and SilentSDDM's Fedora Qt6 dependencies"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+if ! rpm -q fedora-release-common hyprland >/dev/null 2>&1; then
+  echo "This task requires Fedora with Hyprland already installed." >&2
+  exit 1
+fi
+sudo dnf --setopt=clean_requirements_on_remove=False install \
+  sddm sddm-themes weston qt6-qtsvg qt6-qtvirtualkeyboard qt6-qtmultimedia qt6-qtimageformats
+if rpm -q sddm-wayland-plasma >/dev/null 2>&1; then
+  sudo dnf --setopt=clean_requirements_on_remove=False swap sddm-wayland-plasma sddm-wayland-generic
+else
+  sudo dnf --setopt=clean_requirements_on_remove=False install sddm-wayland-generic
+fi
+'''
+
+["sddm:theme"]
+description = "Install the pinned SilentSDDM assets and fonts without running its installer"
+depends = ["sddm:packages"]
+env = { SILENT_SDDM_SOURCE = "{{ env.HOME }}/.config/mise/tasks.d/home-linux/sddm/SilentSDDM" }
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+checkout=${SILENT_SDDM_SOURCE:?Missing SilentSDDM checkout path}
+for asset in Main.qml metadata.desktop qmldir components configs icons backgrounds LICENSE fonts/OFL.txt fonts/redhat fonts/redhat-vf; do
+  if [[ ! -e "$checkout/$asset" ]]; then
+    echo "SilentSDDM asset missing: $asset. Run mise bootstrap to fetch the pinned checkout." >&2
+    exit 1
+  fi
+done
+if ! grep -Fxq 'ConfigFile=configs/default.conf' "$checkout/metadata.desktop"; then
+  echo "Expected SilentSDDM's unmodified default preset; refusing to install." >&2
+  exit 1
+fi
+if [[ ! -f "$checkout/configs/default.conf" || ! -f "$checkout/backgrounds/smoky.jpg" ]]; then
+  echo "SilentSDDM's default preset/background is missing; refusing to install." >&2
+  exit 1
+fi
+
+theme_dir=/usr/share/sddm/themes/silent
+font_dir=/usr/local/share/fonts/silent-sddm
+sudo install -d -m 0755 "$theme_dir" "$font_dir"
+# Copy only runtime assets: no .git directory, upstream installer, or other scripts.
+for asset in Main.qml metadata.desktop qmldir components configs icons backgrounds LICENSE; do
+  sudo cp -R --no-preserve=ownership "$checkout/$asset" "$theme_dir/"
+done
+sudo cp -R --no-preserve=ownership "$checkout/fonts/redhat" "$checkout/fonts/redhat-vf" "$font_dir/"
+sudo install -m 0644 "$checkout/fonts/OFL.txt" "$font_dir/OFL.txt"
+sudo chown -R root:root "$theme_dir" "$font_dir"
+sudo chmod -R u=rwX,go=rX "$theme_dir" "$font_dir"
+sudo restorecon -RF "$theme_dir" "$font_dir"
+sudo fc-cache -f "$font_dir"
+echo "Installed SilentSDDM with configs/default.conf and its Red Hat fonts."
+'''
+
+["sddm:configure"]
+description = "Install the staged SDDM configuration without restarting the login manager"
+env = { SDDM_THEME = "{{ vars.sddm_theme }}" }
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+theme=${SDDM_THEME:?Missing sddm_theme mise variable}
+if [[ ! "$theme" =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]*$ ]]; then
+  echo "sddm_theme must be a theme directory name, not a path." >&2
+  exit 1
+fi
+if [[ ! -f "/usr/share/sddm/themes/$theme/Main.qml" ]]; then
+  echo "Install the Qt6 theme in /usr/share/sddm/themes/$theme first (Main.qml is missing)." >&2
+  exit 1
+fi
+
+source="$HOME/.config/sddm/zz-hyprland.conf"
+destination=/etc/sddm.conf.d/zz-hyprland.conf
+# Refresh only this staged template, without unrelated post-dotfiles hooks.
+mise --no-hooks dot apply "$source"
+if [[ ! -f "$source" ]] || ! grep -Fxq "Current=$theme" "$source"; then
+  echo "The rendered configuration does not match sddm_theme; refusing to install." >&2
+  exit 1
+fi
+if [[ -f /etc/sddm.conf ]] && grep -Eq '^[[:space:]]*(Current|InputMethod|GreeterEnvironment|DisplayServer|CompositorCommand)[[:space:]]*=' /etc/sddm.conf; then
+  echo "/etc/sddm.conf overrides this drop-in. Resolve its conflicting settings before applying." >&2
+  exit 1
+fi
+if sudo test -e "$destination" && ! sudo cmp -s "$source" "$destination"; then
+  backup="$destination.bak.$(date -u +%Y%m%dT%H%M%S%N)"
+  sudo cp -a "$destination" "$backup"
+  echo "Backed up previous SDDM configuration to $backup"
+fi
+sudo install -D -Z -o root -g root -m 0644 "$source" "$destination"
+echo "Installed SDDM theme: $theme. Takes effect at the next SDDM restart/reboot."
+echo "SDDM was not restarted; your current session is unchanged."
+'''
+
+["sddm:setup"]
+description = "Install SilentSDDM, apply the staged configuration, and enable SDDM (no restart)"
+depends = ["sddm:theme"]
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+mise run sddm:configure
+sudo systemctl enable sddm.service
+echo "SDDM is enabled."
+'''

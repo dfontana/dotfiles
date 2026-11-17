@@ -13,6 +13,7 @@
 "~/.config/hypr/hyprland.lua" = { source = "templates/hypr/hyprland.lua", mode = "template" }
 "~/.config/hypr/hyprlock.conf" = { source = "templates/hypr/hyprlock.conf", mode = "template" }
 "~/.config/hypr/hyprpaper.conf" = { source = "templates/hypr/hyprpaper.conf", mode = "template" }
+"~/.config/sddm/zz-hyprland.conf" = { source = "templates/sddm/zz-hyprland.conf", mode = "template" }
 "~/.config/quickshell/home/theme/Theme.qml" = { source = "templates/quickshell/home/theme/Theme.qml", mode = "template" }
 "~/.local/share/fonts/IosevkaCustom Nerd Font Mono/*.ttf" = "tasks.d/home-linux/fonts/ttfs/*.ttf"
 "~/.local/share/fonts/Iosevka Nerd Font/*.ttf" = "tasks.d/home-linux/fonts/icons/*.ttf"
@@ -22,6 +23,8 @@
 # before the [dotfiles] links above are applied.
 [bootstrap.repos]
 "~/.config/mise/tasks.d/home-linux/gtk-icons/rose-pine" = { url = "https://github.com/rose-pine/gtk", ref = "main" }
+# SilentSDDM v1.5.1, pinned to its release commit rather than a moving branch.
+"~/.config/mise/tasks.d/home-linux/sddm/SilentSDDM" = { url = "https://github.com/uiriansan/SilentSDDM", ref = "d477613b07ca13729af20cb4699b308ac7348d2f" }
 
 # Native mise unit: ~/.config/systemd/user/dev.mise.arrus.service.
 # Applying bootstrap restarts it, which is appropriate for this desktop service.
@@ -48,11 +51,15 @@ run = [
   ''',
 ]
 
-# Font build tasks live next to the tracked font assets.
+# Machine tasks live beside their tracked assets.
 [task_config]
-includes = ["~/.config/mise/tasks.d/home-linux/fonts/tasks.toml"]
+includes = [
+  "~/.config/mise/tasks.d/home-linux/fonts/tasks.toml",
+  "~/.config/mise/tasks.d/home-linux/sddm/tasks.toml",
+]
 
 [vars]
+sddm_theme = "silent"
 pi_extensions_path = "{{ env.HOME }}/code/pi-extensions"
 pi_plugins = "git:github.com/huggingface/pi-llama"
 
