@@ -13,7 +13,8 @@ Volume=romm-resources:/romm/resources
 Volume=romm-redis-data:/redis-data
 Volume=%h/servers/romm:/romm/library
 Volume=%h/servers/romm:/romm/assets
-Volume=%h/servers/romm:/romm/config
+# Mount the dotfiles directory directly; the host's config.yml link is only a shortcut.
+Volume=%h/.config/mise/tasks.d/home-server/romm:/romm/config:ro
 Environment=DB_HOST=romm-db
 Environment=DB_NAME=romm
 Environment=HASHEOUS_API_ENABLED=true

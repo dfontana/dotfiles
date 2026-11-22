@@ -22,7 +22,7 @@ server-init.toml       task: one-time firewall ports + user linger (sudo)
 secrets.example.env    schema for ~/servers/secrets.env
 systemd/user/          static user units (~/.config/systemd/user; yt-dlp timer)
 systemd/containers/    Quadlet units (~/.config/containers/systemd)
-romm/config.yml        romm app config, linked into ~/servers/romm/
+romm/config.yml        RomM app config, the authoritative copy
 ```
 
 ## Usage (home-server only; tasks exist only with MISE_ENV=home-server)
@@ -37,8 +37,14 @@ mise run server-units   # optional direct convergence after unit edits
 mise run server-init    # one-time: firewall ports + user linger (sudo)
 ```
 
-Mise dotfiles declaratively link the static user units, Quadlets, and RomM
-config. `server-units` validates runtime secrets and is idempotent; it never
+Mise dotfiles declaratively link the static user units and Quadlets, and expose
+`~/servers/romm/config.yml` as a host-side shortcut. The RomM Quadlet mounts
+`~/.config/mise/tasks.d/home-server/romm/` read-only at `/romm/config` so the
+container never has to resolve the host symlink. Edit `romm/config.yml` in
+this repo and restart RomM to apply changes; in-app writes to this file are
+not supported with this mount.
+
+`server-units` validates runtime secrets and is idempotent; it never
 restarts a running static service. `mise bootstrap` restarts the native Disbot
 unit. After editing a static unit, bootstrap or run it directly, then restart
 the affected service (`systemctl --user restart <unit>`) yourself. Container env
